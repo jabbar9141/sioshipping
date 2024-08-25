@@ -60,6 +60,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Dispatcher::class, 'user_id', 'id');
     }
 
+    public function agent()
+    {
+        return $this->hasOne(Agent::class, 'user_id', 'id');
+    }
+
     public function courier()
     {
         return $this->hasOne(Courier::class, 'user_id', 'id');

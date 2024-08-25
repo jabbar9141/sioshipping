@@ -104,7 +104,7 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#" aria-expanded="false">
+                            <a class="sidebar-link" href="{{route('shipping_rates.index')}}" aria-expanded="false">
                                 <span>
                                     <i class="fa-solid fa-users"></i>
                                 </span>

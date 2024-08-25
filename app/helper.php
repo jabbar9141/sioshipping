@@ -58,3 +58,16 @@ if (!function_exists('accountTxExists')) {
         }
     }
 }
+
+
+if (!function_exists('public_directory')) {
+    function public_directory($path = '')
+    {
+        if (app()->environment('production')) {
+            return base_path('../public_html') . ($path ? '/' . $path : $path);
+        }
+
+        return base_path('public') . ($path ? '/' . $path : $path);
+    }
+}
+

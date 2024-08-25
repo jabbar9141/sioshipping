@@ -11,6 +11,7 @@ class Agent extends Model
 
     protected $fillable = [
         'user_id',
+        'agency_type',
         'name',
         'phone',
         'phone_alt',
@@ -23,5 +24,27 @@ class Agent extends Model
         'status',
         'attachment_path',
         'location_id',
+        'business_name',
+        'tax_id_code',
+        'vat_no',
+        'pec',
+        'sdi'
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function city(){
+        return $this->belongsTo(City::class, 'city_id', 'id');
+    }
+
+    public function state(){
+        return $this->belongsTo(State::class, 'state_id', 'id');
+    }
+
+    public function country(){
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
 }
+

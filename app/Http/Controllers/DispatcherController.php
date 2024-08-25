@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use App\Mail\PaymentEmail;
+use App\Mail\SignUpEmail;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\State;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class DispatcherController extends Controller
@@ -140,7 +146,7 @@ class DispatcherController extends Controller
     public function create()
     {
         try {
-            //check if the user has a dispatcher profile
+         
             $d = Dispatcher::where('user_id', Auth::id())->first();
             if ($d) {
                 return view('dispatcher.settings.profile', ['dispatcher' => $d]);
@@ -158,6 +164,11 @@ class DispatcherController extends Controller
         }
     }
 
+    public function createDispatcher()
+    {
+        return view('dispatcher.settings.create');        
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -166,7 +177,61 @@ class DispatcherController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8'],
+            'agency_type' => ['required'],
+            'business_name' => ['required'],
+            'tax_id_code' => ['required'],
+            'vat_no' => ['required'],
+            'pec' => ['required'],
+            'sdi' => ['required'],
+            'phone' => ['required'],
+            'address1' => ['required'],
+            'zip' => ['required'],
+            'residential_country' => ['required'],
+            'residential_state' => ['required'],
+            'residential_city' => ['required'],
+        ]);
+        
+
+        $user = DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'user_type' => 'dispatcher',
+                'country' => $request->residential_country,
+                'blocked' => true,
+            ]);
+
+            Dispatcher::create([
+                'user_id' => $user->id,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'phone_alt' => $request->phone_alt,
+                'address1' => $request->address1,
+                'address2' => $request->address2,
+                'zip' => $request->zip,
+                'city' => City::find($request->residential_city)->name ?? '',
+                'state' => State::find($request->residential_state)->name ?? '',
+                'country' => Country::find($request->residential_country)->name ?? '',
+                'agency_type' => $request->agency_type ?? '',
+                'business_name' => $request->business_name ?? '',
+                'tax_id_code' => $request->tax_id_code ?? '',
+                'vat_no' => $request->vat_no ?? '',
+                'pec' => $request->pec ?? '',
+                'sdi' => $request->sdi ?? '',
+                'city_id' => $request->residential_city ?? '',
+                'state_id' => $request->residential_state ?? '',
+                'country_id' => $request->residential_country ?? ''
+            ]);
+            return $user;
+        });
+        Mail::to($user->email)->send(new SignUpEmail($user,$request->password));
+        return redirect()->route('allUsers')->with('message', "Dispatcher Created Successfully !")->with('message_type', "success");
     }
 
     /**
@@ -187,8 +252,9 @@ class DispatcherController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Dispatcher $dispatcher)
-    {
-        //
+    {   
+        $dispatcher = Dispatcher::find($dispatcher->id);
+        return view('dispatcher.settings.edit', compact('dispatcher'));
     }
 
     /**
@@ -199,7 +265,8 @@ class DispatcherController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Dispatcher $dispatcher)
-    {
+    {   
+        $dispatcher = Dispatcher::find($dispatcher->id);
         $request->validate([
             'name' => 'required|string',
             'phone' => 'required|string',
@@ -207,30 +274,34 @@ class DispatcherController extends Controller
             'address1' => 'required|string',
             'address2' => 'nullable|string',
             'zip' => 'required',
-            'city' => 'required',
-            'state' => 'required',
-            'country' => 'required',
+            'residential_country' => 'required',
+            'residential_state' => 'required',
+            'residential_city' => 'required',
             'agency_type' => 'required',
             'tax_id_code' => 'required',
         ]);
         try {
-            $dispatcher->name = $request->name;
-            $dispatcher->phone = $request->phone;
-            $dispatcher->phone_alt = $request->phone_alt;
-            $dispatcher->address1 = $request->address1;
-            $dispatcher->address2 = $request->address2;
-            $dispatcher->zip = $request->zip;
-            $dispatcher->city = $request->city;
-            $dispatcher->state = $request->state;
-            $dispatcher->country = $request->country;
-            $dispatcher->agency_type = $request->agency_type;
-            $dispatcher->tax_id_code = $request->tax_id_code;
-            $dispatcher->vat_no = $request->vat_no;
-            $dispatcher->pec = $request->pec;
-            $dispatcher->sdi = $request->sdi;
-            $dispatcher->business_name = $request->business_name;
-            $dispatcher->update();
-            return back()->with(['message' => 'Profile Updated', 'message_type' => 'success']);
+            $dispatcher->update([
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'phone_alt' => $request->phone_alt,
+                'address1' => $request->address1,
+                'address2' => $request->address2,
+                'zip' => $request->zip,
+                'city' => City::find($request->residential_city)->name ?? '',
+                'state' => State::find($request->residential_state)->name ?? '',
+                'country' => Country::find($request->residential_country)->name ?? '',
+                'agency_type' => $request->agency_type ?? '',
+                'business_name' => $request->business_name ?? '',
+                'tax_id_code' => $request->tax_id_code ?? '',
+                'vat_no' => $request->vat_no ?? '',
+                'pec' => $request->pec ?? '',
+                'sdi' => $request->sdi ?? '',
+                'city_id' => $request->residential_city ?? '',
+                'state_id' => $request->residential_state ?? '',
+                'country_id' => $request->residential_country ?? ''
+            ]);
+            return back()->with(['message' => 'Record Updated Successfu', 'message_type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage(), ['exception' => $e]);

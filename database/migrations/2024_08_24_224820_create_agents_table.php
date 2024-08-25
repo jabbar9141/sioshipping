@@ -12,10 +12,12 @@ class CreateAgentsTable extends Migration
      * @return void
      */
     public function up()
-    {
+    {   
+        Schema::dropIfExists('agents');
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id');
+            $table->string('agency_type')->nullable();
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
             $table->string('phone_alt')->nullable();
@@ -27,7 +29,12 @@ class CreateAgentsTable extends Migration
             $table->bigInteger('country_id')->nullable();
             $table->boolean('status')->nullable();
             $table->string('attachment_path')->nullable();  
-            $table->bigInteger('location_id')->nullable();
+            $table->bigInteger('location_id')->nullable();            
+            $table->string('business_name')->nullable();
+            $table->string('tax_id_code')->nullable();
+            $table->string('vat_no')->nullable();
+            $table->string('pec')->nullable();
+            $table->string('sdi')->nullable();
             $table->timestamps();
         });
     }

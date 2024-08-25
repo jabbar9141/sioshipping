@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\ShippingRateController;
 use App\Http\Controllers\WalkInCustomerOrder;
 use App\Models\SupportedBanks;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);

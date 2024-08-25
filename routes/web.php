@@ -21,14 +21,18 @@ use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserFundsController;
 use App\Http\Controllers\WalkInCustomerController;
 use App\Http\Controllers\WalkInCustomerOrder;
+use App\Models\Country;
 use App\Models\EUFundTransferOrder;
 use App\Models\IntlFundTransferOrder;
 use App\Models\Order;
+use App\Models\ShippingCost;
 use App\Models\UserFunds;
 use App\Models\WalkInCustomer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +44,8 @@ use Illuminate\Support\Facades\App;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
 
 Route::get('/', [HomeController::class, 'landing'])->name('landing');
 Route::get('register', [HomeController::class, 'register'])->name('register');
@@ -145,9 +151,12 @@ Route::get('allOrdersList', [OrderController::class, 'allOrdersList'])->name('al
 
 Route::get('allUsers', [AdminController::class, 'allUsers'])->name('allUsers')->middleware(['auth']);
 Route::get('allUsersList', [AdminController::class, 'allUsersList'])->name('allUsersList')->middleware(['auth']);
+Route::get('allAgentList', [WalkInCustomerController::class, 'allAgentList'])->name('allAgentList')->middleware(['auth']);
+Route::get('allDispatcherList', [WalkInCustomerController::class, 'allDispatcherList'])->name('allDispatcherList')->middleware(['auth']);
+
+
 Route::resource('walk_in_customers', WalkInCustomerController::class)->middleware(['auth']);
 Route::get('allWalkInCusList', [WalkInCustomerController::class, 'allWalkInCusList'])->name('allWalkInCusList')->middleware(['auth']);
-Route::get('allAgentList', [WalkInCustomerController::class, 'allAgentList'])->name('allAgentList')->middleware(['auth']);
 Route::get('allMobileUserList', [WalkInCustomerController::class, 'allMobileUserList'])->name('allMobileUserList')->middleware(['auth']);
 
 Route::post('unblockUser', [AdminController::class, 'unblockUser'])->name('unblockUser')->middleware(['auth']);
@@ -190,6 +199,9 @@ Route::post('approveIntlFundTransfer', [IntlFundTransferOrderController::class, 
 Route::get('dispatcher/settings', [DispatcherController::class, 'settings'])->name('dispatcher.settings')->middleware(['auth']);
 Route::get('dispatcher/accept', [DispatcherController::class, 'accept'])->name('dispatcher.accept')->middleware(['auth']);
 Route::get('dispatcher/accept-search', [DispatcherController::class, 'accept_search'])->name('dispatcher.accept.search')->middleware(['auth']);
+
+Route::get('createDispatcher', [DispatcherController::class, 'createDispatcher'])->name('create.dispatcher')->middleware(['auth']);
+
 Route::resource('batches', OrderBatchController::class)->middleware(['auth']);
 Route::get('batchList', [OrderBatchController::class, 'batchList'])->name('batchList')->middleware(['auth']);
 Route::resource('dispatchers', DispatcherController::class)->middleware(['auth']);

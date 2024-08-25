@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ env('APP_NAME') }} | @yield('page_title')</title>
+    {{-- <title>{{ env('APP_NAME') }} | @yield('page_title')</title> --}}
+    <title>Siopay Logistics | Sign Up</title>
+
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Shipping in italy" name="keywords">
     <meta content="Shipping in italy" name="description">
@@ -75,15 +77,10 @@
 
 <body>
     <div class="">
-
-        @if ($errors->any())
-            {{ implode('', $errors->all('<div>:message</div>')) }}
-        @endif
-
         <div class="headi flex items-center h-auto md:h-screen p-3 bg-contain md:bg-cover">
 
             <div class="w-full lg:w-1/2 flex flex-col items-center justify-center">
-                <form action="{{ route('register') }}" method="post">
+                <form action="{{ route('register') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="lg:w-[500px] space-y-5 bg-white items-left rounded-xl p-3 shadow-xl">
 
@@ -243,19 +240,12 @@
                                 </span>
                             @enderror
                         </div>
-                       
-
-                    
+                                           
                         <div class="form-group">
                             <label for="phone_alt">Phone Alt</label>
                             <input type="text" name="phone_alt" class="form-control" id="phone_alt"
                                 value="">
                         </div>
-
-                        
-
-                      
-                        
 
                         <div class="form-group">
                             <label for="address1">{{ __('Address 1') }} <i class="text-danger">*</i></label>

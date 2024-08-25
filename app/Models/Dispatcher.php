@@ -27,6 +27,9 @@ class Dispatcher extends Model
         'vat_no',
         'pec',
         'sdi',
+        'city_id',
+        'state_id',
+        'country_id'
     ];
 
     public function user()

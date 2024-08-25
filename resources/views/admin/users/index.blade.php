@@ -1,5 +1,14 @@
 @extends('admin.app')
 @section('page_title', 'Users')
+@section('css')
+    <style>
+        .pdf {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+        }
+    </style>
+
+@endsection
 @section('content')
     <div class="container-fluid">
         <div class="card">
@@ -40,7 +49,7 @@
                                                 <th>S/N</th>
                                                 <th>Date</th>
                                                 <th>Particulers</th>
-                                                <th>Account type</th>
+                                                <th>User type</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -66,8 +75,9 @@
                                                 <th>S/N</th>
                                                 <th>Date</th>
                                                 <th>Particulers</th>
-                                                <th>KYC Status</th>
+                                                {{-- <th>Account type</th> --}}
                                                 <th>Status</th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
 
@@ -78,22 +88,26 @@
                     </div>
                     <div class="tab-pane fade" id="mobile-kyc-tab-pane" role="tabpanel" aria-labelledby="mobile-kyc"
                         tabindex="0">
-                        <h5 class="card-title fw-semibold mb-4">All Dispatchers</h5>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title fw-semibold mb-4">All Dispatchers</h5>
+                            <a href="{{route('create.dispatcher')}}" class="btn btn-primary" style="height: 38px !important;">Add Dispatcher</a>
+                        </div>
                         <hr>
                         <div class="d3">
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table id="mobile_tbl" class="table table-sm  table-bordered table-striped"
+                                    <table id="dispatcher_tbl" class="table table-sm  table-bordered table-striped"
                                         style="width: 100%">
                                         <thead>
                                             <tr>
                                                 <th>S/N</th>
                                                 <th>Date</th>
                                                 <th>Particulers</th>
-                                                <th>KYC Status</th>
+                                                {{-- <th>Account type</th> --}}
                                                 <th>Status</th>
-                                                
+                                                <th>Actions</th>
+
                                             </tr>
                                         </thead>
 
@@ -173,13 +187,13 @@
                     "data": "date"
                 },
                 {
-                    "data": "surname"
+                    "data": "email"
                 },
                 {
-                    "data": "kyc_actions"
+                    "data": "blocked"
                 },
                 {
-                    "data": "kyc_status"
+                    "data": "actions"
                 },
             ],
             "paging": true,
@@ -190,7 +204,7 @@
             "autoWidth": true
         });
 
-        $('#mobile_tbl').DataTable({
+        $('#dispatcher_tbl').DataTable({
             "dom": 'Bfrtip',
             "iDisplayLength": 50,
             "lengthMenu": [
@@ -201,7 +215,7 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": "{{ route('allMobileUserList') }}",
+                "url": "{{ route('allDispatcherList') }}",
                 "type": "GET"
             },
             "columns": [{
@@ -211,13 +225,13 @@
                     "data": "date"
                 },
                 {
-                    "data": "surname"
+                    "data": "email"
                 },
                 {
-                    "data": "kyc_actions"
+                    "data": "blocked"
                 },
                 {
-                    "data": "kyc_status"
+                    "data": "actions"
                 },
             ],
             "paging": true,

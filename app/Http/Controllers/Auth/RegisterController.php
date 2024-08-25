@@ -14,6 +14,8 @@ use App\Mail\SignUpEmail;
 use App\Models\Admin;
 use App\Models\Agent;
 use App\Models\Dispatcher;
+use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -77,19 +79,6 @@ class RegisterController extends Controller
 
 
         ];
-
-        // if (isset($data['user_type']) && $data['user_type'] == 'agent') {
-        //     $rules += [
-        //         'agency_type' => 'required',
-        //         'tax_id_code' => 'required',
-        //         'phone' => 'required',
-        //         'zip' => 'required',
-        //         'city' => 'required',
-        //         'state' => 'required',
-        //         'country' => 'required',
-        //         'address1' => 'required',
-        //     ];
-        // }
         return Validator::make($data, $rules);
     }
 
@@ -101,82 +90,55 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // dd($data);
-        // if (isset($data['user_type']) && $data['user_type'] == 'agent') {
-        //dispatchers require kyc, so we a setting their accounts to blocked for the meantime, until proper kyc is implemented
-        //TODO: implement proper agent KYC handling
-        $u = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'user_type' => 'mobile',
-            'country' => $data['residential_country'],
-            'blocked' => true,
-        ]);
-        // } else {
-        //     $u = User::create([
-        //         'name' => $data['name'],
-        //         'email' => $data['email'],
-        //         'password' => Hash::make($data['password']),
-        //     ]);
-        // }
-        //create a default customer profile for registerd users
-        $c = Customer::create([
-            'user_id' => $u->id
-        ]);
 
-        // if (isset($data['user_type']) && $data['user_type'] == 'agent') {
-        //create a default dispatcher profile for registerd users
-
-
-        $filename = $data['attachment']; 
-        $sourcePath = 'uploads/documents/' . $filename; 
-        $destinationDirectory = 'uploads/documents/new_directory';
-        
-        if (!Storage::disk('public')->exists($destinationDirectory)) {
-            Storage::disk('public')->makeDirectory($destinationDirectory);
+        $attachment = $data['attachment'];
+        $filename = rand(100000, 999999) . '.' . $attachment->extension();
+        if (app()->environment('local')) {
+            $destinationDirectory = public_directory('uploads/documents');
+        } else {
+            $destinationDirectory = public_path('uploads/documents');
         }
-        $destinationPath = $destinationDirectory . '/' . $filename;
-        if (Storage::disk('public')->exists($sourcePath)) {
-            Storage::disk('public')->move($sourcePath, $destinationPath); 
+
+        if (!file_exists($destinationDirectory)) {
+            mkdir($destinationDirectory, 0755, true);
         }
-        
-      
-        $c = Agent::create([
-            'user_id' => $u->id,
-            'name' => $data['name'],
-            'phone' => $data['phone'],
-            'phone_alt' => $data['phone_alt'],
-            'address1' => $data['address1'],
-            'address2' => $data['address2'],
-            'zip' => $data['zip'],
-            'city_id' => $data['residential_city'],
-            'state_id' => $data['residential_state'],
-            'country_id' => $data['residential_country'],
-            'agency_type' => $data['agency_type'],
-            'business_name' => $data['business_name'],
-            'tax_id_code' => $data['tax_id_code'],
-            'vat_no' => $data['vat_no'],
-            'pec' => $data['pec'],
-            'sdi' => $data['sdi'],
-            'attachment_path' => $destinationPath,
 
-        ]);
-        // } else {
-        //create a default dispatcher profile for registerd users
-        //     $c = Dispatcher::create([
-        //         'user_id' => $u->id
-        //     ]);
-        // }
+        $attachment->move($destinationDirectory, $filename);
 
+        $user = DB::transaction(function () use ($data, $filename) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'user_type' => 'agent',
+                'country' => $data['residential_country'],
+                'blocked' => true,
+            ]);
 
-        //create a default admin profile for registerd users
-        $c = Admin::create([
-            'user_id' => $u->id
-        ]);
+            $agent = Agent::create([
+                'user_id' => $user->id,
+                'name' => $data['name'],
+                'phone' => $data['phone'],
+                'phone_alt' => $data['phone_alt'],
+                'address1' => $data['address1'],
+                'address2' => $data['address2'],
+                'zip' => $data['zip'],
+                'city_id' => $data['residential_city'],
+                'state_id' => $data['residential_state'],
+                'country_id' => $data['residential_country'],
+                'agency_type' => $data['agency_type'],
+                'business_name' => $data['business_name'],
+                'tax_id_code' => $data['tax_id_code'],
+                'vat_no' => $data['vat_no'],
+                'pec' => $data['pec'],
+                'sdi' => $data['sdi'],
+                'attachment_path' => 'uploads/documents/' . $filename,
 
-        //send welcome email
-        Mail::to($u->email)->send(new SignUpEmail($u));
-        return $u;
+            ]);
+            return $user;
+        });
+
+        Mail::to($user->email)->send(new SignUpEmail($user));
+        return $user;
     }
 }

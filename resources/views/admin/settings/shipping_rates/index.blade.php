@@ -8,28 +8,23 @@
                 @include('admin.settings.nav')
                 <hr>
                 <div class="card">
-                    <div class="card-header">
+                    {{-- <div class="card-header">
                         <a href="{{ route('shipping_rates.create') }}" class="btn btn-primary float-right">New Rate</a>
-                    </div>
+                    </div> --}}
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <h5>Shipping Rates</h5>
+                        <h5>Countries Shipping Costs</h5>
                         <div class="table-responsive">
                             <table id="locations_tbl" class="table table-sm  table-bordered table-striped display">
                                 <thead>
                                     <tr>
                                         <th>S/N</th>
                                         <th>Name</th>
-                                        <th>Locations</th>
-                                        <th>Weights</th>
-                                        <th>Price</th>
-                                        <th>Dimensions</th>
-                                        <th>View</th>
-                                        <th>Edit</th>
-                                        <th>Delete</th>
+                                        <th>ISO 2</th>
+                                        <th>Shipping Cost (Min-Max)</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
-
                             </table>
                         </div>
                     </div>
@@ -89,27 +84,29 @@
                     {
                         "data": "name"
                     },
+
+
                     {
-                        "data": "location"
+                        "data": "iso2"
                     },
                     {
-                        "data": "weights"
+                        "data": "shipping_cost"
                     },
                     {
-                        "data": "price"
+                        "data": "action"
                     },
-                    {
-                        "data": "max_dimensions"
-                    },
-                    {
-                        "data": "view"
-                    },
-                    {
-                        "data": "edit"
-                    },
-                    {
-                        "data": "delete"
-                    }
+                    // {
+                    //     "data": "max_dimensions"
+                    // },
+                    // {
+                    //     "data": "view"
+                    // },
+                    // {
+                    //     "data": "edit"
+                    // },
+                    // {
+                    //     "data": "delete"
+                    // }
                 ],
                 "paging": true,
                 "lengthChange": true,

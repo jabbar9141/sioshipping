@@ -6,6 +6,7 @@ use App\Models\Dispatcher;
 use App\Models\Kyc;
 use App\Models\User;
 use App\Models\WalkInCustomer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use CodiceFiscale\InverseCalculator;
@@ -88,26 +89,267 @@ class WalkInCustomerController extends Controller
             ->make(true);
     }
 
-    public function allAgentList()
+    public function allDispatcherList()
     {
         $users = User::where('user_type', 'dispatcher')->orderBy('created_at', 'DESC')->get();
         return Datatables::of($users)
             ->addIndexColumn()
-            ->editColumn('kyc_status', function ($user) {
-                $mar = "<span class= 'badge bg-secondary'>" . (($user->dispatcher->kyc_status == 0) ? 'Unapproved' : 'Approved') . "</span><br>";
-                return $mar;
-            })
-            ->addColumn('surname', function ($user) {
+            ->addColumn('email', function ($user) {
                 $mar = "Name : " . $user->name . "<br>";
                 $mar .= "Contact:" . $user->email . "<br>";
-
-
-                $mar .= '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#' . $user->id . 'Modal">
-                    see More
-                  </button>';
+                return $mar;
+            })
+            ->addColumn('date', function ($user) {
+                $mar = "Created at : " . Carbon::parse($user->created_at)->format("F j, Y") . "<br>";
+                $mar .= "Last updated:" .  Carbon::parse($user->updated_at)->format("F j, Y");
+                return $mar;
+            })
+            ->editColumn('blocked', function ($user) {
+                $mar = "<span class= 'badge bg-secondary'>" . (($user->blocked == 1) ? 'Blocked' : 'Active') . "</span><br>";
+                return $mar;
+            })
+     
+            ->addColumn('actions', function ($user) {
+                $mar = '<div class="d-flex">';
+                if ($user->blocked == 1) {
+                    $url = route('unblockUser');
+                    $mar .= '<form method="POST" action="' . $url . '">
+                            <input type="hidden" name = "_token" value = ' . csrf_token() . '>
+                            <input type="hidden" name = "user_id" value ="' . $user->id . '">
+                            <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update Dispatcher Status">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                </svg>
+                            </button>
+                        </form>';
+                } else {
+                    $url = route('blockUser');
+                    $mar .= '<form method="POST" action="' . $url . '">
+                            <input type="hidden" name = "_token" value = ' . csrf_token() . '>
+                            <input type="hidden" name = "user_id" value ="' . $user->id . '">
+                            <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Update Dispatcher Status">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                </svg>
+                            </button>
+                        </form>';
+                }
+                $mar .= '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#' . $user->id . 'Modal" data-toggle="tooltip" title="View Dispatcher Information">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                            </svg>
+                        </a>';
 
                 $mar .= '
-                <div class="modal fade" id="' . $user->id . 'Modal" tabindex="-1" aria-labelledby="' . $user->id . 'ModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="' . $user->id . 'Modal" tabindex="-1" aria-labelledby="' . $user->id . 'ModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="' . $user->id . 'ModalLabel">' . $user->name . '</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-striped">
+                                        <tr>
+                                            <th>Business Name</th>
+                                            <td>' . $user->dispatcher->name . '<td>
+                                            <th>Phone</th>
+                                            <td>' . $user->dispatcher->phone . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th>Phone 2</th>
+                                            <td>' . $user->dispatcher->phone_alt . '<td>
+                                            <th>Address1</th>
+                                            <td>' . $user->dispatcher->address1 . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th>Address 2</th>
+                                            <td>' . $user->dispatcher->address2 . '<td>
+                                            <th>Zip</th>
+                                            <td>' . $user->dispatcher->zip . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th>City </th>
+                                            <td>' . $user->dispatcher->city . '<td>
+                                            <th>State</th>
+                                            <td>' . $user->dispatcher->state . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th> Country</th>
+                                            <td>' . $user->dispatcher->country . '<td>
+                                            <th>Account type</th>
+                                            <td>' . $user->dispatcher->agency_type . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th> Agency Name </th>  
+                                            <td>' . $user->dispatcher->business_name . '<td>
+                                            <th>Tax ID Code</th>
+                                            <td>' . $user->dispatcher->tax_id_code . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th> VAT No. </th>
+                                            <td>' . $user->dispatcher->vat_no . '<td>
+                                            <th>PEC</th>
+                                            <td>' . $user->dispatcher->pec . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th> SDI </th>
+                                            <td>' . $user->dispatcher->sdi . '<td>
+                                            <th></th>
+                                            <td><td>
+                                        </tr>
+                                    </table>        
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                    $mar .= '<a href="'.route('dispatchers.edit', $user->dispatcher).'" class="btn btn-sm btn-primary ms-2" data-toggle="tooltip" title="Edit Dispatcher">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                        </svg>
+                    </a></div>';
+                    return $mar;
+            })
+            ->rawColumns(['blocked', 'email', 'date', 'actions'])
+            ->make(true);
+    }
+
+    public function allAgentList()
+    {
+        $users = User::where('user_type', 'agent')->orderBy('created_at', 'DESC')->get();
+        return Datatables::of($users)
+            ->addIndexColumn()
+            ->addColumn('email', function ($user) {
+                $mar = "Name : " . $user->name . "<br>";
+                $mar .= "Contact:" . $user->email . "<br>";
+                return $mar;
+            })
+            ->addColumn('date', function ($user) {
+                $mar = "Created at : " . Carbon::parse($user->created_at)->format("F j, Y") . "<br>";
+                $mar .= "Last updated:" .  Carbon::parse($user->updated_at)->format("F j, Y");
+                return $mar;
+            })
+            ->editColumn('blocked', function ($user) {
+                $mar = "<span class= 'badge bg-secondary'>" . (($user->blocked == 1) ? 'Blocked' : 'Active') . "</span><br>";
+                return $mar;
+            })
+            ->addColumn('actions', function ($user) {
+                $mar = '<div class="d-flex">';
+                if ($user->blocked == 1) {
+                    $url = route('unblockUser');
+                    $mar .= '<form method="POST" action="' . $url . '">
+                            <input type="hidden" name = "_token" value = ' . csrf_token() . '>
+                            <input type="hidden" name = "user_id" value ="' . $user->id . '">
+                            <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update Agent Status">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                </svg>
+                            </button>
+                        </form>';
+                } else {
+                    $url = route('blockUser');
+                    $mar .= '<form method="POST" action="' . $url . '">
+                            <input type="hidden" name = "_token" value = ' . csrf_token() . '>
+                            <input type="hidden" name = "user_id" value ="' . $user->id . '">
+                            <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Update Agent Status">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                </svg>
+                            </button>
+                        </form>';
+                }
+                $mar .= '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Information">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                            </svg>
+                        </a>';
+
+                $mar .= '
+                    <div class="modal fade" id="' . $user->id . 'Modal" tabindex="-1" aria-labelledby="' . $user->id . 'ModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="' . $user->id . 'ModalLabel">' . $user->name . '</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-striped">
+                                        <tr>
+                                            <th>Business Name</th>
+                                            <td>' . $user->agent->name . '<td>
+                                            <th>Phone</th>
+                                            <td>' . $user->agent->phone . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th>Phone 2</th>
+                                            <td>' . $user->agent->phone_alt . '<td>
+                                            <th>Address1</th>
+                                            <td>' . $user->agent->address1 . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th>Address 2</th>
+                                            <td>' . $user->agent->address2 . '<td>
+                                            <th>Zip</th>
+                                            <td>' . $user->agent->zip . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th>City </th>
+                                            <td>' . $user->agent->city->name . '<td>
+                                            <th>State</th>
+                                            <td>' . $user->agent->state->name . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th> Country</th>
+                                            <td>' . $user->agent->country->name . '<td>
+                                            <th>Account type</th>
+                                            <td>' . $user->agent->agency_type . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th> Agency Name </th>  
+                                            <td>' . $user->agent->business_name . '<td>
+                                            <th>Tax ID Code</th>
+                                            <td>' . $user->agent->tax_id_code . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th> VAT No. </th>
+                                            <td>' . $user->agent->vat_no . '<td>
+                                            <th>PEC</th>
+                                            <td>' . $user->agent->pec . '<td>
+                                        </tr>
+                                        <tr>
+                                            <th> SDI </th>
+                                            <td>' . $user->agent->sdi . '<td>
+                                            <th></th>
+                                            <td><td>
+                                        </tr>
+                                    </table>        
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+
+            $mar .= '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#document' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Information">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-code" viewBox="0 0 16 16">
+            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
+            <path d="M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708"/>
+            </svg>
+            </a></div>';
+
+            $mar .= '
+                <div class="modal fade" id="document' . $user->id . 'Modal" tabindex="-1" aria-labelledby="document' . $user->id . 'ModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -115,102 +357,21 @@ class WalkInCustomerController extends Controller
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <table class="table table-striped">
-                                    <tr>
-                                        <th>Business Name</th>
-                                        <td>' . $user->dispatcher->name . '<td>
-                                        <th>Phone</th>
-                                        <td>' . $user->dispatcher->phone . '<td>
-                                    </tr>
-                                    <tr>
-                                        <th>Phone 2</th>
-                                        <td>' . $user->dispatcher->phone_alt . '<td>
-                                        <th>Address1</th>
-                                        <td>' . $user->dispatcher->address1 . '<td>
-                                    </tr>
-                                    <tr>
-                                        <th>Address 2</th>
-                                        <td>' . $user->dispatcher->address2 . '<td>
-                                        <th>Zip</th>
-                                        <td>' . $user->dispatcher->zip . '<td>
-                                    </tr>
-                                    <tr>
-                                        <th>City </th>
-                                        <td>' . $user->dispatcher->city . '<td>
-                                        <th>State</th>
-                                        <td>' . $user->dispatcher->state . '<td>
-                                    </tr>
-                                    <tr>
-                                        <th> Country</th>
-                                        <td>' . $user->dispatcher->country . '<td>
-                                        <th>Account type</th>
-                                        <td>' . $user->dispatcher->agency_type . '<td>
-                                    </tr>
-                                    <tr>
-                                        <th> Agency Name </th>
-                                        <td>' . $user->dispatcher->business_name . '<td>
-                                        <th>Tax ID Code</th>
-                                        <td>' . $user->dispatcher->tax_id_code . '<td>
-                                    </tr>
-                                    <tr>
-                                        <th> VAT No. </th>
-                                        <td>' . $user->dispatcher->vat_no . '<td>
-                                        <th>PEC</th>
-                                        <td>' . $user->dispatcher->pec . '<td>
-                                    </tr>
-                                    <tr>
-                                        <th> SDI </th>
-                                        <td>' . $user->dispatcher->sdi . '<td>
-                                        <th></th>
-                                        <td><td>
-                                    </tr>
-
-                                </table>
+                                <iframe class="pdf" src="'.asset($user->agent->attachment_path).'"  height="650"></iframe>  
                             </div>
                             <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
-              </div>';
+                </div>';    
                 return $mar;
             })
-            ->addColumn('date', function ($user) {
-                $mar = "Created at : " . $user->created_at . "<br>";
-                $mar .= "Last updated:" . $user->updated_at;
-                return $mar;
-            })
-            ->addColumn('kyc_actions', function ($user) {
-                // $mar = "<span class= 'badge bg-secondary'>" . ($user->kyc_status) . "</span><br>";
-                $mar = "";
-                // $doc_front_url = asset('uploads/' . $user->doc_front);
-                // $doc_back_url = asset('uploads/' . $user->doc_back);
-                // $mar .= "Docment Front: <a href = " . $doc_front_url . " target='_blank'>" . $user->doc_front . "</a><br>";
-                // $mar .= "Docment Back: <a href = " . $doc_back_url . " target='_blank'>" . $user->doc_back . "</a><br>";
-
-                if ($user->dispatcher->kyc_status == '0') {
-                    $url = route('approveAgentKYC');
-                    $mar .= '<br><form method="POST" action="' . $url . '">
-                            <input type="hidden" name = "_token" value = ' . csrf_token() . '>
-                            <input type="hidden" name = "user_id" value ="' . $user->id . '">
-                            <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-primary">Approve KYC</button>
-                        </form>';
-                } else {
-                    $url = route('unapproveAgentKYC');
-                    $mar .= '<br><form method="POST" action="' . $url . '">
-                            <input type="hidden" name = "_token" value = ' . csrf_token() . '>
-                            <input type="hidden" name = "user_id" value ="' . $user->id . '">
-                            <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger">Unapprove KYC</button>
-                        </form>';
-                }
-                return $mar;
-            })
-            // ->addColumn('delete', function ($user) {
-            //
-            // })
-            ->rawColumns(['kyc_status', 'surname', 'date', 'kyc_actions'])
+            ->rawColumns(['blocked', 'email', 'date', 'actions'])
             ->make(true);
     }
+
+
 
     public function allMobileUserList()
     {

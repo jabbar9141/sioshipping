@@ -19,7 +19,14 @@
             Welcome to Siopay please proceed to login at <a href="http://siopay.eu">Siopay</a> to Enjoy our services today. <br>
             <br>
             <br>
-            Your Registration Number is <b>{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</b>, and you will recieve a mail shortly from our KYC team
+            Your Registration Number is <b>{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</b> 
+            <br>@if ($user->user_type == "dispatcher")
+                Email : <b>{{ $user->email }}</b>
+                <br>
+                Password : <b>{{ $password }}</b> <br>
+            @else
+                
+            @endif, and you will recieve a mail shortly from our KYC team
             concerning the status of your registration, mail info@siopaay.eu if you have any questions.
             <br>
             Welcome
