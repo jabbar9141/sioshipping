@@ -45,7 +45,9 @@ use Illuminate\Support\Facades\File;
 |
 */
 
-
+Route::get('/test', function(){
+    dd(public_path());
+});
 
 Route::get('/', [HomeController::class, 'landing'])->name('landing');
 Route::get('register', [HomeController::class, 'register'])->name('register');
