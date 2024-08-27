@@ -72,14 +72,7 @@
                             <span class="hide-menu">All Shipping Orders</span>
                         </a>
                     </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('batches.index') }}" aria-expanded="false">
-                            <span>
-                                <i class="ti ti-article"></i>
-                            </span>
-                            <span class="hide-menu">Batches</span>
-                        </a>
-                    </li>
+                 
               
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{ route('dispatcher.settings') }}" aria-expanded="false">
@@ -96,7 +89,7 @@
                     {{-- @if (Auth::user()->user_type == 'admin' &&
                             (optional(auth()->user()->admin)->can == 'all' || optional(auth()->user()->admin)->can == 'kyc')) --}}
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('allUsers') }}" aria-expanded="false">
+                            <a class="sidebar-link @if (Route::is('allUsers') || Route::is('create.dispatcher') || Route::is('dispatchers.*')) active @endif" href="{{ route('allUsers') }}" aria-expanded="false">
                                 <span>
                                     <i class="fa-solid fa-users"></i>
                                 </span>
@@ -119,6 +112,14 @@
                                 <span class="hide-menu">Currency Exchange</span>
                             </a>
                         </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link  @if (Route::is('batches.*'))   active  @endif" href="{{ route('batches.index') }}" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-article"></i>
+                                </span>
+                                <span class="hide-menu">Batches</span>
+                            </a>
+                        </li>
                         {{-- <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('walk_in_customers.index') }}"
                                 aria-expanded="false">
@@ -132,7 +133,7 @@
                     {{-- @if (Auth::user()->user_type == 'admin' &&
                             (optional(auth()->user()->admin)->can == 'all' || optional(auth()->user()->admin)->can == 'accounts')) --}}
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('allOrders') }}" aria-expanded="false">
+                            <a class="sidebar-link @if (Route::is('allOrders') || Route::is('orders.*'))   active  @endif" href="{{ route('allOrders') }}" aria-expanded="false">
                                 <span>
                                     <i class="ti ti-article"></i>
                                 </span>
@@ -143,21 +144,21 @@
                    
                     {{-- @if (Auth::user()->user_type == 'admin' && optional(auth()->user()->admin)->can == 'all') --}}
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('products.index') }}" aria-expanded="false">
+                            <a class="sidebar-link  @if (Route::is('products.*'))   active  @endif" href="{{ route('products.index') }}" aria-expanded="false">
                                 <span>
                                     <i class="fa-solid fa-check"></i>
                                 </span>
                                 <span class="hide-menu">Global Products</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
+                        {{-- <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('admin.settings') }}" aria-expanded="false">
                                 <span>
                                     <i class="fa-solid fa-gears"></i>
                                 </span>
                                 <span class="hide-menu">Settings</span>
                             </a>
-                        </li>
+                        </li> --}}
                     {{-- @endif --}}
                 @endif
             </ul>

@@ -2,51 +2,52 @@
 @section('page_title', 'Location')
 @section('content')
     <div class="container-fluid">
+        {{-- <div class="card"> --}}
+        {{-- <div class="card-body"> --}}
+        {{-- <h5 class="card-title fw-semibold mb-4">Settings</h5> --}}
+        {{-- @include('dispatcher.settings.nav') --}}
+        {{-- <hr> --}}
         <div class="card">
+            <div class="card-header">
+               <h5>Show Batch</h5> 
+                {{-- <a href="{{ route('batches.index') }}" class="btn btn-danger float-right"><i
+                                class="fa fa-times"></i>Exit</a> --}}
+            </div>
+            <!-- /.card-header -->
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Settings</h5>
-                @include('dispatcher.settings.nav')
+                <p><b>Batch Name : [{{ $batch->name }}]</b></p>
+                <p><b>Current Location : {{ $batch->location->name }}Lat: {{ $batch->location->latitude }} &nbsp;
+                    &nbsp; Long: {{ $batch->location->longitude }} </b></p>
                 <hr>
-                <div class="card">
-                    <div class="card-header">
-                        <a href="{{ route('batches.index') }}" class="btn btn-danger float-right"><i
-                                class="fa fa-times"></i>Exit</a>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <h5>Viewing Batch [{{ $batch->name }}]</h5>
-                        <p><b>Current Location : </b>{{ $batch->location->name }}Lat: {{ $batch->location->latitude }} &nbsp;
-                            &nbsp; Long: {{ $batch->location->longitude }}</p>
-                        <hr>
-                        <h5>Geolocation data</h5>
-                        <hr>
-                        <div id="map" style="height: 400px;"></div>
+                <h5>Geolocation data</h5>
+                <hr>
+                <div id="map" style="height: 400px;"></div>
 
-                        <hr>
-                        <h5>Orders in this batch</h5>
-                        <hr>
-                        <div class="table-responsive">
-                            <table id="orders_tbl" class="table table-sm  table-bordered table-striped display">
-                                <thead>
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>Data</th>
-                                        <th>Locations</th>
-                                        <th>Parties</th>
-                                        <th>Price(&euro;)</th>
-                                        <th>Status</th>
-                                        <th>View / Track</th>
-                                        <th>Edit</th>
-                                    </tr>
-                                </thead>
+                <hr>
+                <h5>Orders in this batch</h5>
+                <hr>
+                <div class="table-responsive">
+                    <table id="orders_tbl" class="table table-sm  table-bordered table-striped display">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Data</th>
+                                <th>Locations</th>
+                                <th>Parties</th>
+                                <th>Price(&euro;)</th>
+                                <th>Status</th>
+                                <th>View / Track</th>
+                                <th>Edit</th>
+                            </tr>
+                        </thead>
 
-                            </table>
-                        </div>
-                    </div>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+    {{-- </div> --}}
+    {{-- </div> --}}
 @endsection
 @section('scripts')
     <script>

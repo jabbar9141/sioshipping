@@ -162,7 +162,6 @@ Route::get('EUFundsTransferRatesList', [EUFundsTransferRatesController::class, '
 Route::resource('intl_funds_rate', IntlFundsTransferRatesController::class)->middleware(['auth']);
 Route::get('IntlFundsTransferRatesList', [IntlFundsTransferRatesController::class, 'IntlFundsTransferRatesList'])->name('IntlFundsTransferRatesList')->middleware(['auth']);
 
-Route::resource('orders', OrderController::class)->middleware(['auth']);
 Route::get('/locations-search', [LocationController::class, 'search'])->name('locations.search');
 Route::get('/rates-fetch', [ShippingRateController::class, 'rates_fetch'])->name('rates.fetch');
 Route::get('myOrdersList', [OrderController::class, 'myOrdersList'])->name('myOrdersList')->middleware(['auth']);
@@ -170,6 +169,7 @@ Route::post('cancelOrder', [OrderController::class, 'cancelOrder'])->name('cance
 
 Route::get('allOrders', [OrderController::class, 'allOrders'])->name('allOrders')->middleware(['auth']);
 Route::get('allOrdersList', [OrderController::class, 'allOrdersList'])->name('allOrdersList')->middleware(['auth']);
+Route::resource('orders', OrderController::class)->middleware(['auth']);
 
 Route::get('allUsers', [AdminController::class, 'allUsers'])->name('allUsers')->middleware(['auth']);
 Route::get('allUsersList', [AdminController::class, 'allUsersList'])->name('allUsersList')->middleware(['auth']);

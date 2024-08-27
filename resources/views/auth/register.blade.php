@@ -331,10 +331,16 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div>
+                            <label for="attachment">{{ __('Registration Document') }} <i class="text-danger">*</i></label>
+                            <input type="file" class="form-control" name="front_attachment" accept="application/pdf">
+                            @error('attachment')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
                         <div>
-                            <label for="attachment">{{ __('Select File') }} <i class="text-danger">*</i></label>
-
+                            <label for="attachment">{{ __('Full Document') }} <i class="text-danger">*</i></label>
                             <input type="file" class="form-control" name="attachment" accept="application/pdf">
                             @error('attachment')
                                 <span class="text-danger">{{ $message }}</span>

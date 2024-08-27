@@ -76,6 +76,7 @@ class RegisterController extends Controller
             'residential_state' => ['required'],
             'residential_city' => ['required'],
             'attachment' => ['required'],
+            'front_attachment' => ['required'],
 
 
         ];
@@ -92,15 +93,19 @@ class RegisterController extends Controller
     {
 
         $attachment = $data['attachment'];
+        $front_attachment = $data['front_attachment'];
         $filename = rand(100000, 999999) . '.' . $attachment->extension();
-         $destinationDirectory = public_path('uploads/documents');
-
+        $front_filename = rand(100000, 999999) . '_front.' . $front_attachment->extension();
+       
+        $destinationDirectory = public_path('uploads/documents');
+        
         if (!file_exists($destinationDirectory)) {
             mkdir($destinationDirectory, 0755, true);
         }
         $attachment->move($destinationDirectory, $filename);
+        $front_attachment->move($destinationDirectory, $front_filename);
 
-        $user = DB::transaction(function () use ($data, $filename) {
+        $user = DB::transaction(function () use ($data, $filename, $front_filename) {
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
@@ -128,6 +133,7 @@ class RegisterController extends Controller
                 'pec' => $data['pec'],
                 'sdi' => $data['sdi'],
                 'attachment_path' => 'uploads/documents/' . $filename,
+                'front_attachment' => 'uploads/documents/'. $front_filename,
 
             ]);
             return $user;

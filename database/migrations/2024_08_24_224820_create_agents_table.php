@@ -29,6 +29,7 @@ class CreateAgentsTable extends Migration
             $table->bigInteger('country_id')->nullable();
             $table->boolean('status')->nullable();
             $table->string('attachment_path')->nullable();  
+            $table->string('front_attachment')->nullable();
             $table->bigInteger('location_id')->nullable();            
             $table->string('business_name')->nullable();
             $table->string('tax_id_code')->nullable();

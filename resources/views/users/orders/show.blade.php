@@ -11,8 +11,8 @@
                 <hr>
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{ route('orders.index') }}" class="btn btn-danger float-right"><i
-                                class="fa fa-times"></i>Exit</a>
+                        {{-- <a href="{{ route('orders.index') }}" class="btn btn-danger float-right"><i
+                                class="fa fa-times"></i>Exit</a> --}}
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -22,30 +22,14 @@
                                 <table class="table table-bordered table-sm">
                                     <tbody>
                                         <tr>
-                                            {{-- https://github.com/bitjson/qr-code --}}
                                             <th colspan="2">
-                                                <qr-code id="qr1"
-                                                    contents="{{ route('track.shipping', $order->tracking_id) }}"
-                                                    module-color="#5D87FF" position-ring-color="#5A6A85"
-                                                    position-center-color="#539BFF" mask-x-to-y-ratio="1.2"
-                                                    style="
-                                                  width: 300px;
-                                                  height: 300px;
-                                                  margin: 2em auto;
-                                                  background-color: #fff;
-                                                ">
-                                                    {{-- <img src="{{asset('admin_assets/assets/images/logos/favicon.png')}}" style="width: 100%" slot="icon" /> --}}
-                                                </qr-code>
-
-                                                {{-- <script>
-                                                    document.getElementById('qr1').addEventListener('codeRendered', () => {
-                                                        document.getElementById('qr1').animateQRCode('MaterializeIn');
-                                                    });
-                                                </script> --}}
+                                                <div style="">
+                                                    <svg id="barcode" style="width: 100px; height: 100px;"></svg><br>
+                                                </div>
                                             </th>
-                                            <th colspan="2">
+                                            <th colspan="2" style="text-align: end">
                                                 <img src="{{ asset('admin_assets/assets/images/logos/favicon.png') }}"
-                                                    style="width: 100%" slot="icon" />
+                                                    style="width: 42%" slot="icon" />
                                             </th>
                                         </tr>
                                         <tr>
@@ -77,11 +61,11 @@
                                         </tr>
                                         <tr>
                                             <th>Status</th>
-                                            <td>
-                                                <span class="badge bg-secondary">{{ $order->status }}</span>
+                                            <td class="d-flex">
+                                                <span class="badge bg-secondary" style="height: 28px !important;">{{ $order->status }}</span>
                                                 @if ($order->status == 'unpaid')
                                                     <a href="{{ route('payment.summary', ['order_id' => $order->id]) }}"
-                                                        class="btn btn-primary">$ Pay</a>
+                                                        class="btn btn-primary" >$ Pay</a>
                                                 @endif
 
                                                 @if ($order->status && request()->get('mode') != '0')
@@ -89,7 +73,7 @@
                                                         class="form-inline">
                                                         @csrf
                                                         <input type="hidden" value="{{ $order->id }}" name="order_id">
-                                                        <button class="btn btn-danger"
+                                                        <button class="btn btn-danger ms-2"
                                                             onclick="return confirm('Are you sure you wish to cancel this order')">x
                                                             Cancel Order</button>
                                                     </form>
@@ -222,7 +206,16 @@
     </div>
 @endsection
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"
+        integrity="sha256-UuAyU0w/mJdq2Vy4wguvgO0MyD1CWQYCqM8dsW4uIu0=" crossorigin="anonymous"></script>
     <script>
+        $(document).ready(function() {
+            let trakingId = "TID_{{ $order->tracking_id }}" 
+            JsBarcode("#barcode", trakingId, {
+                format: "CODE128"
+            });
+        });
+
         // Get latitude and longitude values for the two locations from the server
         var latitude1 = {{ $order->pickup_location->latitude }};
         var longitude1 = {{ $order->pickup_location->longitude }};
@@ -273,7 +266,8 @@
             mywindow.document.write(
                 `<link rel="stylesheet" href="{{ asset('admin_assets/assets/css/styles.min.css') }}" />`);
             mywindow.document.write('</head><body>');
-            mywindow.document.write(`<link rel="preload" href="https://unpkg.com/@bitjson/qr-code@1.0.2/dist/qr-code.js" as="script">`);
+            mywindow.document.write(
+                `<link rel="preload" href="https://unpkg.com/@bitjson/qr-code@1.0.2/dist/qr-code.js" as="script">`);
             var script = document.createElement('script');
             script.src = 'https://unpkg.com/@bitjson/qr-code@1.0.2/dist/qr-code.js';
             mywindow.document.head.appendChild(script);

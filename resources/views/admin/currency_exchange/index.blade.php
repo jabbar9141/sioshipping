@@ -20,7 +20,7 @@
                         <div class="col-6">
                             <label for="exchange_rate1">Currency Exchange Rate<small class="text-danger">*</small></label>
                             <input type="number" name="exchange_rate" id="exchange_rate1" class="form-control"
-                                min="0" max="100" step="0.01" required>
+                                min="0"  step="0.01" required>
                         </div>
                     </div>
 

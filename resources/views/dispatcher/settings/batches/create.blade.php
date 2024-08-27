@@ -2,48 +2,46 @@
 @section('page_title', 'Create Batch')
 @section('content')
     <div class="container-fluid">
+        {{-- <div class="card"> --}}
+        {{-- <div class="card-body"> --}}
+        {{-- <h5 class="card-title fw-semibold mb-4">Settings</h5> --}}
+        {{-- @include('dispatcher.settings.nav') --}}
+        {{-- <hr> --}}
         <div class="card">
+            <div class="card-header">
+                <h5>Create New Batch</h5>
+            </div>
+            <!-- /.card-header -->
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Settings</h5>
-                @include('dispatcher.settings.nav')
-                <hr>
-                <div class="card">
-                    <div class="card-header">
-                        <a href="{{ route('batches.index') }}" class="btn btn-danger float-right"><i
-                                class="fa fa-times"></i>Exit</a>
+                @include('admin.partials.notification')
+                
+                <form action="{{ route('batches.store') }}" method="post">
+                    @csrf
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" name="name", id="name">
+                        </div>
                     </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        @include('admin.partials.notification')
-                        <h5>Create New Batch</h5>
-                        <form action="{{ route('batches.store') }}" method="post">
-                            @csrf
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label for="name">Name</label>
-                                    <input type="text" class="form-control" name="name", id="name">
-                                </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="ui-widget">
+                                <label for="origin">Shipping from <i class="text-danger">*</i> : </label>
+                                <input type="text" id="origin" name="origin_" value="{{ old('origin_') }}"
+                                    class="form-control" autocomplete="off">
+                                <input type="hidden" name="origin_id" value="{{ old('origin_id') }}" id="origin_id">
                             </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="ui-widget">
-                                        <label for="origin">Shipping from <i class="text-danger">*</i> : </label>
-                                        <input type="text" id="origin" name="origin_" value="{{ old('origin_') }}"
-                                            class="form-control" autocomplete="off">
-                                        <input type="hidden" name="origin_id" value="{{ old('origin_id') }}"
-                                            id="origin_id">
-                                    </div>
-                                </div>
-                            </div>
-                            <br>
-                            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                </form>
             </div>
         </div>
     </div>
+    {{-- </div> --}}
+    {{-- </div> --}}
 @endsection
 @section('scripts')
     <script>

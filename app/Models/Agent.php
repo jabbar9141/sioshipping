@@ -28,7 +28,8 @@ class Agent extends Model
         'tax_id_code',
         'vat_no',
         'pec',
-        'sdi'
+        'sdi',
+        'front_attachment'
     ];
 
     public function user(){

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CurrencyExchangeRate;
 use Carbon\Carbon;
 use App\Models\UserFunds;
 use Illuminate\Support\Facades\Log;
@@ -70,4 +71,31 @@ if (!function_exists('public_directory')) {
         return base_path('public') . ($path ? '/' . $path : $path);
     }
 }
+
+if (!function_exists('toEuro')) {
+    function toEuro($currency_id, $price)
+    {
+        if ($currency_id > 0) {
+            $currency = CurrencyExchangeRate::find($currency_id);
+            $result = $price / $currency->currency_rate;
+            return $result;
+        } else {
+            return $price;
+        }
+    }
+}
+
+if (!function_exists('fromEuroView')) {
+    function fromEuroView($currency_id, $price)
+    {
+        if ($currency_id > 0) {
+            $currency = CurrencyExchangeRate::find($currency_id);
+            $result = number_format($price * $currency->currency_rate, 2);
+            return $result . ' ' . $currency->country->currency_symbol;
+        } else {
+            return $price . ' ' . "€";
+        }
+    }
+}
+
 
