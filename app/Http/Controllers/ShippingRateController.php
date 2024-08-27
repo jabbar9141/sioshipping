@@ -96,11 +96,11 @@ class ShippingRateController extends Controller
                 return ($item->min_cost ?? 0) . ' - ' . ($item->max_cost ?? 0);
             })
             ->addColumn('action', function ($item) {
-                // $url = route('admin-country-details', $item->id);
-                // $weightUrl = route('admin-country-weight-details', $item->id);
+                $url = route('cities.shipping.rates', $item->id);
+                $weightUrl = route('weight.shipping.rates', $item->id);
 
-                return '<a href="#" class="btn btn-info btn-sm" ><i class="fa fa-eye me-2"></i>City</a> 
-                        <a href="#" class="btn btn-primary btn-sm" ><i class="fa fa-eye me-1"></i> weight</a>';
+                return '<a href="'.$url.'" class="btn btn-info btn-sm" ><i class="fa fa-eye me-2"></i>City</a> 
+                        <a href="'.$weightUrl.'" class="btn btn-primary btn-sm" ><i class="fa fa-eye me-1"></i> weight</a>';
             })
             ->rawColumns(['action', 'shipping_cost'])
             ->make(true);
@@ -476,62 +476,31 @@ class ShippingRateController extends Controller
         return view('backend.admin.all_countries');
     }
 
-    public function allCountriesData()
-    {
-        $items = Country::select('countries.id', 'countries.name', 'countries.iso2')
-            ->leftJoin('shipping_costs', 'countries.id', '=', 'shipping_costs.country_id')
-            ->selectRaw('MIN(shipping_costs.cost) as min_cost, MAX(shipping_costs.cost) as max_cost')
-            ->groupBy('countries.id')
-            ->get();
+ 
 
-        return DataTables::of($items)
-            ->addIndexColumn()
-            ->addColumn('name', function ($item) {
-                return ($item->name ?? 'N/A');
-            })
-            ->addColumn('iso2', function ($item) {
-                return (($item->iso2 ?? 'N/A'));
-            })
-            ->addColumn('shipping_cost', function ($item) {
-                return ($item->min_cost ?? 0) . ' - ' . ($item->max_cost ?? 0);
-            })
-            ->addColumn('action', function ($item) {
-                $url = route('admin-country-details', $item->id);
-                $weightUrl = route('admin-country-weight-details', $item->id);
-
-                return '<a href="' . $url . '" class="btn btn-info btn-sm" ><i class="fa fa-eye me-2"></i>City</a> 
-                        <a href="' . $weightUrl . '" class="btn btn-primary btn-sm" ><i class="fa fa-eye me-1"></i> weight</a>';
-            })
-            ->rawColumns(['action', 'shipping_cost'])
-            ->make(true);
-    }
-
-    public function countryDetails($id)
+    public function citiseShippingRates($id)
     {
         $country = Country::find($id);
-
-        // dd($country->shippingCosts[0]->weight);
-
         $data = [
             'country' => $country,
             'cities' => $country->cities ?? [],
-            // 'shippingCosts' => $country->shippingCost
+           
         ];
-        return view('backend/admin/country-details', $data);
+        return view('admin.settings.shipping_rates.city_shipping_cost',$data);
     }
 
-    public function countryWeightDetails($id)
+    public function weightShippingRates($id)
     {
         $country = Country::find($id);
-        $shippingCosts = ShippingCost::where('country_iso_2', $country->iso2)->get();
+        $shippingCosts = ShippingCost::where('country_id', $country->id)->get();
         $data = [
             'country' => $country,
             'shippingCosts' => $shippingCosts ?? [],
         ];
-        return view('backend/admin/country-weight-details', $data);
+        return view('admin.settings.shipping_rates.weight_shipping_cost', $data);
     }
 
-    public function cityList($country_id)
+    public function citiesShippingRatesList($country_id)
     {
         $items = City::where('country_id', $country_id)->get();
         return DataTables::of($items)
@@ -549,8 +518,8 @@ class ShippingRateController extends Controller
             ->addColumn('shipping_cost', function ($item) {
                 $shippingCost = CityShippingCost::where('city_id', $item->id)->where('country_id', $item->country_id)->first();
                 if (isset($shippingCost->percentage) && $shippingCost->percentage > 0) {
-                    $min = ShippingCost::where('country_iso_2', $item->country->iso2)->whereNotNull('cost')->orderBy('id', "asc")->first();
-                    $max = ShippingCost::where('country_iso_2', $item->country->iso2)->whereNotNull('cost')->orderBy('id', 'desc')->first();
+                    $min = ShippingCost::where('country_id', $item->country_id)->whereNotNull('cost')->orderBy('id', "asc")->first();
+                    $max = ShippingCost::where('country_id', $item->country_id)->whereNotNull('cost')->orderBy('id', 'desc')->first();
 
                     $min_cost = number_format(($shippingCost->percentage * $min->cost ?? 1) / 100, 2);
                     $max_cost = number_format(($shippingCost->percentage * $max->cost ?? 1) / 100, 2);
@@ -559,8 +528,8 @@ class ShippingRateController extends Controller
                 return 'N/A';
             })
             ->addColumn('weight', function ($item) {
-                $min = ShippingCost::where('country_iso_2', $item->country->iso2)->whereNotNull('cost')->orderBy('id', "asc")->first();
-                $max = ShippingCost::where('country_iso_2', $item->country->iso2)->whereNotNull('cost')->orderBy('id', 'desc')->first();
+                $min = ShippingCost::where('country_id', $item->country_id)->whereNotNull('cost')->orderBy('id', "asc")->first();
+                $max = ShippingCost::where('country_id', $item->country_id)->whereNotNull('cost')->orderBy('id', 'desc')->first();
                 return ($min->weight ?? 0) . ' - ' . ($max->weight ?? 0);
             })
             ->addColumn('action', function ($item) {
@@ -573,7 +542,7 @@ class ShippingRateController extends Controller
 
 
 
-    public function weightList($country_id)
+    public function weightShippingRatesList($country_id)
     {
         $country = Country::find($country_id);
         $items = ShippingCost::where('country_iso_2', $country->iso2)->get();
@@ -599,7 +568,7 @@ class ShippingRateController extends Controller
 
 
 
-    public function cityCost($city_id)
+    public function getCityShippingCost($city_id)
     {
         $city = city::find($city_id);
         if ($city) {
@@ -618,7 +587,7 @@ class ShippingRateController extends Controller
         }
     }
 
-    public function weightCost($shipping_cost_id)
+    public function getWeightShippingCost($shipping_cost_id)
     {
         $shippingCost = ShippingCost::find($shipping_cost_id);
         if ($shippingCost) {
@@ -639,12 +608,11 @@ class ShippingRateController extends Controller
 
 
 
-    public function saveCost(Request $request, $id)
-    {
+    public function saveCityShippingCostPercentage(Request $request, $id)
+    {   
+       
         $request->validate([
             'percentage' => 'required|numeric|min:0|max:100',
-            // 'cities' => 'required',
-            // 'weight' => 'required|min:0',
         ]);
         return DB::transaction(function () use ($id, $request) {
             $country = Country::find($id);
@@ -699,7 +667,7 @@ class ShippingRateController extends Controller
         });
     }
 
-    public function updateCost(Request $request)
+    public function updateWeightShippingCost(Request $request)
     {
 
         try {

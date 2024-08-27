@@ -93,16 +93,11 @@ class RegisterController extends Controller
 
         $attachment = $data['attachment'];
         $filename = rand(100000, 999999) . '.' . $attachment->extension();
-        // if (app()->environment('local')) {
-        //     $destinationDirectory = public_directory('uploads/documents');
-        // } else {
          $destinationDirectory = public_path('uploads/documents');
-        // }
 
         if (!file_exists($destinationDirectory)) {
             mkdir($destinationDirectory, 0755, true);
         }
-
         $attachment->move($destinationDirectory, $filename);
 
         $user = DB::transaction(function () use ($data, $filename) {

@@ -104,19 +104,19 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{route('shipping_rates.index')}}" aria-expanded="false">
+                            <a class="sidebar-link @if (Route::is('cities.shipping.rates') || Route::is('shipping_rates.index') || Route::is('weight.shipping.rates'))   active  @endif" href="{{route('shipping_rates.index')}}" aria-expanded="false">
                                 <span>
-                                    <i class="fa-solid fa-users"></i>
+                                    <i class="fa-solid fa-ferry"></i>
                                 </span>
-                                <span class="hide-menu">Manage Shippings Cost</span>
+                                <span class="hide-menu">Shippings Cost</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#" aria-expanded="false">
+                            <a class="sidebar-link @if (Route::is('currency-view')) active @endif" href="{{ route('currency-view') }}" aria-expanded="false">
                                 <span>
-                                    <i class="fa-solid fa-users"></i>
+                                    <i class="fa-solid fa-coins"></i>
                                 </span>
-                                <span class="hide-menu">Manage Currency Exchang</span>
+                                <span class="hide-menu">Currency Exchange</span>
                             </a>
                         </li>
                         {{-- <li class="sidebar-item">

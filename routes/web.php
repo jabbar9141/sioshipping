@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\CurrencyExchangeRateController;
 use App\Http\Controllers\DispatcherController;
 use App\Http\Controllers\EUFundsTransferRatesController;
 use App\Http\Controllers\EUFundTransferOrderController;
@@ -133,6 +134,25 @@ Route::get('locationList', [LocationController::class, 'locationList'])->name('l
 
 Route::resource('shipping_rates', ShippingRateController::class)->middleware(['auth']);
 Route::get('shippingRatesList', [ShippingRateController::class, 'shippingRatesList'])->name('shippingRatesList')->middleware(['auth']);
+Route::get('citiseShippingRates/{countryId}', [ShippingRateController::class, 'citiseShippingRates'])->name('cities.shipping.rates')->middleware(['auth']);
+Route::get('citiesShippingRatesList/{countryId}', [ShippingRateController::class, 'citiesShippingRatesList'])->name('citiesShippingRatesList')->middleware(['auth']);
+
+Route::get('weightShippingRates/{countryId}', [ShippingRateController::class, 'weightShippingRates'])->name('weight.shipping.rates')->middleware(['auth']);
+Route::get('weightShippingRatesList/{countryId}', [ShippingRateController::class, 'weightShippingRatesList'])->name('weightShippingRatesList')->middleware(['auth']);
+
+Route::get('getWeightShippingCost/{id}', [ShippingRateController::class, 'getWeightShippingCost'])->name('get-weight-shipping-cost')->middleware(['auth']);
+Route::post('updateWeightShippingCost', [ShippingRateController::class, 'updateWeightShippingCost'])->name('shipping-cost-update')->middleware(['auth']);
+
+
+Route::get('getCityShippingCost/{id}', [ShippingRateController::class, 'getCityShippingCost'])->name('get-city-shipping-cost')->middleware(['auth']);
+Route::post('saveCityShippingCostPercentage/{countryId}', [ShippingRateController::class, 'saveCityShippingCostPercentage'])->name('save-city-shipping-cost-percentage')->middleware(['auth']);
+
+Route::get('currencyExchangeView',[CurrencyExchangeRateController::class,'index'])->name('currency-view')->middleware(['auth']);
+Route::get('currencyExchangeRateList',[CurrencyExchangeRateController::class,'currencyExchangeRateList'])->name('currencyExchangeRateList')->middleware(['auth']);
+// 
+Route::get('getCurrencyExchangeRate/{id}',[CurrencyExchangeRateController::class,'getCurrencyExchangeRate'])->name('getCurrencyExchangeRate')->middleware(['auth']);
+Route::post('updateCurrencyExchangeRate',[CurrencyExchangeRateController::class,'updateCurrencyExchangeRate'])->name('updateCurrencyExchangeRate')->middleware(['auth']);
+Route::post('storeCurrencyExchangeRate',[CurrencyExchangeRateController::class,'storeCurrencyExchangeRate'])->name('storeCurrencyExchangeRate')->middleware(['auth']);
 
 
 Route::resource('eu_fund_rates', EUFundsTransferRatesController::class)->middleware(['auth']);
