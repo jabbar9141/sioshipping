@@ -105,17 +105,17 @@ class HomeController extends Controller
         $admin_rep = [];
         $dispatcher_rep = [];
         $user_rep = [];
-        if (Auth::user()->user_type == 'admin') {
-            $admin_rep = $this->adminReports();
-            $dispatcher_rep = $this->dispatchReports();
-            $user_rep = $this->customerReports();
-        } else if (Auth::user()->user_type == 'dispatcher') {
-            $dispatcher_rep = $this->dispatchReports();
-            $user_rep = $this->customerReports();
-        } else {
-            $user_rep = $this->customerReports();
-        }
-        return view('home', ['admin_rep' => $admin_rep, 'dispatcher_rep' => $dispatcher_rep, 'user_rep' => $user_rep]);
+        // if (Auth::user()->user_type == 'admin') {
+            $totalUsers = User::where('user_type','!=','admin')->count();
+            $totalDispatures = User::where('user_type','dispatcher')->count();
+            $totalAgents = User::where('user_type','agnet')->count();
+        // } else if (Auth::user()->user_type == 'dispatcher') {
+        //     $dispatcher_rep = $this->dispatchReports();
+        //     $user_rep = $this->customerReports();
+        // } else {
+        //     $user_rep = $this->customerReports();
+        // }
+        return view('home', ['totalUsers' => $totalUsers, 'totalDispatures' => $totalDispatures, 'totalAgents' => $totalAgents]);
     }
 
     public function landing(Request $request)

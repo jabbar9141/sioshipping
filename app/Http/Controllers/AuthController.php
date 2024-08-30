@@ -176,4 +176,13 @@ class AuthController extends Controller
             'expires_in' => config('jwt.ttl') * 60
         ]);
     }
+
+    public function updatePassword(Request $request){
+        $request->validate([
+            'password' => 'required|confirmed',
+        ]);
+        $user = Auth::user();
+        $user->update(['password' => Hash::make($request->password)]);
+        return back()->with(['message' => 'Password updated successfully', 'message_type' => 'success']);
+    }
 }

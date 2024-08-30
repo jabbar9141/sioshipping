@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AgentController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\CurrencyExchangeRateController;
@@ -22,6 +24,7 @@ use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserFundsController;
 use App\Http\Controllers\WalkInCustomerController;
 use App\Http\Controllers\WalkInCustomerOrder;
+use App\Http\Controllers\WalkInOrderAgents;
 use App\Models\Country;
 use App\Models\EUFundTransferOrder;
 use App\Models\IntlFundTransferOrder;
@@ -129,6 +132,8 @@ Auth::routes();
 Route::get('/home', [HomeController::class, 'index'])->middleware(['auth'])->name('home');
 
 Route::get('admin/settings', [AdminController::class, 'admin_settings'])->name('admin.settings')->middleware(['auth']);
+Route::post('updatePassword', [AuthController::class, 'updatePassword'])->name('updatePassword')->middleware(['auth']);
+
 Route::resource('locations', LocationController::class)->middleware(['auth']);
 Route::get('locationList', [LocationController::class, 'locationList'])->name('locationList')->middleware(['auth']);
 
@@ -200,6 +205,9 @@ Route::post('approveMobileUserKYC', [WalkInCustomerController::class, 'approveMo
 Route::get('dispatchOrders', [OrderController::class, 'dispatchOrders'])->name('dispatchOrders')->middleware(['auth']);
 Route::get('dispatchOrdersList', [OrderController::class, 'dispatchOrdersList'])->name('dispatchOrdersList')->middleware(['auth']);
 
+Route::get('agentsOrders', [OrderController::class, 'agentsOrders'])->name('agentsOrders')->middleware(['auth']);
+Route::get('agentsOrdersList', [OrderController::class, 'agentsOrdersList'])->name('agentsOrdersList')->middleware(['auth']);
+
 Route::get('dispatchEUFundOrders', [EUFundTransferOrderController::class, 'dispatchEUFundOrders'])->name('dispatchEUFundOrders')->middleware(['auth']);
 Route::get('dispatchEUFundOrdersList', [EUFundTransferOrderController::class, 'dispatchEUFundOrdersList'])->name('dispatchEUFundOrdersList')->middleware(['auth']);
 
@@ -226,7 +234,15 @@ Route::get('createDispatcher', [DispatcherController::class, 'createDispatcher']
 
 Route::resource('batches', OrderBatchController::class)->middleware(['auth']);
 Route::get('batchList', [OrderBatchController::class, 'batchList'])->name('batchList')->middleware(['auth']);
+
 Route::resource('dispatchers', DispatcherController::class)->middleware(['auth']);
+Route::resource('agents', AgentController::class)->middleware(['auth']);
+Route::get('agentSetting', [AgentController::class, 'settings'])->name('agent.profile')->middleware(['auth']);
+
+
+
+
+
 Route::get('batchOrdersList/{batch_id}', [OrderBatchController::class, 'batchOrdersList'])->name('batchOrdersList')->middleware(['auth']);
 Route::get('batchOrderEdit/{order_id}', [OrderBatchController::class, 'batchOrderEdit'])->name('batchOrderEdit')->middleware(['auth']);
 Route::post('batchOrderEdit/{order_id}', [OrderBatchController::class, 'batchOrderEdit'])->name('batchOrderEdit')->middleware(['auth']);
@@ -245,6 +261,9 @@ Route::get('allPaymentsList', [PaymentController::class, 'allPaymentsList'])->na
 
 Route::get('/tax-fetch', [WalkInCustomerController::class, 'tax_fetch'])->name('tax.fetch');
 Route::resource('walk_in_customer_order', WalkInCustomerOrder::class)->middleware(['auth']);
+
+Route::resource('walkInOrderAgents', WalkInOrderAgents::class)->middleware(['auth']);
+
 
 Route::get('myWalkInOrdersList', [WalkInCustomerOrder::class, 'myOrdersList'])->name('myWalkInOrdersList')->middleware(['auth']);
 Route::post('cancelWalkInOrder', [WalkInCustomerOrder::class, 'cancelOrder'])->name('cancelWalkInOrder')->middleware(['auth']);

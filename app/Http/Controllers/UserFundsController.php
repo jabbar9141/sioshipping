@@ -22,18 +22,18 @@ class UserFundsController extends Controller
             // dd($stripeIntent);
             if ($stripeIntent->status == 'succeeded') {
                 if (accountTxExists(request()->get('payment_intent'))) {
-                    return view('dispatcher.settings.wallet')->with(['message' => 'Deposit successfully received', 'message_type' => 'success']);
+                    return view('agents.settings.wallet')->with(['message' => 'Deposit successfully received', 'message_type' => 'success']);
                 } else {
                     $u = updateAccountBalance(Auth::id(), ($stripeIntent->amount_received / 100), $stripeIntent->id, 'debit', 'Wallet Funding');
 
                     if ($u) {
-                        return view('dispatcher.settings.wallet')->with(['message' => 'Deposit successfully received', 'message_type' => 'success']);
+                        return view('agents.settings.wallet')->with(['message' => 'Deposit successfully received', 'message_type' => 'success']);
                     } else {
-                        return view('dispatcher.settings.wallet')->with(['message' => 'Failed to update Wallet']);
+                        return view('agents.settings.wallet')->with(['message' => 'Failed to update Wallet']);
                     }
                 }
             } else {
-                return view('dispatcher.settings.wallet')->with(['message' => 'Deposit Unssuccessful']);
+                return view('agents.settings.wallet')->with(['message' => 'Deposit Unssuccessful']);
             }
         } else if (null != request()->get('deposit_amt')) {
             $amt = request()->get('deposit_amt');
@@ -46,15 +46,15 @@ class UserFundsController extends Controller
                 'currency' => 'eur',
                 'automatic_payment_methods' => ['enabled' => true],
             ]);
-            return view('dispatcher.settings.wallet', ['stripeIntent' => $stripeIntent, 'amount' => $amt]);
+            return view('agents.settings.wallet', ['stripeIntent' => $stripeIntent, 'amount' => $amt]);
         } elseif (null != request()->get('date_from') && null != request()->get('date_to')) {
             $dateFrom = Carbon::parse(request('date_from'))->startOfDay();
             $dateTo = Carbon::parse(request('date_to'))->endOfDay();
 
             $recordsBetweenDates = UserFunds::where('user_id', Auth::id())->whereBetween('created_at', [$dateFrom, $dateTo])->get();
-            return view('dispatcher.settings.wallet', ['wallet_history' => $recordsBetweenDates]);
+            return view('agents.settings.wallet', ['wallet_history' => $recordsBetweenDates]);
         } else {
-            return view('dispatcher.settings.wallet');
+            return view('agents.settings.wallet');
         }
     }
 

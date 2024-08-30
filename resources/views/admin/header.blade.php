@@ -32,7 +32,7 @@
                                 <a href="{{ route('set-lang', 'en') }}"
                                     class="d-flex align-items-center gap-2 dropdown-item">
                                     <i class="fa fa-check text-success"></i>
-                                        <p class="mb-0 fs-3">English</p>
+                                    <p class="mb-0 fs-3">English</p>
                                 </a>
                                 <a href="{{ route('set-lang', 'it') }}"
                                     class="d-flex align-items-center gap-2 dropdown-item">
@@ -43,7 +43,7 @@
                                 <a href="{{ route('set-lang', 'en') }}"
                                     class="d-flex align-items-center gap-2 dropdown-item">
 
-                                        <p class="mb-0 fs-3">English</p>
+                                    <p class="mb-0 fs-3">English</p>
                                 </a>
                                 <a href="{{ route('set-lang', 'it') }}"
                                     class="d-flex align-items-center gap-2 dropdown-item">
@@ -66,20 +66,29 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                         <div class="message-body">
-                            {{-- <a href="javascript:void(0)"
-                                class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-user fs-6"></i>
-                                <p class="mb-0 fs-3">My Profile</p>
-                            </a> --}}
-                            <a href="{{ route('my.payments') }}" class="d-flex align-items-center gap-2 dropdown-item">
+                            @if (Auth::user()->user_type == 'admin')
+                                <a href="{{ route('admin.settings') }}"
+                                    class="d-flex align-items-center gap-2 dropdown-item">
+                                    <i class="ti ti-user fs-6"></i>
+                                    <p class="mb-0 fs-3">My Profile</p>
+                                </a>
+                            @endif
+                            @if (Auth::user()->user_type == 'agent')
+                                <a href="{{ route('agent.profile') }}"
+                                    class="d-flex align-items-center gap-2 dropdown-item">
+                                    <i class="ti ti-user fs-6"></i>
+                                    <p class="mb-0 fs-3">My Profile</p>
+                                </a>
+                            @endif
+                            {{-- <a href="{{ route('my.payments') }}" class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-mail fs-6"></i>
                                 <p class="mb-0 fs-3">My Payments</p>
-                            </a>
-                            <a href="{{ route('orders.index') }}"
+                            </a> --}}
+                            {{-- <a href="{{ route('orders.index') }}"
                                 class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-list-check fs-6"></i>
                                 <p class="mb-0 fs-3">My Orders</p>
-                            </a>
+                            </a> --}}
                             <a class="btn btn-outline-primary mx-3 mt-2 d-block" href="{{ route('logout') }}"
                                 onclick="event.preventDefault();
                                          document.getElementById('logout-form').submit();">
