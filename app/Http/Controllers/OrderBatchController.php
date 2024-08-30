@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\Country;
 use App\Models\City;
 use App\Models\OrderBatch;
+use App\Models\BatchorderLog;
+use App\Models\Batchlog;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
@@ -39,8 +41,8 @@ class OrderBatchController extends Controller
      */
     public function batchList()
     {
-        $d = Auth::user()->dispatcher->id;
-        $batch = OrderBatch::where('dispatcher_id', $d)->orderBy('created_at', 'DESC')->get();
+        $user = Auth::user();
+        $batch = OrderBatch::where('user_id', $user->id)->orderBy('created_at', 'DESC')->get();
 
         return Datatables::of($batch)
             ->addIndexColumn()
@@ -49,12 +51,12 @@ class OrderBatchController extends Controller
                 return $mar;
             })
             ->addColumn('location', function ($orderBatch) {
-                $mar = "Cur. Loc. : " . $orderBatch->location->name;
+                $mar = "Cur. Loc. : " . $orderBatch->batchlogs->first()->shipToCity->name;
                 return $mar;
             })
             ->addColumn('edit', function ($orderBatch) {
                 $edit_url = route('batches.edit', $orderBatch->id);
-                return '<a href="' . $edit_url . '" class="btn btn-info btn-sm" ><i class="fa fa-pencil"></i> Edit</a>';
+                return '<a href="' . $edit_url . '" class="btn btn-info btn-sm" ><i class="fa fa-pencil"></i> Add Log</a>';
             })
             ->addColumn('view', function ($orderBatch) {
                 $url = route('batches.show', $orderBatch->id);
@@ -156,9 +158,8 @@ class OrderBatchController extends Controller
      */
     public function create()
     {
-        $countries = Country::select('name', 'id')->orderBy('name', 'ASC')->get();
-        
-        return view('dispatcher.settings.batches.create', compact('countries'));
+
+        return view('dispatcher.settings.batches.create');
     }
 
     /**
@@ -171,17 +172,42 @@ class OrderBatchController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'origin_id' => 'required|numeric|exists:locations,id'
+            'shipt_from_country_id' => 'required|numeric',
+            'shipt_from_city_id' => 'required|numeric',
+            'shipt_to_country_id' => 'required|numeric',
+            'shipt_to_city_id' => 'required|numeric',
+            'order_id' => 'required',
         ]);
+
         try {
-            $b = OrderBatch::create([
-                'name' => 'BA-' . time() . '-' . $request->name,
-                'location_id' => $request->origin_id,
-                'dispatcher_id' => Auth::user()->dispatcher->id
+            DB::beginTransaction();
+            $b = new OrderBatch();
+            $b->name = 'BA-' . time() . '-' . $request->name;
+            $b->user_id = Auth::user()->id;
+            $b->save();
+            $b->batch_tracking_id = 'BA-' . rand(99999999, 100000000) . '_' . $b->id;
+            $b->save();
+
+
+            $batch_log = Batchlog::create([
+                'shipt_from_country_id' => $request->shipt_from_country_id,
+                'shipt_from_city_id' => $request->shipt_from_city_id,
+                'shipt_to_country_id' => $request->shipt_to_country_id,
+                'shipt_to_city_id' => $request->shipt_to_city_id,
+                'batch_id' => $b->id,
             ]);
-            return back()->with(['message' => 'Batch Created', 'message_type' => 'success']);
+
+
+            foreach ($request->order_id as $value) {
+                $batchorder_log = new BatchorderLog();
+                $batchorder_log->batch_id = $b->id;
+                $batchorder_log->order_id = $value;
+                $batchorder_log->save();
+            }
+            DB::commit();
+            return redirect()->route('batches.index')->with(['message' => 'Batch Created', 'message_type' => 'success']);
         } catch (\Exception $e) {
-            // DB::rollBack();
+            DB::rollBack();
             Log::error($e->getMessage(), ['exception' => $e]);
             return back()->with('message', "An error occured " . $e->getMessage());
         }
@@ -208,8 +234,9 @@ class OrderBatchController extends Controller
     public function edit($orderBatch)
     {
         $orderBatch = OrderBatch::where('id', $orderBatch)->first();
-        $loc_str = $orderBatch->location->postcode . '-' . $orderBatch->location->name . ' [Lat: ' . $orderBatch->location->latitude . ', Long: ' . $orderBatch->location->longitude . ']';
-        return view('dispatcher.settings.batches.edit', ['batch' => $orderBatch, 'loc_str' => $loc_str]);
+        
+        // $loc_str = $orderBatch->location->postcode . '-' . $orderBatch->location->name . ' [Lat: ' . $orderBatch->location->latitude . ', Long: ' . $orderBatch->location->longitude . ']';
+        return view('dispatcher.settings.batches.edit', ['batch' => $orderBatch]);
     }
 
     /**

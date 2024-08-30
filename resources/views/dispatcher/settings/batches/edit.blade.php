@@ -9,27 +9,56 @@
         {{-- <hr> --}}
         <div class="card">
             <div class="card-header">
-                <h5>Edit Batch</h5>
+                <h5>Add Batch Log</h5>
                 {{-- <a href="{{ route('batches.index') }}" class="btn btn-danger float-right"><i class="fa fa-times"></i>Exit</a> --}}
             </div>
             <!-- /.card-header -->
             <div class="card-body">
                 @include('admin.partials.notification')
-                <p><b>Batch Name : [{{ $batch->name }}]</b></p>
+                <div class="d-flex gap-5">
+                <p><b>Batch Name : {{ $batch->name }}</b></p>
+                <p><b>Batch Trackind : {{ $batch->batch_tracking_id }}</b></p>
+            </div>
+                
                 <form action="{{ route('batches.update', $batch->id) }}" method="post">
                     @csrf
                     @method('PUT')
-                    <div class="row">
-                        <div class="col-12">
+                    <div class="row mb-2">
+                        <div class="col-6">
                             <div class="ui-widget">
-                                <label for="origin">Current Location <i class="text-danger">*</i> : </label>
-                                <input type="text" id="origin" name="origin_" value="{{ $loc_str }}"
-                                    class="form-control" autocomplete="off">
-                                <input type="hidden" name="origin_id" value="{{ $batch->location_id }}" id="origin_id">
+                                <label for="origin">Shipping From Country </label>
+                                <input type="text" id="origin" name="origin_" value="{{ $batch->batchlogs->first()->shipFromCountry->name }}"
+                                    class="form-control" autocomplete="off" readonly>
+                               
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="ui-widget">
+                                <label for="origin">Shipping From City </label>
+                                <input type="text" id="origin" name="origin_" value="{{ $batch->batchlogs->first()->shipFromCity->name }}"
+                                    class="form-control" autocomplete="off" readonly>
+                               
                             </div>
                         </div>
                     </div>
-                    <br>
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <div class="ui-widget">
+                                <label for="origin">Shipping To Country </label>
+                                <input type="text" id="origin" name="origin_" value=""
+                                    class="form-control" autocomplete="off" readonly>
+                               
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="ui-widget">
+                                <label for="origin">Shipping To City </label>
+                                <input type="text" id="origin" name="origin_" value=""
+                                    class="form-control" autocomplete="off" readonly>
+                               
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="form-group">
                             <label for="status">Status</label>
@@ -45,6 +74,7 @@
                             </select>
                         </div>
                     </div>
+                  
                     <br>
                     <button type="submit"
                         onclick="return confirm('Are you sure you wish to update this batch, all changes set will affect all associated orders')"

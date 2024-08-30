@@ -15,10 +15,10 @@ class CreateBatchlogsTable extends Migration
     {
         Schema::create('batchlogs', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('shipt_from_country_id')->nullable();
-            $table->bigInteger('shipt_from_city_id')->nullable();
-            $table->bigInteger('shipt_to_country_id')->nullable();
-            $table->bigInteger('shipt_to_city_id')->nullable();
+            $table->bigInteger('ship_from_country_id')->nullable();
+            $table->bigInteger('ship_from_city_id')->nullable();
+            $table->bigInteger('ship_to_country_id')->nullable();
+            $table->bigInteger('ship_to_city_id')->nullable();
             $table->timestamps();
         });
     }

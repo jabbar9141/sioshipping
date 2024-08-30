@@ -13,6 +13,12 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
+                @if($errors->any())
+                @foreach ($errors->all() as $error)
+                    <li class="text-danger">{{ $error }}</li>
+                @endforeach
+                
+                @endif
                 @include('admin.partials.notification')
 
                 <form action="{{ route('batches.store') }}" method="post">
@@ -20,56 +26,58 @@
                     <div class="row">
                         <div class="form-group col-md-12 col-lg-6">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" name="name", id="name">
-                        </div>
-
-                        <div class="col-12 col-lg-6">
-                            <label for="origin">Shipping from Country<i class="text-danger">*</i> : </label>
-                            <select name="ship_from_country" id="ship_from_country" class="form-control">
-
-                            </select>
-                            @error('ship_from_country')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                    </div>
-                        <br>
-                    <div class="row">
-                        <div class="col-12 col-lg-6 ">
-                            <label for="origin">Shipping from City<i class="text-danger">*</i> : </label>
-                            <select name="ship_from_city" id="ship_from_city" class="form-control">
-                            </select>
-                            @error('ship_from_city')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                            <input type="text" class="form-control" name="name" id="name">
+                            @error('name')
+                                <p class="text-danger">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="col-12 col-lg-6">
-                            <label for="origin">Shipping to Country<i class="text-danger">*</i> : </label>
-                            <select name="ship_to_country" id="ship_to_country" class="form-control">
-
+                            <label for="origin">Select Orders<i class="text-danger">*</i> : </label>
+                            <select  name="order_id[]" id="orders" class="form-control" multiple>
                             </select>
-                            @error('ship_to_country')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                            @error('order_id')
+                                <p class="text-danger">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-12 col-lg-6">
-                            <label for="origin">Shipping to City<i class="text-danger">*</i> : </label>
-                            <select name="ship_to_city" id="ship_to_city" class="form-control">
+                            <label for="origin">Shipping from Country<i class="text-danger">*</i> : </label>
+                            <select name="shipt_from_country_id" id="ship_from_country" class="form-control">
+
                             </select>
-                            @error('ship_to_city')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                            @error('shipt_from_country_id')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
+                        </div>
+                        <div class="col-12 col-lg-6 ">
+                            <label for="origin">Shipping from City<i class="text-danger">*</i> : </label>
+                            <select name="shipt_from_city_id" id="ship_from_city" class="form-control">
+                            </select>
+                            @error('shipt_from_city_id')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-12 col-lg-6">
+                            <label for="origin">Shipping to Country<i class="text-danger">*</i> : </label>
+                            <select name="shipt_to_country_id" id="ship_to_country" class="form-control">
+
+                            </select>
+                            @error('shipt_to_country_id')
+                                <p class="text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <label for="origin">Shipping to City<i class="text-danger">*</i> : </label>
+                            <select name="shipt_to_city_id" id="ship_to_city" class="form-control">
+                            </select>
+                            @error('shipt_to_city_id')
+                                <p class="text-danger">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -114,8 +122,8 @@
 
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
-                    .replace(':stateId', $(this).val());
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
                     // showBlockUI();
                     $.ajax({
@@ -123,7 +131,7 @@
                         type: 'post',
                         dataType: 'json',
                         data: {
-                            'stateId': $(this).val(),
+                            'countryId': $(this).val(),
                             '_token': _token
                         },
                         success: function(response) {
@@ -133,7 +141,7 @@
                                         value
                                         .id + '">' + value.name + '</option>');
                                 });
-                                ship_from_city.trigger('change');
+                                $("#ship_from_city").trigger('change');
                                 // hideBlockUI();
                                 @if (!is_null(old('residential.city')))
                                     $('#ship_from_city').val({{ old('residential.city') }});
@@ -200,6 +208,7 @@
         $(document).ready(function() {
             $('#ship_to_country').select2();
             $('#ship_to_city').select2();
+            $('#orders').select2();
 
             countries2();
 
@@ -214,7 +223,7 @@
                     "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
                     .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
-                    
+
                     $.ajax({
                         url: url,
                         type: 'post',
@@ -230,14 +239,14 @@
                                         value
                                         .id + '">' + value.name + '</option>');
                                 });
-                                ship_to_city.trigger('change');
-                                
+                                $("#ship_to_city").trigger('change');
+
                                 @if (!is_null(old('residential.city')))
                                     $('#ship_to_city').val({{ old('residential.city') }});
                                     $('#ship_to_city').trigger('change')
                                 @endif
                             } else {
-                               
+
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
@@ -248,13 +257,13 @@
                         },
                         error: function(error) {
                             console.log(error);
-                            
+
                         }
                     });
                 } else {
-                    
+
                 }
-                
+
 
             });
         })
@@ -293,6 +302,34 @@
 
 
         }
+        gitOrders();
+        function gitOrders() {
+            let Url =  "{{ route('ajax-get-paced-orders') }}";
+            $('#orders').html('<option value="" >Select Order</option>');
+            $.ajax({
+                url: Url,
+                type: 'get',
+                dataType: 'json',
+                success: function(responce) {
+                    console.log(responce.ordres);
+                    if (responce.ordres) {
+                        $.each(responce.ordres, function(key, value) {
+                            $("#orders").append('<option value="' + value.id + '">' + value.tracking_id +
+                                '</option>')
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                        });
+                    }
+                }
 
+            });
+
+           
+        }
+        
     </script>
 @endsection

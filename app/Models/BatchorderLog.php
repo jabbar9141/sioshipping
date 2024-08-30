@@ -10,7 +10,7 @@ class BatchorderLog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'batche_id',
+        'batch_id',
         'order_id',
     ];
 

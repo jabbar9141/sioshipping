@@ -27,13 +27,12 @@ class CityController extends Controller
         ], 200);
     }
 
-    // public function getCityOrder($cityId) {
-    //     $ordres = Order::with('city')->get();
-
-    //     // return $ordres;
-    //     return response()->json([
-    //         'success' => true,
-    //         'cities' => $ordres->toArray(),
-    //     ], 200);
-    // }
+    public function getOrder() {
+        $ordres = Order::select('id', 'tracking_id')->where('status', 'placed')->get();
+        // return $ordres;
+        return response()->json([   
+            'success' => true,
+            'ordres' => $ordres->toArray(),
+        ], 200);
+    }
 }

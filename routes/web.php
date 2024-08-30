@@ -35,6 +35,7 @@ use App\Models\WalkInCustomer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
@@ -86,6 +87,21 @@ Route::get('/test', function(){
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_30_102134_create_batchorder_logs_table.php'
     // ]);
+    //  Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_30_182206_change_column_batchorder_logs_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_30_182434_change_column_batchlogs_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_30_182959_change_column_order_batches_table.php'
+    // ])
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_30_184059_add_column_order_batches_table.php'
+    // ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_08_30_185559_add_column_new_order_batches_table.php'
+    ]);
     return "Success";
 });
 
@@ -336,7 +352,7 @@ Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.
 
 Route::post('ajax-get-cities/{stateId}', [CityController::class, 'getCities'])->name('ajax-get-cities');
 Route::post('ajax-get-country-cities/{countryId}', [CityController::class, 'getCountryCities'])->name('ajax-get-country-cities');
-Route::get('ajax-get-city-orders/{cityId}', [CityController::class, 'getCityOrder'])->name('ajax-get-city-orders');
+Route::get('ajax-get-paced-orders', [CityController::class, 'getOrder'])->name('ajax-get-paced-orders');
 
 Route::post('ajax-get-states/{countryId}', [StateController::class, 'getStates'])->name('ajax-get-states');
 Route::get('ajax-get-countries/', [CountryController::class, 'getCountries'])->name('ajax-get-countries');

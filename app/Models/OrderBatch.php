@@ -13,7 +13,8 @@ class OrderBatch extends Model
         'name',
         'dispatcher_id',
         'status',
-        'location_id'
+        'location_id',
+        'batch_tracking_id'
     ];
 
     public function location()
@@ -24,5 +25,13 @@ class OrderBatch extends Model
     public function dispatcher()
     {
         return $this->belongsTo(Dispatcher::class);
+    }
+
+    public function  batchlogs()  {
+        return $this->hasMany(Batchlog::class,'batch_id');
+    }
+
+    public function batchOrderLogs(){
+        return $this->hasMany(BatchorderLog::class, 'batch_id');
     }
 }

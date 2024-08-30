@@ -23,7 +23,7 @@
                                 <th>Status</th>
                                 <th>Location</th>
                                 <th>View</th>
-                                <th>Edit</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
 
