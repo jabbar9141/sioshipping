@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use App\Models\Order;
+use App\Models\Country;
+use App\Models\City;
 use App\Models\OrderBatch;
 use Illuminate\Http\Request;
 
@@ -154,7 +156,9 @@ class OrderBatchController extends Controller
      */
     public function create()
     {
-        return view('dispatcher.settings.batches.create');
+        $countries = Country::select('name', 'id')->orderBy('name', 'ASC')->get();
+        
+        return view('dispatcher.settings.batches.create', compact('countries'));
     }
 
     /**

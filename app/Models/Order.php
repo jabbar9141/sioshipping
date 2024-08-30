@@ -113,4 +113,9 @@ class Order extends Model
     {
         return $this->belongsTo(WalkInCustomer::class, 'walk_in_customer_id', 'id');
     }
+    
+    public function city()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

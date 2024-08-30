@@ -50,7 +50,43 @@ use Illuminate\Support\Facades\File;
 */
 
 Route::get('/test', function(){
-    dd(public_path());
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_24_161206_create_coutries_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_24_161227_create_cities_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_24_161251_create_states_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_24_224820_create_agents_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_25_000008_add_registration_status_field_to_users_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_25_111402_update_enum_values_in_users_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_25_175459_add_new_fields_in_dispatchers_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_25_212638_create_shipping_costs_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_25_222121_create_city_shipping_costs_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_26_230605_create_currency_exchange_rates_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_30_095304_create_batchlogs_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_30_102134_create_batchorder_logs_table.php'
+    // ]);
+    return "Success";
 });
 
 Route::get('/', [HomeController::class, 'landing'])->name('landing');
@@ -299,6 +335,9 @@ Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.
 
 
 Route::post('ajax-get-cities/{stateId}', [CityController::class, 'getCities'])->name('ajax-get-cities');
+Route::post('ajax-get-country-cities/{countryId}', [CityController::class, 'getCountryCities'])->name('ajax-get-country-cities');
+Route::get('ajax-get-city-orders/{cityId}', [CityController::class, 'getCityOrder'])->name('ajax-get-city-orders');
+
 Route::post('ajax-get-states/{countryId}', [StateController::class, 'getStates'])->name('ajax-get-states');
 Route::get('ajax-get-countries/', [CountryController::class, 'getCountries'])->name('ajax-get-countries');
 
