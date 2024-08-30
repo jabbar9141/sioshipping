@@ -197,7 +197,7 @@ class AgentController extends Controller
             'agency_type' => 'required',
             'tax_id_code' => 'required',
         ]);
-        try {
+        // try {
             $agent = Agent::find($agent->id);
             $destinationDirectory = public_path('uploads/documents');
             if (!file_exists($destinationDirectory)) {
@@ -217,7 +217,7 @@ class AgentController extends Controller
                 }
                 
                 $agent->update([
-                    'attachment_path' => 'uploads/documents'.$filename,
+                    'attachment_path' => 'uploads/documents/'.$filename,
                 ]);
             }
             if ($request->hasFile('attachment')) {
@@ -232,7 +232,7 @@ class AgentController extends Controller
                     }
                 }
                 $agent->update([
-                    'front_attachment' => 'uploads/documents'.$front_filename,
+                    'front_attachment' => 'uploads/documents/'.$front_filename,
                 ]);
             }
             $agent->update([
@@ -256,11 +256,10 @@ class AgentController extends Controller
                 'country_id' => $request->residential_country ?? ''
             ]);
             return back()->with(['message' => 'Record Updated Successfully!', 'message_type' => 'success']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error($e->getMessage(), ['exception' => $e]);
-            return back()->with('message', "An error occured " . $e->getMessage());
-        }
+        // } catch (\Exception $e) {
+        //     Log::error($e->getMessage(), ['exception' => $e]);
+        //     return back()->with(['message', "An error occured " . $e->getMessage()]);
+        // }
     }
 
     /**
