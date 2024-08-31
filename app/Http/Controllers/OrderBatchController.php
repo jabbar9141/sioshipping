@@ -18,6 +18,7 @@ use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 
 use App\Mail\PaymentEmail;
+use App\Models\Dispatcher;
 use Illuminate\Support\Facades\Mail;
 
 class OrderBatchController extends Controller
@@ -159,7 +160,8 @@ class OrderBatchController extends Controller
     public function create()
     {
 
-        return view('dispatcher.settings.batches.create');
+        $dispachers = Dispatcher::get();
+        return view('dispatcher.settings.batches.create', compact('dispachers'));
     }
 
     /**
@@ -170,12 +172,14 @@ class OrderBatchController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
         $request->validate([
             'name' => 'required',
-            'shipt_from_country_id' => 'required|numeric',
-            'shipt_from_city_id' => 'required|numeric',
-            'shipt_to_country_id' => 'required|numeric',
-            'shipt_to_city_id' => 'required|numeric',
+            'ship_from_country_id' => 'required|numeric',
+            'ship_from_city_id' => 'required|numeric',
+            'ship_to_country_id' => 'required|numeric',
+            'ship_to_city_id' => 'required|numeric',
+            'dispatcher_id' => 'required|numeric',
             'order_id' => 'required',
         ]);
 
@@ -184,16 +188,17 @@ class OrderBatchController extends Controller
             $b = new OrderBatch();
             $b->name = 'BA-' . time() . '-' . $request->name;
             $b->user_id = Auth::user()->id;
+            $b->dispatcher_id = $request->dispatcher_id;
             $b->save();
             $b->batch_tracking_id = 'BA-' . rand(99999999, 100000000) . '_' . $b->id;
             $b->save();
 
 
             $batch_log = Batchlog::create([
-                'shipt_from_country_id' => $request->shipt_from_country_id,
-                'shipt_from_city_id' => $request->shipt_from_city_id,
-                'shipt_to_country_id' => $request->shipt_to_country_id,
-                'shipt_to_city_id' => $request->shipt_to_city_id,
+                'ship_from_country_id' => $request->ship_from_country_id,
+                'ship_from_city_id' => $request->ship_from_city_id,
+                'ship_to_country_id' => $request->ship_to_country_id,
+                'ship_to_city_id' => $request->ship_to_city_id,
                 'batch_id' => $b->id,
             ]);
 
@@ -222,6 +227,7 @@ class OrderBatchController extends Controller
     public function show($orderBatch)
     {
         $batch = OrderBatch::where('id', $orderBatch)->first();
+        
         return view('dispatcher.settings.batches.show', ['batch' => $batch]);
     }
 
@@ -234,9 +240,17 @@ class OrderBatchController extends Controller
     public function edit($orderBatch)
     {
         $orderBatch = OrderBatch::where('id', $orderBatch)->first();
-        
+        $lastCountryId = Batchlog::where('batch_id', $orderBatch->id)->orderBy('id','desc')->first()->ship_to_country_id ?? 0;
+        $lastCityId = Batchlog::where('batch_id', $orderBatch->id)->orderBy('id','desc')->first()->ship_to_city_id ?? 0;
+ 
+        $data = [
+           'batch' => $orderBatch,
+           'lastCountryId'=> $lastCountryId,
+           'lastCityId' => $lastCityId
+        ];
+        //  return $data;
         // $loc_str = $orderBatch->location->postcode . '-' . $orderBatch->location->name . ' [Lat: ' . $orderBatch->location->latitude . ', Long: ' . $orderBatch->location->longitude . ']';
-        return view('dispatcher.settings.batches.edit', ['batch' => $orderBatch]);
+        return view('dispatcher.settings.batches.edit', $data);
     }
 
     /**
@@ -277,24 +291,36 @@ class OrderBatchController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $orderBatch)
-    {
+    {   
         $request->validate([
-            'origin_id' => 'required|numeric|exists:locations,id',
-            'status' => 'required|string'
+            'ship_from_country_id' => 'required|numeric',
+            'ship_from_city_id' => 'required|numeric',
+            'ship_to_country_id' => 'required|numeric',
+            'ship_to_city_id' => 'required|numeric',
+            'status' => 'required'
         ]);
+
         try {
             $orderBatch = OrderBatch::where('id', $orderBatch)->first();
             DB::beginTransaction();
-            $b = $orderBatch->update([
-                'location_id' => $request->origin_id,
+            $orderBatch->update([
                 'status' => $request->status
             ]);
+        
+            $batch_log = Batchlog::create([
+                'ship_from_country_id' => $request->ship_from_country_id,
+                'ship_from_city_id' => $request->ship_from_city_id,
+                'ship_to_country_id' => $request->ship_to_country_id,
+                'ship_to_city_id' => $request->ship_to_city_id,
+                'batch_id' => $orderBatch->id,
+            ]);
+
             //update status of associated orders
             Order::where('batch_id', $orderBatch->id)->update([
                 'status' => $request->status,
-                'current_location_id' => $request->origin_id
+                // 'current_location_id' => $request->origin_id
             ]);
-
+    
             $oo = Order::where('batch_id', $orderBatch->id)->get();
             foreach ($oo as $o) {
                 Mail::to($o->customer->user->email)->send(new PaymentEmail($o));
@@ -303,7 +329,7 @@ class OrderBatchController extends Controller
 
                 Mail::to($o->delivery_email)->send(new PaymentEmail($o));
             }
-
+  
             DB::commit();
             return back()->with(['message' => 'Batch Updated', 'message_type' => 'success']);
         } catch (\Exception $e) {

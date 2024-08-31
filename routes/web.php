@@ -352,6 +352,7 @@ Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.
 
 Route::post('ajax-get-cities/{stateId}', [CityController::class, 'getCities'])->name('ajax-get-cities');
 Route::post('ajax-get-country-cities/{countryId}', [CityController::class, 'getCountryCities'])->name('ajax-get-country-cities');
+Route::get('ajax-edit-countries', [CityController::class, 'editCountriy'])->name('ajax-edit-countries');
 Route::get('ajax-get-paced-orders', [CityController::class, 'getOrder'])->name('ajax-get-paced-orders');
 
 Route::post('ajax-get-states/{countryId}', [StateController::class, 'getStates'])->name('ajax-get-states');
