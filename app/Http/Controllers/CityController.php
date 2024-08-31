@@ -47,4 +47,5 @@ class CityController extends Controller
             'countries' => $countries->toArray(),
         ], 200);
     }
+
 }

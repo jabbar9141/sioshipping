@@ -16,8 +16,8 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <p><b>Batch Name : [{{ $batch->name }}]</b></p>
-                <p><b>Current Location : {{ $batch->location->name }}Lat: {{ $batch->location->latitude }} &nbsp;
-                    &nbsp; Long: {{ $batch->location->longitude }} </b></p>
+                {{--  <p><b>Current Location : {{ $batch->location->name }}Lat: {{ $batch->location->latitude }} &nbsp;
+                    &nbsp; Long: {{ $batch->location->longitude }} </b></p>  --}}
                 <hr>
                 <h5>Geolocation data</h5>
                 <hr>
@@ -52,8 +52,8 @@
 @section('scripts')
     <script>
         // Get latitude and longitude values from the server
-        var latitude = {{ $batch->location->latitude }};
-        var longitude = {{ $batch->location->longitude }};
+        var latitude = "1234.231";
+        var longitude = "12233.2313";
 
         // Initialize the map
         var map = L.map('map').setView([latitude, longitude], 10); // 16 is the zoom level
@@ -65,7 +65,7 @@
 
         // Add a marker at the specified location
         L.marker([latitude, longitude]).addTo(map)
-            .bindPopup('{{ $batch->location->name }}')
+            .bindPopup('{{ $batch->name }}')
             .openPopup();
     </script>
     <script>

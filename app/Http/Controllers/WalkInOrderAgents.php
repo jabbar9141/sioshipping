@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use App\Mail\PaymentEmail;
+use App\Models\CityShippingCost;
+use App\Models\ShippingCost;
 use App\Models\ShippingRate;
 use Illuminate\Support\Facades\Mail;
 
@@ -178,44 +180,44 @@ class WalkInOrderAgents extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        // return $request->all();
         $request->validate([
             'tax_code_' => 'required',
             'surname_' => 'required',
             'name_' => 'required',
             'gender_' => 'required',
             'dob_' => 'required|date',
-            'doc_type_' => 'nullable',
-            'doc_num_' => 'nullable',
-            'doc_front_' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
-            'doc_back_' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
-            'origin_id' => 'required|numeric|exists:locations,id',
-            'dest_id' => 'required|numeric|exists:locations,id',
-            'rate' => 'required|numeric|exists:shipping_rates,id',
+            'doc_type_' => 'required',
+            'doc_num_' => 'required',
+            'doc_front_' => 'required|file|mimes:jpg,jpeg,png,pdf',
+            'doc_back_' => 'required|file|mimes:jpg,jpeg,png,pdf',
+            // 'origin_id' => 'required|numeric|exists:locations,id',
+            // 'dest_id' => 'required|numeric|exists:locations,id',
+            // 'rate' => 'required|numeric|exists:shipping_rates,id',
             'rx_name' => 'required|string',
             'rx_phone' => 'required|string',
             'rx_email' => 'required|string|email',
-            'rx_phone_alt' => 'nullable|string',
+            'rx_phone_alt' => 'required|string',
             'rx_address1' => 'required|string',
-            'rx_address2' => 'nullable|string',
+            'rx_address2' => 'string',
             'rx_zip' => 'required|string',
-            'rx_city' => 'required|string',
-            'rx_state' => 'required|string',
-            'rx_country' => 'required|string',
+            'customer_city_id' => 'required|string',
+            'customer_state_id' => 'required|string',
+            'customer_country_id' => 'required|string',
             's_name' => 'required|string',
             's_phone' => 'required|string',
             's_email' => 'required|string|email',
-            's_phone_alt' => 'nullable|string',
+            's_phone_alt' => 'required|string',
             's_address1' => 'required|string',
-            's_address2' => 'nullable|string',
+            's_address2' => 'required|string',
             's_zip' => 'required|string',
             's_city' => 'required|string',
             's_state' => 'required|string',
             's_country' => 'required|string',
             'r_date' => 'required|string',
-            'cond_of_goods' => 'nullable|string',
-            'val_of_goods' => 'nullable|string',
-            'val_cur' => 'nullable|string',
+            'cond_of_goods' => 'required|string',
+            'val_of_goods' => 'required|string',
+            'val_cur' => 'required|string',
             'type' => 'array',
             'len' => 'array',
             'width' => 'array',
@@ -232,9 +234,17 @@ class WalkInOrderAgents extends Controller
             'count.*' => 'required',
             'item_desc.*' => 'required',
             'item_value.*' => 'required',
-            'terms_of_sale' => 'nullable',
-            'customs_inv_num' => 'nullable'
+            'customer_country_id' => 'required|numeric',
+            'customer_state_id' => 'required|numeric',
+            'customer_city_id' => 'required|numeric',
+            'ship_from_country' => 'required|numeric',
+            'ship_from_city' => 'required|numeric',
+            'ship_to_country' => 'required|numeric',
+            'ship_to_city' => 'required|numeric',
+            'terms_of_sale' => 'required',
+            'customs_inv_num' => 'required'
         ]);
+        
         try {
             DB::beginTransaction();
             $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->first();
@@ -312,8 +322,10 @@ class WalkInOrderAgents extends Controller
                     ]);
                 }
             }
+
             $l = new Order;
             $l->customer_id = Auth::id(); //id of the Agent
+            $l->agend_id = Auth::id(); //id of the Agent
             $l->walk_in_customer_id = $cus->id;
             $l->pickup_location_id = $request->origin_id;
             $l->delivery_location_id = $request->dest_id;
@@ -327,9 +339,9 @@ class WalkInOrderAgents extends Controller
             $l->delivery_address1 = $request->rx_address1;
             $l->delivery_address2 = $request->rx_address2 ?? null;
             $l->delivery_zip = $request->rx_zip;
-            $l->delivery_city = $request->rx_city;
-            $l->delivery_state = $request->rx_state;
-            $l->delivery_country = $request->rx_country;
+            $l->delivery_city = $request->customer_city_id;
+            $l->delivery_state = $request->customer_state_id;
+            $l->delivery_country = $request->customer_country_id;
             $l->pickup_name = $request->s_name;
             $l->pickup_phone = $request->s_phone;
             $l->pickup_email = $request->s_email;
@@ -341,27 +353,62 @@ class WalkInOrderAgents extends Controller
             $l->pickup_state = $request->s_state;
             $l->pickup_country = $request->s_country;
             $l->return_date = $request->r_date;
-            $l->cond_of_goods = $request->cond_of_goods;
-            $l->val_of_goods = $request->val_of_goods;
+            $l->cond_of_goods = 0;
+            $l->val_of_goods = 0;
             $l->val_cur = $request->val_cur;
             $l->provider = ((!in_array($request->rate, self::$supported_apis) ? $request->rate : 'SIOPAY'));
             $l->terms_of_sale = $request->terms_of_sale;
             $l->customs_inv_num = $request->customs_inv_num;
+            $l->current_location_country_id = $request->ship_to_country;
+            $l->current_location_city_id = $request->ship_to_city;
+            $l->pickup_location_country_id = $request->ship_from_country;
+            $l->pickup_location_city_id = $request->ship_from_city;
+            $l->delivery_location_country_id = $request->ship_to_country;
+            $l->delivery_location_city_id = $request->ship_to_city;
             $l->save();
-            for ($o = 0; $o < count($request->type); $o++) {
-                $item = new OrderPackage;
-
-                $item->order_id = $l->id;
-                $item->type = $request->type[$o];
-                $item->length = $request->len[$o];
-                $item->width = $request->width[$o];
-                $item->height = $request->height[$o];
-                $item->weight = $request->weight[$o];
-                $item->qty = $request->count[$o];
-                $item->item_desc = $request->item_desc[$o];
-                $item->item_value = $request->item_value[$o];
-                $item->save();
+            // for ($o = 0; $o < count($request->group-a); $o++) {
+            $l = Order::find(30);
+            $totalWeight = 0;
+            foreach ($request->items as $key => $item) {
+                   
+                $orderPackage = new OrderPackage;
+                $orderPackage->order_id = 30;
+                $orderPackage->type = $item['type'];
+                $orderPackage->length = $item['len'];
+                $orderPackage->width = $item['width'];
+                $orderPackage->height = $item['height'];
+                $orderPackage->weight = $item['weight'];
+                $orderPackage->qty = $item['count'];
+                $orderPackage->item_desc = $item['item_desc'];
+                $orderPackage->item_value = $item['item_value'];
+                // return $orderPackage;
+                $orderPackage->save();
             }
+
+            $shipFromCountryId = $l->pickup_location_country_id;
+            $shipFromCityId = $l->pickup_location_city_id;
+            $shipToCountryId = $l->delivery_location_country_id;
+            $shipToCityId = $l->delivery_location_city_id;
+            $totalWeight = (int) OrderPackage::where('order_id', $l->id)->sum('weight');
+            
+            $shippingCostPrice = 0;
+            $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight', $totalWeight)->first();
+            if ($shipFromCountryId == $shipToCountryId) {
+                $cityShppingCost = CityShippingCost::where('country_id', $shipFromCountryId)->where('city_id', $shipFromCityId)->first();
+                if ($cityShppingCost) {
+                    $shippingCostPrice = (float) $shippingCost->cost * ((float) $cityShppingCost->percentage ?? 10 / 100);
+                }
+            } else {
+                $shippingCostPrice = (float) $shippingCost->cost;
+            }
+
+      
+            $l->cond_of_goods = OrderPackage::where('order_id', $l->id)->sum('qty');
+            $l->val_of_goods = OrderPackage::where('order_id', $l->id)->sum('item_value');
+            $l->shipping_cost = $shippingCostPrice;
+            $l->save();
+                
+            // }
 
             // if ($request->rate == 'FEDEX') {
             //     //prepare fedex data

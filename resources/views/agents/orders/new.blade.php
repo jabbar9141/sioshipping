@@ -5,6 +5,11 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">New Order</h5>
+                @if ($errors->any())
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                @endif
                 @include('admin.partials.notification')
                 <hr>
                 <form action="{{ route('walkInOrderAgents.store') }}" method="post" id="order-form"
@@ -16,6 +21,9 @@
                                 <label for="tax_code">Customer No / Tax code <i class="text-danger">*</i> : </label>
                                 <input type="text" id="tax_code" name="tax_code_" value="{{ old('tax_code_') }}"
                                     class="form-control" autocomplete="off" required>
+                                @error('tax_code_')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -33,8 +41,10 @@
                                 <div class="ui-widget">
                                     <label for="surname">Surname <i class="text-danger">*</i> : </label>
                                     <input type="text" id="surname" name="surname_" value="{{ old('surname_') }}"
-                                        class="form-control" autocomplete="off" required>
-
+                                        class="form-control" autocomplete="off">
+                                    @error('surname_')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                     <input type="hidden" id="cus_id" name="cus_id">
                                 </div>
                             </div>
@@ -42,7 +52,10 @@
                                 <div class="ui-widget">
                                     <label for="name">Firstname <i class="text-danger">*</i> : </label>
                                     <input type="text" id="name" name="name_" value="{{ old('name_') }}"
-                                        class="form-control" autocomplete="off" required>
+                                        class="form-control" autocomplete="off">
+                                    @error('name_')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -52,6 +65,9 @@
                                     <label for="gender">Gender <i class="text-danger">*</i> : </label>
                                     <input type="text" id="gender" name="gender_" value="{{ old('gender_') }}"
                                         class="form-control" autocomplete="off">
+                                    @error('gender_')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -59,6 +75,9 @@
                                     <label for="dob">D.O.B <i class="text-danger">*</i> : </label>
                                     <input type="date" id="dob" name="dob_" value="{{ old('dob_') }}"
                                         class="form-control" autocomplete="off">
+                                    @error('dob_')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -78,6 +97,9 @@
                                         <option value="EU Resident Card / Permesso Di Soggiorno">EU Resident Card / Permesso
                                             Di Soggiorno</option>
                                     </select>
+                                    @error('doc_type_')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -85,6 +107,9 @@
                                     <label for="doc_num">Document Number<i class="text-danger">*</i> : </label>
                                     <input type="text" id="doc_num" name="doc_num_" value="{{ old('doc_num_') }}"
                                         class="form-control" autocomplete="off">
+                                    @error('doc_num_')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -93,6 +118,9 @@
                                 <div class="ui-widget">
                                     <label for="doc_front">Document Front <i class="text-danger">*</i> : </label>
                                     <input type="file" id="doc_front" name="doc_front_" class="form-control">
+                                    @error('doc_front_')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                     <br>
                                     <img src="" alt="doc_front" id="doc_front_img"
                                         style="width: 100%; border:1px solid gray">
@@ -102,6 +130,9 @@
                                 <div class="ui-widget">
                                     <label for="doc_back">Document back <i class="text-danger">*</i> : </label>
                                     <input type="file" id="doc_back" name="doc_back_" class="form-control">
+                                    @error('doc_back_')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
                                     <br>
                                     <img src="" alt="doc_back" id="doc_back_img"
                                         style="width: 100%; border:1px solid gray">
@@ -120,9 +151,7 @@
 
                                     </select>
                                     @error('ship_from_country')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                        <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                     {{-- <label for="origin">Shipping from <i class="text-danger">*</i> : </label>
                                     <input type="text" id="origin" name="origin_" value="{{ old('origin_') }}"
@@ -138,9 +167,7 @@
                                     <select name="ship_from_city" id="ship_from_city" class="form-control">
                                     </select>
                                     @error('ship_from_city')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                        <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -154,9 +181,7 @@
 
                                     </select>
                                     @error('ship_to_country')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                        <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -166,9 +191,7 @@
                                     <select name="ship_to_city" id="ship_to_city" class="form-select select2">
                                     </select>
                                     @error('ship_to_city')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
+                                        <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                     {{-- <label for="dest">Shipping To <i class="text-danger">*</i> : </label>
                                     <input type="text" id="dest" name="dest_" value="{{ old('dest_') }}"
@@ -196,7 +219,7 @@
                                     <tr>
                                         <td>
                                             <select name="type[]" class="form-control type"
-                                                onchange="calculateTotItems('type')" required>
+                                                onchange="calculateTotItems('type')">
                                                 <option value="">--select package type--</option>
                                                 <option value="percel">Percel</option>
                                                 <option value="doc">Document</option>
@@ -206,22 +229,22 @@
                                         <td>
                                             <input type="number" step="any" min="0" value="0"
                                                 class="form-control len" onkeyup="calculateTot()" name="len[]"
-                                                required>
+                                            >
                                         </td>
                                         <td>
                                             <input type="number" step="any" min="0" value="0"
                                                 class="form-control width" onkeyup="calculateTot()" name="width[]"
-                                                required>
+                                            >
                                         </td>
                                         <td>
                                             <input type="number" step="any" min="0" value="0"
                                                 class="form-control height" onkeyup="calculateTot()" name="height[]"
-                                                required>
+                                            >
                                         </td>
                                         <td>
                                             <input type="number" step="any" min="0" value="0"
                                                 class="form-control weight" onkeyup="calculateTot()" name="weight[]"
-                                                required>
+                                            >
                                         </td>
                                         <td>
                                             <input type="text" class="form-control" name="item_desc[]"
@@ -229,12 +252,12 @@
                                         </td>
                                         <td>
                                             <input type="number" step="any" min="0" value="0.0"
-                                                class="form-control itemvalue" name="item_value[]" required>
+                                                class="form-control itemvalue" name="item_value[]">
                                         </td>
                                         <td>
                                             <input type="number" step="1" min="1" value="1"
                                                 class="form-control count" onkeyup="calculateTot()" name="count[]"
-                                                required>
+                                            >
                                         </td>
                                         <td> --}}
                         {{-- <button class="btn btn-danger" type="button" onclick="removeRow(this)"><i
@@ -277,7 +300,7 @@
                         {{-- </table>
                         </div> --}}
                         <div class="repeater">
-                            <div data-repeater-list="group-a">
+                            <div data-repeater-list="items">
                                 <div class="text-end">
                                     <button class="btn btn-primary btn-sm" type="button" data-repeater-create><i
                                             class="fa fa-plus"></i> Add</button>
@@ -287,47 +310,71 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="">Select Package</label>
-                                            <select name="type" class="form-control type" required>
+                                            <select name="type" class="form-control type">
                                                 <option value="">--select package type--</option>
                                                 <option value="percel">Percel</option>
                                                 <option value="doc">Document</option>
                                                 <option value="pallet">Pallet</option>
                                             </select>
+                                            @error('type')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col">
                                             <label for="">Length</label>
                                             <input type="number" step="any" min="0" value="0"
-                                                class="form-control len" name="len" required>
+                                                class="form-control len" name="len">
+                                            @error('len')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col">
                                             <label for="">Width </label>
                                             <input type="number" step="any" min="0" value="0"
-                                                class="form-control width" name="width" required>
+                                                class="form-control width" name="width">
+                                            @error('width')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col">
                                             <label for="">Height </label>
                                             <input type="number" step="any" min="0" value="0"
-                                                class="form-control height" name="height" required>
+                                                class="form-control height" name="height">
+                                            @error('height')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col">
                                             <label for="">Weight </label>
                                             <input type="number" step="any" min="0" value="0"
-                                                class="form-control weight" name="weight" required>
+                                                class="form-control weight" name="weight">
+                                            @error('weight')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col">
                                             <label for="">Dscription </label>
                                             <input type="text" class="form-control" name="item_desc"
                                                 placeholder="Description...">
+                                            @error('item_desc')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col">
                                             <label for="">Price </label>
                                             <input type="number" step="any" min="0" value="0.0"
-                                                class="form-control itemvalue" name="item_value" required>
+                                                class="form-control itemvalue" name="item_value">
+                                            @error('item_value')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col">
                                             <label for="">Quantitty </label>
                                             <input type="number" step="1" min="1" value="1"
-                                                class="form-control count" name="count" required>
+                                                class="form-control count" name="count">
+                                            @error('count')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="text-end mt-2">
@@ -395,167 +442,237 @@
                         </div>
                     </div>
 
-                    <div class="stage_2" style="display: none;">
-                        <hr>
-                        <h5>Addresses</h5>
-                        <hr>
-                        <div class="add_set">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Sender Address</h6>
-                                    <div class="row">
-                                        <div class="form-group col-md-12">
-                                            <label for="s_name">Sender Name <i class="text-danger">*</i></label>
-                                            <input type="text" name="s_name" class="form-control"
-                                                value="{{ auth()->user()->name }}" required>
+                    <div class="stage_2 ">
+                        <div>
+                            <hr>
+                            <h5>Addresses</h5>
+                            <hr>
+                            <div class="add_set">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Sender Address</h6>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label for="s_name">Sender Name <i class="text-danger">*</i></label>
+                                                <input type="text" name="s_name" class="form-control" readonly
+                                                    value="{{ auth()->user()->name }}">
+                                                @error('s_name')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label for="s_email">Sender Email <i class="text-danger">*</i></label>
+                                                <input type="email" name="s_email" class="form-control" readonly
+                                                    value="{{ auth()->user()->email }}">
+                                                @error('s_email')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="s_phone">Sender Phone <i class="text-danger">*</i></label>
+                                                <input type="text" readonly value="{{ auth()->user()->agent->phone }}"
+                                                    name="s_phone" class="form-control">
+                                                @error('s_phone')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="s_phone_alt">Sender Phone Alt. (optional)</label>
+                                                <input type="text" readonly
+                                                    value="{{ auth()->user()->agent->phone_alt }}" name="s_phone_alt"
+                                                    class="form-control">
+                                                @error('s_phone_alt')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="s_aadress1">Address1 <i class="text-danger">*</i></label>
+                                                <textarea name="s_address1" readonly class="form-control">{{ auth()->user()->agent->address1 }}</textarea>
+                                                @error('s_address1')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="s_aadress2">Address 2(additional data-optional)</label>
+                                                <textarea name="s_address2" readonly class="form-control">{{ auth()->user()->agent->address2 }}</textarea>
+                                                @error('s_address2')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="s_zip">Sender zip <i class="text-danger">*</i></label>
+                                                <input type="text" readonly name="s_zip"
+                                                    value="{{ auth()->user()->agent->zip }}" class="form-control">
+                                                @error('s_zip')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="s_city">Sender city <i class="text-danger">*</i></label>
+                                                <input type="text" readonly name="s_city"
+                                                    value="{{ auth()->user()->agent->city->name }}" class="form-control">
+                                                @error('s_city')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="s_state">Sender State/Province <i
+                                                        class="text-danger">*</i></label>
+                                                <input type="text" readonly name="s_state"
+                                                    value="{{ auth()->user()->agent->state->name }}"
+                                                    class="form-control">
+                                                @error('s_state')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="s_country">Sender Country/ Region <i
+                                                        class="text-danger">*</i></label>
+                                                <input type="text" readonly name="s_country"
+                                                    value="{{ auth()->user()->agent->country->name }}"
+                                                    class="form-control" id="s_country" autocomplete="off">
+                                                @error('s_country')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label for="r_date">Pickup Date <i class="text-danger">*</i></label>
+                                                <input type="date" name="r_date" value="{{ old('r_date') }}"
+                                                    class="form-control">
+                                                @error('r_date')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
                                         </div>
                                     </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-12">
-                                            <label for="s_email">Sender Email <i class="text-danger">*</i></label>
-                                            <input type="email" name="s_email" class="form-control"
-                                                value="{{ auth()->user()->email }}" required>
+                                    <div class="col-md-6">
+                                        <h6>Receiver Address</h6>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label for="rx_name">Receiver Name <i class="text-danger">*</i></label>
+                                                <input type="text" name="rx_name" value="{{ old('rx_name') }}"
+                                                    class="form-control">
+                                                @error('rx_name')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
                                         </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-6">
-                                            <label for="s_phone">Sender Phone <i class="text-danger">*</i></label>
-                                            <input type="text" value="{{ auth()->user()->agent->phone }}"
-                                                name="s_phone" class="form-control" required>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label for="rx_email">Receiver Email <i class="text-danger">*</i></label>
+                                                <input type="email" name="rx_email" value="{{ old('rx_email') }}"
+                                                    class="form-control">
+                                                @error('rx_email')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
                                         </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="s_phone_alt">Sender Phone Alt. (optional)</label>
-                                            <input type="text" value="{{ auth()->user()->agent->phone_alt }}"
-                                                name="s_phone_alt" class="form-control">
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="rx_phone">Receiver Phone <i class="text-danger">*</i></label>
+                                                <input type="text" name="rx_phone" value="{{ old('rx_phone') }}"
+                                                    class="form-control">
+                                                @error('rx_phone')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="rx_phone_alt">Receiver Phone Alt. (optional)</label>
+                                                <input type="text" name="rx_phone_alt"
+                                                    value="{{ old('rx_phone_alt') }}" class="form-control">
+                                                @error('rx_phone_alt')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
                                         </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <label for="s_aadress1">Address1 <i class="text-danger">*</i></label>
-                                            <textarea name="s_address1" class="form-control" required>{{ auth()->user()->agent->address1 }}</textarea>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="rx_aadress1">Address1 <i class="text-danger">*</i></label>
+                                                <textarea name="rx_address1" class="form-control">{{ old('rx_address1') }}</textarea>
+                                                @error('rx_address1')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
                                         </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <label for="s_aadress2">Address 2(additional data-optional)</label>
-                                            <textarea name="s_address2" class="form-control">{{ auth()->user()->agent->address2 }}</textarea>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="rx_aadress2">Address 2(additional data-optional) <i
+                                                        class="text-danger">*</i></label>
+                                                <textarea name="rx_address2" value="{{ old('rx_address2') }}" class="form-control"></textarea>
+                                                @error('rx_address2')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
                                         </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-6">
-                                            <label for="s_zip">Sender zip <i class="text-danger">*</i></label>
-                                            <input type="text" name="s_zip"
-                                                value="{{ auth()->user()->agent->zip }}" class="form-control" required>
+                                        <br>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="rx_zip">Receiver zip <i class="text-danger">*</i></label>
+                                                <input type="text" name="rx_zip" value="{{ old('rx_zip') }}"
+                                                    class="form-control">
+                                                @error('rx_zip')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12 col-lg-6">
+                                                <label for="origin">Receiver Country<i class="text-danger">*</i> :
+                                                </label>
+                                                <select name="customer_country_id" id="customer_country_id"
+                                                    class="form-control">
+
+                                                </select>
+                                                @error('customer_country_id')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
                                         </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="s_city">Sender city <i class="text-danger">*</i></label>
-                                            <input type="text" name="s_city"
-                                                value="{{ auth()->user()->agent->city->name }}" class="form-control"
-                                                required>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-6">
-                                            <label for="s_state">Sender State/Province <i
-                                                    class="text-danger">*</i></label>
-                                            <input type="text" name="s_state"
-                                                value="{{ auth()->user()->agent->state->name }}" class="form-control"
-                                                required>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="s_country">Sender Country/ Region <i
-                                                    class="text-danger">*</i></label>
-                                            <input type="text" name="s_country"
-                                                value="{{ auth()->user()->agent->country->name }}" class="form-control"
-                                                id="s_country" autocomplete="off" required>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-12">
-                                            <label for="r_date">Pickup Date <i class="text-danger">*</i></label>
-                                            <input type="date" name="r_date" value="{{ old('r_date') }}"
-                                                class="form-control" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Receiver Address</h6>
-                                    <div class="row">
-                                        <div class="form-group col-md-12">
-                                            <label for="rx_name">Receiver Name <i class="text-danger">*</i></label>
-                                            <input type="text" name="rx_name" value="{{ old('rx_name') }}"
-                                                class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-12">
-                                            <label for="rx_email">Receiver Email <i class="text-danger">*</i></label>
-                                            <input type="email" name="rx_email" value="{{ old('rx_email') }}"
-                                                class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-6">
-                                            <label for="rx_phone">Receiver Phone <i class="text-danger">*</i></label>
-                                            <input type="text" name="rx_phone" value="{{ old('rx_phone') }}"
-                                                class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="rx_phone_alt">Receiver Phone Alt. (optional)</label>
-                                            <input type="text" name="rx_phone_alt" value="{{ old('rx_phone_alt') }}"
-                                                class="form-control">
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <label for="rx_aadress1">Address1 <i class="text-danger">*</i></label>
-                                            <textarea name="rx_address1" class="form-control" required>{{ old('rx_address1') }}</textarea>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <label for="rx_aadress2">Address 2(additional data-optional) <i
-                                                    class="text-danger">*</i></label>
-                                            <textarea name="rx_address2" value="{{ old('rx_address2') }}" class="form-control"></textarea>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-6">
-                                            <label for="rx_zip">Receiver zip <i class="text-danger">*</i></label>
-                                            <input type="text" name="rx_zip" value="{{ old('rx_zip') }}"
-                                                class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="rx_city">Receiver city <i class="text-danger">*</i></label>
-                                            <input type="text" name="rx_city" value="{{ old('rx_city') }}"
-                                                class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="form-group col-md-6">
-                                            <label for="rx_state">Receiver State/Province <i
-                                                    class="text-danger">*</i></label>
-                                            <input type="text" name="rx_state" value="{{ old('rx_state') }}"
-                                                class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="rx_country">Receiver Country/ Region <i
-                                                    class="text-danger">*</i></label>
-                                            <input type="text" name="rx_country" value="{{ old('rx_country') }}"
-                                                class="form-control" id="rx_country" autocomplete="off" required>
+                                        <br>
+                                        <div class="row">
+                                            <div class="col-12 col-lg-6">
+                                                <label for="origin">Receiver State<i class="text-danger">*</i> :
+                                                </label>
+                                                <select name="customer_state_id" id="customer_state_id"
+                                                    class="form-control">
+
+                                                </select>
+                                                @error('customer_state_id')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12 col-lg-6 ">
+                                                <label for="origin">Receiver City<i class="text-danger">*</i> : </label>
+                                                <select name="customer_city_id" id="customer_city_id"
+                                                    class="form-control">
+                                                </select>
+                                                @error('customer_city_id')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -567,6 +684,9 @@
                                 <label for="cond_of_goods">Condition Of goods/ Customs Declaration</label>
                                 <input type="text" name="cond_of_goods" value="{{ old('cond_of_goods') }}"
                                     class="form-control" id="cond_of_goods">
+                                @error('cond_of_goods')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                         <br>
@@ -579,11 +699,17 @@
                                     <option value="SOLD">Sold</option>
                                     <option value="NOT_SOLD">Not Sold</option>
                                 </select>
+                                @error('terms_of_sale')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="customs_inv_num">Invoice Numbers(comma seperated)</label>
                                 <input type="text" name="customs_inv_num" value="{{ old('customs_inv_num') }}"
                                     class="form-control" id="customs_inv_num" placeholder="e.g INV-001, INV-002">
+                                @error('customs_inv_num')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                         <br>
@@ -592,27 +718,154 @@
                                 <label for="val_of_goods">Value Of goods</label>
                                 <input type="number" name="val_of_goods" value="{{ old('val_of_goods') }}"
                                     class="form-control" id="val_of_goods">
+                                @error('val_of_goods')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="val_cur">Curency Of Value</label>
                                 <input type="text" name="val_cur" value="{{ old('val_cur') }}" class="form-control"
                                     id="val_cur">
+                                @error('val_cur')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                         <hr>
                         <p>By clicking Proceed bellow, you attest that you have read and understood our terms.</p>
-                        <button type="button" class="btn btn-primary" onclick="submit_form()"><i
-                                class="fa fa-save"></i>
+                        <button type="submit" class="btn proccess_btn btn-primary"><i class="fa fa-save"></i>
                             Proceed</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 @endsection
+
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/jquery.repeater@1.2.1/jquery.repeater.min.js"></script>
     <script>
+        //function submit_form() {
+        // if (!$('#order-form')[0].checkValidity()) {
+        //  alert('please fill all required fields, all fileds marked * are required')
+        //  $('#order-form')[0].reportValidity()
+        // } else {
+        // if (confirm('Are you sure you sure you wish to proceed?')) {
+        //   $('#order-form').submit();
+        //}
+        //}
+        //}
+        $('.proccess_btn').attr('disabled', true);
+        $(document).ready(function() {
+            $('#customer_country_id').select2();
+            $('#customer_city_id').select2();
+            $('#customer_state_id').select2();
+            countries();
+
+            var customer_country_id = $("#customer_country_id");
+            customer_country_id.wrap('<div class="position-relative"></div>');
+            customer_country_id.on('change', function() {
+                $("#customer_city_id").empty();
+                $('#customer_state_id').empty();
+                $('#customer_state_id').html('<option value="">Select State</option>');
+                $('#customer_city_id').html('<option value="">Select City</option>');
+                var _token = '{{ csrf_token() }}';
+                let url = "{{ route('ajax-get-states', ['countryId' => ':countryId']) }}".replace(
+                    ':countryId', $(this).val());
+                if ($(this).val() > 0) {
+                    // showBlockUI();
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.states, function(key, value) {
+                                    $("#customer_state_id").append(
+                                        '<option value="' + value.id + '">' + value
+                                        .name + '</option>'
+                                    );
+                                });
+                                // hideBlockUI();
+
+                                customer_state_id.trigger('change');
+
+
+                            } else {
+                                // hideBlockUI();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            // hideBlockUI();
+                        }
+                    });
+                }
+            });
+
+
+            var customer_state_id = $("#customer_state_id");
+            customer_state_id.wrap('<div class="position-relative"></div>');
+            customer_state_id.on('change', function() {
+                $("#customer_city_id").empty()
+                $('#customer_city_id').html('<option value="">Select City</option>');
+
+                var _token = '{{ csrf_token() }}';
+                let url =
+                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
+                    .replace(':stateId', $(this).val());
+                if ($(this).val() > 0) {
+                    // showBlockUI();
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.cities, function(key, value) {
+                                    $("#customer_city_id").append('<option value="' +
+                                        value
+                                        .id + '">' + value.name + '</option>');
+                                });
+                                $('#customer_city_id').trigger('change');
+                                // hideBlockUI();
+
+                            } else {
+                                // hideBlockUI();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    title: 'Are You Sure',
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            // hideBlockUI();
+                        }
+                    });
+                } else {
+                    // hideBlockUI();
+                }
+                // hideBlockUI();
+
+            });
+        })
         $(document).ready(function() {
             function calculateTot() {
                 let the_classes = ['len', 'width', 'height', 'weight',
@@ -711,6 +964,7 @@
                                         value
                                         .id + '">' + value.name + '</option>');
                                 });
+
                                 $("#ship_from_city").trigger('change');
                                 // hideBlockUI();
                                 @if (!is_null(old('residential.city')))
@@ -800,6 +1054,7 @@
 
             $('#ship_from_country').html('<option value="">Select Country</option>');
             $('#ship_to_country').html('<option value="">Select Country</option>');
+            $('#customer_country_id').html('<option value="">Select Country</option>');
             var _token = '{{ csrf_token() }}';
             let url = "{{ route('ajax-get-countries') }}";
             $.ajax({
@@ -816,6 +1071,8 @@
                                 '">' + value.name + '</option>');
                             $("#ship_to_country").append('<option value="' + value.id +
                                 '">' + value.name + '</option>');
+                            $("#customer_country_id").append('<option value="' + value.id + '">' + value
+                                .name + '</option>')
                         });
                     } else {
                         Swal.fire({
@@ -832,16 +1089,7 @@
         }
 
 
-        function submit_form() {
-            if (!$('#order-form')[0].checkValidity()) {
-                alert('please fill all required fields, all fileds marked * are required')
-                $('#order-form')[0].reportValidity()
-            } else {
-                if (confirm('Are you sure you sure you wish to proceed?')) {
-                    $('#order-form').submit();
-                }
-            }
-        }
+
         $(document).ready(function() {
             $('#origin').autocomplete({
                 source: "{{ route('locations.search') }}",
@@ -1353,7 +1601,7 @@
         // Attach the change event handlers to the file input elements
         $('#doc_front').change(setDocFrontSrc);
         $('#doc_back').change(setDocBackSrc);
-
+        
         function getRates() {
 
             let ship_from_country = $('#ship_from_country').val();
@@ -1414,7 +1662,7 @@
                                     </tr>
                                 `;
                         $('#shipping_rate_list').html(mar);
-                        $('.stage_2').show();
+                        $('.proccess_btn').attr('disabled', false);
                         //show second stage of form
                     } else {
                         toastr.error(data.message);

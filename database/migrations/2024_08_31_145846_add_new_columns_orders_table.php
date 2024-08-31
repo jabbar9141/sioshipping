@@ -25,6 +25,7 @@ class AddNewColumnsOrdersTable extends Migration
                  $table->bigInteger('pickup_location_id')->nullable();
                  $table->bigInteger('delivery_location_id')->nullable();
                  $table->bigInteger('current_location_id')->nullable();
+                 
                  $table->bigInteger('current_location_country_id')->nullable();
                  $table->bigInteger('current_location_city_id')->nullable();
                  $table->bigInteger('pickup_location_country_id')->nullable();

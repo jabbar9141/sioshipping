@@ -87,6 +87,7 @@ class ShippingRateController extends Controller
         $shipToCountryId = $request->ship_to_country;
         $shipToCityId = $request->ship_to_city;
         $totalWeight = (int) $request->weightTotal;
+        // return $shipFromCountryId;
         $shippingCostPrice = 0;
         $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight', $totalWeight)->first();
         if ($shipFromCountryId == $shipToCountryId) {

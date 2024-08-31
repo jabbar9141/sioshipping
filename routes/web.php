@@ -102,9 +102,15 @@ Route::get('/test', function(){
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_121342_remove_contrained_from_orders_table.php'
     // ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_08_31_145846_add_new_columns_orders_table.php'
-    ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_31_145846_add_new_columns_orders_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_31_190358_add_new_columns_orderss_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_31_190623_add_new_columns_order_packages_table.php'
+    // ]);
     return "Success";
 });
 
@@ -361,3 +367,44 @@ Route::get('ajax-get-paced-orders', [CityController::class, 'getOrder'])->name('
 Route::post('ajax-get-states/{countryId}', [StateController::class, 'getStates'])->name('ajax-get-states');
 Route::get('ajax-get-countries/', [CountryController::class, 'getCountries'])->name('ajax-get-countries');
 
+
+Route::get('/import-test', function () {
+    ShippingCost::truncate();
+    set_time_limit(10000);
+
+
+    $file = public_path('shipping_costs.csv');
+
+    // Open the file for reading
+    if (($handle = fopen($file, 'r')) !== false) {
+        // Get the first row, which contains the column headers
+        $header = fgetcsv($handle, 50000, ';');
+        // dump($header);
+        $csvData = [];
+
+        while (($row = fgetcsv($handle, 50000, ';')) !== false) {
+            // dd($row);
+
+            $csvData[] = array_combine($header, $row);
+        }
+
+        fclose($handle);
+    }
+
+    foreach ($csvData as $key => $csvs) {
+        foreach ($csvs as $c_key => $value) {
+            if ($c_key == 'Weight') {
+                continue;
+            }
+            ShippingCost::create([
+                'weight' => $csvs['Weight'],
+                'country_name' => $c_key,
+                'country_iso_2' => substr($c_key, 0, 2),
+                'country_id' => Country::where('iso2', substr($c_key, 0, 2))->first()->id,
+                'cost' => $value,
+            ]);
+        }
+    }
+
+    return $csvData;
+});
