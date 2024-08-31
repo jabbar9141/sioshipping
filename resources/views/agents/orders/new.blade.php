@@ -27,7 +27,7 @@
                         <em id="kyc_status_text"></em>
                     </div>
                     <hr>
-                    <div class="stage0 d-none">
+                    <div class="stage0">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="ui-widget">
@@ -177,9 +177,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
+                        <hr>
+                        {{-- <div class="table-responsive"> --}}
+                        {{-- <table class="table"> --}}
+                        {{-- <thead>
                                     <th>Package Type <i class="text-danger">*</i></th>
                                     <th>length(cm) <i class="text-danger">*</i></th>
                                     <th>Width(cm) <i class="text-danger">*</i></th>
@@ -190,8 +191,8 @@
                                     <th>Count/qty <i class="text-danger">*</i></th>
                                     <th><button class="btn btn-primary btn-sm" type="button" onclick="addRow()"><i
                                                 class="fa fa-plus"></i> Add</button></th>
-                                </thead>
-                                <tbody id="items_list">
+                                </thead> --}}
+                        {{-- <tbody id="items_list">
                                     <tr>
                                         <td>
                                             <select name="type[]" class="form-control type"
@@ -235,13 +236,13 @@
                                                 class="form-control count" onkeyup="calculateTot()" name="count[]"
                                                 required>
                                         </td>
-                                        <td>
-                                            {{-- <button class="btn btn-danger" type="button" onclick="removeRow(this)"><i
+                                        <td> --}}
+                        {{-- <button class="btn btn-danger" type="button" onclick="removeRow(this)"><i
                                                     class="fa fa-trash"></i></button> --}}
-                                        </td>
+                        {{-- </td>
                                     </tr>
-                                </tbody>
-                                <tfoot>
+                                </tbody> --}}
+                        {{-- <tfoot>
                                     <th>
                                         Packages: <span id="type-tot"></span>
                                         <input type="hidden" name="type_tot" id="type_tot">
@@ -272,8 +273,104 @@
                                         Total Quantity: <span id="count-tot"></span>
                                         <input type="hidden" name="count_tot" id="count_tot">
                                     </th>
-                                </tfoot>
-                            </table>
+                                </tfoot> --}}
+                        {{-- </table>
+                        </div> --}}
+                        <div class="repeater">
+                            <div data-repeater-list="group-a">
+                                <div class="text-end">
+                                    <button class="btn btn-primary btn-sm" type="button" data-repeater-create><i
+                                            class="fa fa-plus"></i> Add</button>
+                                </div>
+
+                                <div data-repeater-item class="mt-2">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="">Select Package</label>
+                                            <select name="type" class="form-control type" required>
+                                                <option value="">--select package type--</option>
+                                                <option value="percel">Percel</option>
+                                                <option value="doc">Document</option>
+                                                <option value="pallet">Pallet</option>
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Length</label>
+                                            <input type="number" step="any" min="0" value="0"
+                                                class="form-control len" name="len" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Width </label>
+                                            <input type="number" step="any" min="0" value="0"
+                                                class="form-control width" name="width" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Height </label>
+                                            <input type="number" step="any" min="0" value="0"
+                                                class="form-control height" name="height" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Weight </label>
+                                            <input type="number" step="any" min="0" value="0"
+                                                class="form-control weight" name="weight" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Dscription </label>
+                                            <input type="text" class="form-control" name="item_desc"
+                                                placeholder="Description...">
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Price </label>
+                                            <input type="number" step="any" min="0" value="0.0"
+                                                class="form-control itemvalue" name="item_value" required>
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Quantitty </label>
+                                            <input type="number" step="1" min="1" value="1"
+                                                class="form-control count" name="count" required>
+                                        </div>
+                                    </div>
+                                    <div class="text-end mt-2">
+                                        <button data-repeater-delete class="btn btn-sm btn-danger" type="button"><i
+                                                class="fa fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-nowrap">Packages: <span id="type-tot"></span></p>
+                                <input type="hidden" name="type_tot" id="type_tot">
+                            </div>
+                            <div class="col">
+                                <p class="text-nowrap">Total: <span id="len-tot"></span></p>
+                                <input type="hidden" name="len_tot" id="len_tot">
+                            </div class="col">
+                            <div class="col">
+                                <p class="text-nowrap">Total: <span id="width-tot"></span></p>
+
+
+                                <input type="hidden" name="width_tot" id="width_tot">
+                            </div>
+                            <div class="col">
+                                <p class="text-nowrap"> Total : <span id="height-tot"></span></p>
+                                <input type="hidden" name="height_tot" id="height_tot">
+                            </div>
+                            <div class="col">
+                                <p class="text-nowrap">Total : <span id="weight-tot"></span></p>
+                                <input type="hidden" name="weight_tot" id="weight_tot">
+                            </div>
+                            <div class="col">
+                                {{-- Content <i class="text-danger">*</i> --}}
+                            </div>
+                            <div class="col">
+                                <p class="text-nowrap">Total : <span id="itemvalue-tot"></span></p>
+                                <input type="hidden" name="itemvalue_tot" id="itemvalue_tot">
+                            </div>
+                            <div class="col">
+                                <p class="text-nowrap">Total : <span id="count-tot"></span></span></p>
+                                <input type="hidden" name="count_tot" id="count_tot">
+                            </div>
                         </div>
                         <button type="button" onclick="getRates()" class="btn btn-primary">Get Available Rates</button>
                         <hr>
@@ -513,8 +610,72 @@
     </div>
 @endsection
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/jquery.repeater@1.2.1/jquery.repeater.min.js"></script>
     <script>
         $(document).ready(function() {
+            function calculateTot() {
+                let the_classes = ['len', 'width', 'height', 'weight',
+                    'itemvalue', 'count'
+                ];
+
+                for (let i = 0; i < the_classes.length; i++) {
+                    let total = 0;
+                    $('.' + the_classes[i]).each(function() {
+                        let value = parseFloat($(this).val()) ||
+                            0;
+                        total += value;
+                    });
+                    $('#' + the_classes[i] + '-tot').text(total.toFixed(2));
+                    $('#' + the_classes[i] + '_tot').val(total.toFixed(
+                        2));
+                }
+            }
+
+
+            function calculateTotItems(item_class) {
+                let total = 0;
+                $('.' + item_class).each(function(i, e) {
+                    if ($(this).val() != '') {
+                        total = total + 1
+                    }
+                })
+                $('#' + item_class + '-tot').text(total);
+                $('#type-tot').val(total);
+            }
+
+            function bindEvents() {
+                $('.len, .width, .height, .weight, .count, .itemvalue').off('keyup').on('keyup',
+                    function() {
+                        calculateTot();
+                    });
+                $('.type').off('change').on('change', function() {
+                    calculateTotItems('type');
+                });
+            }
+
+            $('.repeater').repeater({
+                isFirstItemUndeletable: true,
+                show: function() {
+                    $(this).slideDown();
+                    calculateTot();
+                    calculateTotItems('type');
+                    bindEvents();
+                },
+                hide: function(deleteElement) {
+                    if (confirm('Are you sure you want to delete this element?')) {
+                        $(this).slideUp(deleteElement, function() {
+                            $(this).remove();
+                            calculateTotItems('type');
+                            calculateTot();
+                        });
+                    }
+                }
+            });
+
+            bindEvents();
+        });
+        $(document).ready(function() {
+
             $('#ship_from_country').select2();
             $('#ship_from_city').select2();
             $('#ship_to_country').select2();
@@ -1097,83 +1258,11 @@
 
         });
 
-        function addRow() {
-            let items_list = $('#items_list');
-            let mar = `
-            <tr>
-                <td>
-                    <select name="type[]" class="form-control type" onchange="calculateTotItems('type')" required>
-                        <option value="">--select package type--</option>
-                        <option value="percel">Percel</option>
-                        <option value="doc">Document</option>
-                        <option value="pallet">Pallet</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="number" step="any" min="0" value="0" class="form-control len" onkeyup="calculateTot()" name="len[]">
-                </td>
-                <td>
-                    <input type="number" step="any" min="0" value="0" class="form-control width" onkeyup="calculateTot()" name="width[]">
-                </td>
-                <td>
-                    <input type="number" step="any" min="0" value="0" class="form-control height" onkeyup="calculateTot()" name="height[]">
-                </td>
-                <td>
-                    <input type="number" step="any" min="0" value="0" class="form-control weight" onkeyup="calculateTot()" name="weight[]">
-                </td>
-                <td>
-                    <input type="text" class="form-control" name="item_desc[]" placeholder="Description...">
-                </td>
-                <td>
-                    <input type="number" step="any" min="0" value="0.0"
-                        class="form-control itemvalue"
-                        name="item_value[]" required>
-                </td>
-                <td>
-                    <input type="number" step="1" min="1" value="1" class="form-control count" onkeyup="calculateTot()" name="count[]">
-                </td>
-                <td>
-                    <button class="btn btn-danger" type="button" onclick="removeRow(this)"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
 
-            items_list.append(mar);
-        }
 
-        function removeRow(obj) {
-            $(obj).closest('tr').remove();
-            setTimeout(() => {
-                $('input[name="weight[]"]').trigger('input');
-            }, 200);
-        }
 
-        function calculateTot() {
-            let the_classes = ['len', 'width', 'height', 'weight', 'count', 'itemvalue']
-            for (let i = 0; i < the_classes.length; i++) {
-                let total = 0;
-                $('.' + the_classes[i]).each(function(o, e) {
-                    if ($(this).val() != '') {
-                        let c = (!$(this).hasClass('count')) ? $(this).parent().parent().find('.count').val() :
-                            1; //find the count/qty on that row except for the count col
-                        total = total + (parseFloat($(this).val()) * parseFloat(c));
-                    }
-                })
-                $('#' + the_classes[i] + '-tot').text(total);
-                $('#' + the_classes[i] + '_tot').val(total)
-            }
-        }
 
-        function calculateTotItems(item_class) {
-            let total = 0;
-            $('.' + item_class).each(function(i, e) {
-                if ($(this).val() != '') {
-                    total = total + 1
-                }
-            })
-            $('#' + item_class + '-tot').text(total);
-            $('#type-tot').val(total);
-        }
+
 
         function verifyTaxCode() {
             let tax_code = $('#tax_code').val();
@@ -1197,12 +1286,6 @@
                             $('#doc_type').val(data.doc_type);
                             $('#doc_front_img').attr('src', data.doc_front_img);
                             $('#doc_back_img').attr('src', data.doc_back_img);
-                            $('.stage0').removeClass('d-none');
-
-                            $('#ship_from_country').select2();
-                            $('#ship_from_city').select2();
-                            $('#ship_to_country').select2();
-                            $('#ship_to_city').select2();
 
                             $('#tax_code_status_text').addClass('text-success');
                             $('#tax_code_status_text').removeClass('text-danger');
@@ -1222,12 +1305,7 @@
                                 'Customer No / Tax Code Is Invalid, Please fill data accordingly');
                             $('#kyc_status_text').addClass('text-danger');
                             $('#kyc_status_text').removeClass('text-success');
-                            $('.stage0').removeClass('d-none');
 
-                            $('#ship_from_country').select2();
-                            $('#ship_from_city').select2();
-                            $('#ship_to_country').select2();
-                            $('#ship_to_city').select2();
                         }
                     },
                     error: function(xhr, status, error) {
@@ -1281,41 +1359,14 @@
             let ship_from_city = $('#ship_from_city').val();
             let ship_to_country = $('#ship_to_country').val();
             let ship_to_city = $('#ship_to_city').val();
-            let widthArray = [];
-            let heightArray = [];
-            let weightArray = [];
-            let lengthArray = [];
-            let descArray = [];
-            let valueArray = [];
-            let countArray = [];
+            let weightTotal = $('#weight_tot').val();
+            let widthTotal = $('#width_tot').val();
+            let heightTotal = $('#len_tot').val();
+            let lengthTotal = $('#height_tot').val();
+            let valueTotal = $('#itemvalue_tot').val();
+            let countTotal = $('#count_tot').val();
 
-            $('input[name="width[]"]').each(function() {
-                widthArray.push(parseFloat($(this).val()));
-            });
 
-            $('input[name="height[]"]').each(function() {
-                heightArray.push(parseFloat($(this).val()));
-            });
-
-            $('input[name="weight[]"]').each(function() {
-                weightArray.push(parseFloat($(this).val()));
-            });
-
-            $('input[name="length[]"]').each(function() {
-                lengthArray.push(parseFloat($(this).val()));
-            });
-
-            $('input[name="count[]"]').each(function() {
-                countArray.push(parseFloat($(this).val()));
-            });
-
-            $('input[name="item_value[]"]').each(function() {
-                valueArray.push(parseFloat($(this).val()));
-            });
-
-            $('input[name="item_desc[]"]').each(function() {
-                descArray.push($(this).val());
-            });
 
             $.ajax({
                 url: "{{ route('rates.fetch') }}",
@@ -1326,13 +1377,12 @@
                     ship_to_country: ship_to_country,
                     ship_to_city: ship_to_city,
                     origin: origin,
-                    widthArray: widthArray,
-                    heightArray: heightArray,
-                    weightArray: weightArray,
-                    lengthArray: lengthArray,
-                    descArray: descArray,
-                    valueArray: valueArray,
-                    countArray: countArray
+                    weightTotal: weightTotal,
+                    heightTotal: heightTotal,
+                    widthTotal: widthTotal,
+                    lengthTotal: lengthTotal,
+                    valueTotal: valueTotal,
+                    countTotal: countTotal 
                 },
                 success: function(data) {
                     console.log(data);

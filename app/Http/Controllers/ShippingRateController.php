@@ -83,15 +83,18 @@ class ShippingRateController extends Controller
     public function rates_fetch(Request $request)
     {
         dd($request->all());
-        $request->validate([
-            'origin' => 'required|numeric',
-            'dest' => 'required|numeric',
-            'width' => 'required|numeric',
-            'height' => 'required|numeric',
-            'weight' => 'required|numeric',
-            'length' => 'required|numeric',
-            'count' => 'required|numeric'
-        ]);
+        $shipFromCountryId = $request->ship_from_country_id;
+        $shipFromCityId = $request->ship_from_city_id;
+        $shipToCountryId = $request->ship_to_country_id;
+        $shipToCityId = $request->ship_to_city_id;
+        $totalWeight = $request->weightTotal;
+        $shippingCostPrice = 0;
+        $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight',(int) $totalWeight)->first();
+        if ($shipFromCountryId == $shipToCountryId) {
+        }else{
+            $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight',(int) $totalWeight)->first();
+            
+        }
 
         $o = Location::find($request->origin);
         $d = Location::find($request->dest);
@@ -116,6 +119,7 @@ class ShippingRateController extends Controller
             ->with(['destination', 'origin'])
             ->limit(20)
             ->get();
+
 
         $resp = ['siopay' => $rates, 'fedex' => ''];
         return response()->json($resp);
