@@ -201,8 +201,11 @@ class OrderBatchController extends Controller
                 'ship_to_city_id' => $request->ship_to_city_id,
                 'batch_id' => $b->id,
             ]);
-
-
+                
+            Order::whereIn('id', $request->order_id)->update([
+                   'batch_id' => $b->id,
+            ]);
+            
             foreach ($request->order_id as $value) {
                 $batchorder_log = new BatchorderLog();
                 $batchorder_log->batch_id = $b->id;

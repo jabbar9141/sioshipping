@@ -99,8 +99,11 @@ Route::get('/test', function(){
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_30_184059_add_column_order_batches_table.php'
     // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_31_121342_remove_contrained_from_orders_table.php'
+    // ]);
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_08_30_185559_add_column_new_order_batches_table.php'
+        '--path' => 'database/migrations/2024_08_31_145846_add_new_columns_orders_table.php'
     ]);
     return "Success";
 });
