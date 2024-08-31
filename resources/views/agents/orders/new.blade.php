@@ -372,18 +372,19 @@
                                 <input type="hidden" name="count_tot" id="count_tot">
                             </div>
                         </div>
-                        <button type="button" onclick="getRates()" class="btn btn-primary">Get Available Rates</button>
+                        <button type="button" onclick="getRates()" class="btn btn-primary">Calculate Shiping
+                            Cost</button>
                         <hr>
-                        <h5>Shipping Rates</h5>
+                        <h5>Shipping Cost</h5>
                         <div class="table-responsive">
                             <table id="locations_tbl" class="table table-sm  table-bordered table-striped display">
                                 <thead>
                                     <tr>
-                                        <th>Select <i class="text-danger">*</i></th>
-                                        <th>Name</th>
-                                        <th>Time</th>
-                                        <th>Locations</th>
-                                        <th>Price(&euro;)</th>
+                                        <th>Ship From</i></th>
+                                        <th>Ship To</th>
+                                        <th>Total Weight</th>
+                                        <th>Shipping Cost</th>
+                                        <th>Total Price</th>
                                     </tr>
                                 </thead>
                                 <tbody id="shipping_rate_list">
@@ -1382,81 +1383,48 @@
                     widthTotal: widthTotal,
                     lengthTotal: lengthTotal,
                     valueTotal: valueTotal,
-                    countTotal: countTotal 
+                    countTotal: countTotal
                 },
                 success: function(data) {
-                    console.log(data);
+                    if (data.success) {
+                        console.log(data);
+                        let result = data.data;
 
-                    if (data.siopay.length > 0 || data.fedex) {
                         siopay = data.siopay;
                         let fedex = data.fedex;
                         let mar = '';
-                        for (let j = 0; j < siopay.length; j++) {
-                            mar += `
+
+                        mar += `
                                     <tr>
                                         <td>
-                                            <input type = 'radio' value = ${siopay[j].id} name = 'rate' id = "rate_${siopay[j].id}" required>
+                                           ${result.ship_from}
                                         </td>
                                         <td>
-                                            ${siopay[j].name}
+                                            ${result.ship_to}
                                         </td>
                                         <td>
-                                            ${siopay[j].transit_days} Days
+                                            ${result.total_weight}
                                         </td>
                                         <td>
-                                            Origin: ${siopay[j].origin.name}
-                                            Destination: ${siopay[j].destination.name}
+                                            ${ result.shipping_cost }
                                         </td>
                                         <td>
-                                            ${siopay[j].price}
+                                            ${ result.total }
                                         </td>
                                     </tr>
-
                                 `;
-                        }
                         $('#shipping_rate_list').html(mar);
-                        if (fedex) {
-                            mar += `
-                                    <tr>
-                                        <td>
-                                            <input type = 'radio' value = 'FEDEX' name = 'rate' id = "rate_fedex" required>
-                                        </td>
-                                        <td>
-                                            FedEx
-                                        </td>
-                                        <td>
-                                            Origin: ${origin}
-                                            Destination: ${dest}
-                                        </td>
-                                        <td>
-                                            Min: ${weight}
-                                            Max: ${weight}
-                                        </td>
-                                        <td>
-                                            ${fedex}
-                                        </td>
-                                        <td>
-                                            Width: ${width}
-                                            Height: ${height}
-                                            Length: ${length}
-                                        </td>
-                                    </tr>
-
-                                `;
-                        }
-                        $('#shipping_rate_list').html(mar);
-                        //show second stage of form
                         $('.stage_2').show();
+                        //show second stage of form
                     } else {
-                        console.log('No results');
-                        ($('#shipping_rate_list').html(
-                            '<tr><td colspan="6">No results found</td></tr>'));
-                        //hide second stage of form
-                        $('.stage_2').hide();
+                        toastr.error(data.message);
                     }
+
+
                 },
                 error: function(data) {
                     console.log(data);
+                    toastr.error('Something went wrong');
 
                 }
             });

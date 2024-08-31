@@ -38,7 +38,7 @@ class ShippingRateController extends Controller
      */
     public function shippingRatesList()
     {
-        
+
         $items = Country::select('countries.id', 'countries.name', 'countries.iso2')
             ->leftJoin('shipping_costs', 'countries.id', '=', 'shipping_costs.country_id')
             ->selectRaw('MIN(shipping_costs.weight) as min_weight, MAX(shipping_costs.weight) as max_weight')
@@ -82,22 +82,29 @@ class ShippingRateController extends Controller
      */
     public function rates_fetch(Request $request)
     {
-        dd($request->all());
-        $shipFromCountryId = $request->ship_from_country_id;
-        $shipFromCityId = $request->ship_from_city_id;
-        $shipToCountryId = $request->ship_to_country_id;
-        $shipToCityId = $request->ship_to_city_id;
-        $totalWeight = $request->weightTotal;
+        $shipFromCountryId = $request->ship_from_country;
+        $shipFromCityId = $request->ship_from_city;
+        $shipToCountryId = $request->ship_to_country;
+        $shipToCityId = $request->ship_to_city;
+        $totalWeight = (int) $request->weightTotal;
         $shippingCostPrice = 0;
-        $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight',(int) $totalWeight)->first();
+        $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight', $totalWeight)->first();
         if ($shipFromCountryId == $shipToCountryId) {
-        }else{
-            $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight',(int) $totalWeight)->first();
-            
+            $cityShppingCost = CityShippingCost::where('country_id', $shipFromCountryId)->where('city_id', $shipFromCityId)->first();
+            if ($cityShppingCost) {
+                $shippingCostPrice = (float) $shippingCost->cost * ((float) $cityShppingCost->percentage ?? 0 / 100);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    "message" => "First Define the shipping cost Of the City",
+                ]);
+            }
+        } else {
+            $shippingCostPrice = (float) $shippingCost->cost;
         }
 
-        $o = Location::find($request->origin);
-        $d = Location::find($request->dest);
+        // $o = Location::find($request->origin);
+        // $d = Location::find($request->dest);
 
         //if the count array and others are not supplied, it means we are estimating the ship cost of a single item
         //most likely a request from the json api, that is cusumed by siostore...this is deprecated, as the rates_fetch_api() method handles external requests now
@@ -109,20 +116,34 @@ class ShippingRateController extends Controller
         // }
 
         //get the rates
-        $rates = ShippingRate::where('origin_id', $request->origin)
-            ->where('destination_id', $request->dest)
-            ->where('weight_start', '<=', $request->weight)
-            ->where('weight_end', '>=', $request->weight)
-            ->where('length', '>=', $request->length)
-            ->where('width', '>=', $request->width)
-            ->where('height', '>=', $request->height)
-            ->with(['destination', 'origin'])
-            ->limit(20)
-            ->get();
+        // $rates = ShippingRate::where('origin_id', $request->origin)
+        //     ->where('destination_id', $request->dest)
+        //     ->where('weight_start', '<=', $request->weight)
+        //     ->where('weight_end', '>=', $request->weight)
+        //     ->where('length', '>=', $request->length)
+        //     ->where('width', '>=', $request->width)
+        //     ->where('height', '>=', $request->height)
+        //     ->with(['destination', 'origin'])
+        //     ->limit(20)
+        //     ->get();
 
 
-        $resp = ['siopay' => $rates, 'fedex' => ''];
-        return response()->json($resp);
+        $resp = [
+            'shipping_cost' => $shippingCostPrice,
+            'ship_from' => 'County : ' . Country::find($shipFromCountryId)->name . '<br>, City : ' . City::find($shipFromCityId)->name,
+            'ship_to' => 'County : ' . Country::find($shipToCountryId)->name . '<br>, City : ' . City::find($shipToCityId)->name,
+            'total_weight' => $request->weightTotal,
+            'heightTotal' => $request->heightTotal,
+            'widthTotal' => $request->widthTotal,
+            'lengthTotal' => $request->lengthTotal,
+            'valueTotal' => $request->valueTotal,
+            'countTotal' => $request->countTotal,
+            'total' => (float) $request->valueTotal + $shippingCostPrice
+         ];
+        return response()->json([
+            'success' => true,
+            'data' => $resp
+        ]);
 
 
 
