@@ -108,7 +108,7 @@ class WalkInCustomerController extends Controller
                 $mar = "<span class= 'badge bg-secondary'>" . (($user->blocked == 1) ? 'Blocked' : 'Active') . "</span><br>";
                 return $mar;
             })
-     
+
             ->addColumn('actions', function ($user) {
                 $mar = '<div class="d-flex">';
                 if ($user->blocked == 1) {
@@ -209,13 +209,13 @@ class WalkInCustomerController extends Controller
                             </div>
                         </div>
                     </div>';
-                    $mar .= '<a href="'.route('dispatchers.edit', $user->dispatcher).'" class="btn btn-sm btn-primary ms-2" data-toggle="tooltip" title="Edit Dispatcher">
+                $mar .= '<a href="' . route('dispatchers.edit', $user->dispatcher) . '" class="btn btn-sm btn-primary ms-2" data-toggle="tooltip" title="Edit Dispatcher">
                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                         </svg>
                     </a></div>';
-                    return $mar;
+                return $mar;
             })
             ->rawColumns(['blocked', 'email', 'date', 'actions'])
             ->make(true);
@@ -341,14 +341,14 @@ class WalkInCustomerController extends Controller
                         </div>
                     </div>';
 
-            $mar .= '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#document' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Information">
+                $mar .= '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#document' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Information">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-code" viewBox="0 0 16 16">
             <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
             <path d="M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708"/>
             </svg>
             </a></div>';
 
-            $mar .= '
+                $mar .= '
                 <div class="modal fade" id="document' . $user->id . 'Modal" tabindex="-1" aria-labelledby="document' . $user->id . 'ModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
@@ -357,14 +357,14 @@ class WalkInCustomerController extends Controller
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <iframe class="pdf" src="'.asset($user->agent->attachment_path).'"  height="650"></iframe>  
+                                <iframe class="pdf" src="' . asset($user->agent->attachment_path) . '"  height="650"></iframe>  
                             </div>
                             <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
-                </div>';    
+                </div>';
                 return $mar;
             })
             ->rawColumns(['blocked', 'email', 'date', 'actions'])
@@ -646,44 +646,24 @@ class WalkInCustomerController extends Controller
     {
         $codiceFiscale = $request->tax_code;
         $cus = WalkInCustomer::where('tax_code', $codiceFiscale)->first();
-        if ($cus) {
+        $res = [];
+        $res = [
+            'isValid' => isset($cus) ? true : false,
+            'dob' => isset($cus) ? $cus->birthDate : null,
+            'gender' => isset($cus) ? $cus->gender : null,
+        ];
+        $res['surname'] = isset($cus) ? $cus->surname : '';
+        $res['name'] = isset($cus) ? $cus->name : '';
+        $res['doc_type'] = isset($cus) ? $cus->doc_type : '';
+        $res['doc_num'] = isset($cus) ? $cus->doc_num : '';
+        $res['kyc_status'] = isset($cus) ? $cus->kyc_status : '';
+        $res['id'] = isset($cus) ? $cus->id : "";
+        $res['phone'] = isset($cus) ? $cus->phone : "";
+        $res['address'] = isset($cus) ? $cus->address : "";
+        $res['email'] = isset($cus) ? $cus->email : '';
+        $res['doc_back_img'] = isset($cus) && $cus->doc_back ? asset('uploads/'.$cus->doc_back) : '';
+        $res['doc_front_img'] = isset($cus) && $cus->doc_front ? asset('uploads/'.$cus->doc_front) : '';
 
-            $res = [
-                'isValid' => true,
-                'dob' => $cus->birthDate,
-                'gender' => $cus->gender
-            ];
-            if ($cus) {
-                $res['surname'] = $cus->surname;
-                $res['name'] = $cus->name;
-                $res['doc_type'] = $cus->doc_type;
-                $res['doc_num'] = $cus->doc_num;
-                $res['kyc_status'] = $cus->kyc_status;
-                $res['id'] = $cus->id;
-                $res['phone'] = $cus->phone;
-                $res['address'] = $cus->address;
-                $res['email'] = $cus->email;
-            } else {
-                $res['surname'] = '';
-                $res['name'] = '';
-                $res['doc_type'] = '';
-                $res['doc_num'] = '';
-                $res['kyc_status'] = '';
-                $res['id'] = '';
-            }
-        } else {
-            $res = [
-                'isValid' => false,
-                'dob' => null,
-                'gender' => null,
-            ];
-            $res['surname'] = '';
-            $res['name'] = '';
-            $res['doc_type'] = '';
-            $res['doc_num'] = '';
-            $res['kyc_status'] = '';
-            $res['id'] = '';
-        }
         echo json_encode($res);
     }
 

@@ -27,7 +27,7 @@
                         <em id="kyc_status_text"></em>
                     </div>
                     <hr>
-                    <div class="stage0" style="display: none;">
+                    <div class="stage0 d-none">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="ui-widget">
@@ -112,21 +112,68 @@
                         <h5>Shipping details</h5>
                         <hr>
                         <div class="row">
-                            <div class="col-md-6">
+
+                            <div class="col-6 mb-2">
                                 <div class="ui-widget">
-                                    <label for="origin">Shipping from <i class="text-danger">*</i> : </label>
+                                    <label for="origin">Shipping from Country<i class="text-danger">*</i> : </label>
+                                    <select name="ship_from_country" id="ship_from_country" class="form-control">
+
+                                    </select>
+                                    @error('ship_from_country')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                    {{-- <label for="origin">Shipping from <i class="text-danger">*</i> : </label>
                                     <input type="text" id="origin" name="origin_" value="{{ old('origin_') }}"
                                         class="form-control" autocomplete="off">
                                     <input type="hidden" name="origin_id" value="{{ old('origin_id') }}"
-                                        id="origin_id">
+                                        id="origin_id"> --}}
+
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-6 mb-2">
                                 <div class="ui-widget">
-                                    <label for="dest">Shipping To <i class="text-danger">*</i> : </label>
+                                    <label for="origin">Shipping from City<i class="text-danger">*</i> : </label>
+                                    <select name="ship_from_city" id="ship_from_city" class="form-control">
+                                    </select>
+                                    @error('ship_from_city')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <div class="ui-widget">
+                                    <label for="ship_to_country">Shipping to Country<i class="text-danger">*</i> :
+                                    </label>
+                                    <select name="ship_to_country" id="ship_to_country" class="form-control">
+
+                                    </select>
+                                    @error('ship_to_country')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <div class="ui-widget">
+                                    <label for="ship_to_city">Shipping to City<i class="text-danger">*</i> : </label>
+                                    <select name="ship_to_city" id="ship_to_city" class="form-select select2">
+                                    </select>
+                                    @error('ship_to_city')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                    {{-- <label for="dest">Shipping To <i class="text-danger">*</i> : </label>
                                     <input type="text" id="dest" name="dest_" value="{{ old('dest_') }}"
                                         class="form-control" autocomplete="off">
-                                    <input type="hidden" name="dest_id" value="{{ old('dest_id') }}" id="dest_id">
+                                    <input type="hidden" name="dest_id" value="{{ old('dest_id') }}" id="dest_id"> --}}
                                 </div>
                             </div>
                         </div>
@@ -277,13 +324,13 @@
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <label for="s_phone">Sender Phone <i class="text-danger">*</i></label>
-                                            <input type="text" value="{{ auth()->user()->agent->phone }}" name="s_phone"
-                                                class="form-control" required>
+                                            <input type="text" value="{{ auth()->user()->agent->phone }}"
+                                                name="s_phone" class="form-control" required>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label for="s_phone_alt">Sender Phone Alt. (optional)</label>
-                                            <input type="text" value="{{ auth()->user()->agent->phone_alt}}" name="s_phone_alt"
-                                                class="form-control">
+                                            <input type="text" value="{{ auth()->user()->agent->phone_alt }}"
+                                                name="s_phone_alt" class="form-control">
                                         </div>
                                     </div>
                                     <br>
@@ -304,13 +351,14 @@
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <label for="s_zip">Sender zip <i class="text-danger">*</i></label>
-                                            <input type="text" name="s_zip" value="{{ auth()->user()->agent->zip }}"
-                                                class="form-control" required>
+                                            <input type="text" name="s_zip"
+                                                value="{{ auth()->user()->agent->zip }}" class="form-control" required>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label for="s_city">Sender city <i class="text-danger">*</i></label>
-                                            <input type="text" name="s_city" value="{{ auth()->user()->agent->city->name }}"
-                                                class="form-control" required>
+                                            <input type="text" name="s_city"
+                                                value="{{ auth()->user()->agent->city->name }}" class="form-control"
+                                                required>
                                         </div>
                                     </div>
                                     <br>
@@ -318,14 +366,16 @@
                                         <div class="form-group col-md-6">
                                             <label for="s_state">Sender State/Province <i
                                                     class="text-danger">*</i></label>
-                                            <input type="text" name="s_state" value="{{ auth()->user()->agent->state->name }}"
-                                                class="form-control" required>
+                                            <input type="text" name="s_state"
+                                                value="{{ auth()->user()->agent->state->name }}" class="form-control"
+                                                required>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label for="s_country">Sender Country/ Region <i
                                                     class="text-danger">*</i></label>
-                                            <input type="text" name="s_country" value="{{ auth()->user()->agent->country->name }}"
-                                                class="form-control" id="s_country" autocomplete="off" required>
+                                            <input type="text" name="s_country"
+                                                value="{{ auth()->user()->agent->country->name }}" class="form-control"
+                                                id="s_country" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <br>
@@ -464,6 +514,162 @@
 @endsection
 @section('scripts')
     <script>
+        $(document).ready(function() {
+            $('#ship_from_country').select2();
+            $('#ship_from_city').select2();
+            $('#ship_to_country').select2();
+            $('#ship_to_city').select2();
+
+            countries();
+
+            var ship_from_country = $("#ship_from_country");
+            ship_from_country.wrap('<div class="position-relative"></div>');
+            ship_from_country.on('change', function() {
+                $("#ship_from_city").empty()
+                $('#ship_from_city').html('<option value="">Select City</option>');
+
+                var _token = '{{ csrf_token() }}';
+                let url =
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
+                if ($(this).val() > 0) {
+                    // showBlockUI();
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.cities, function(key, value) {
+                                    $("#ship_from_city").append('<option value="' +
+                                        value
+                                        .id + '">' + value.name + '</option>');
+                                });
+                                $("#ship_from_city").trigger('change');
+                                // hideBlockUI();
+                                @if (!is_null(old('residential.city')))
+                                    $('#ship_from_city').val({{ old('residential.city') }});
+                                    $('#ship_from_city').trigger('change')
+                                @endif
+                            } else {
+                                // hideBlockUI();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    title: 'Are You Sure',
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            // hideBlockUI();
+                        }
+                    });
+                } else {
+                    // hideBlockUI();
+                }
+                // hideBlockUI();
+
+            });
+
+            var ship_to_country = $("#ship_to_country");
+            ship_to_country.wrap('<div class="position-relative"></div>');
+            ship_to_country.on('change', function() {
+                $("#ship_to_city").empty()
+                $('#ship_to_city').html('<option value="">Select City</option>');
+
+                var _token = '{{ csrf_token() }}';
+                let url =
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
+                if ($(this).val() > 0) {
+
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.cities, function(key, value) {
+                                    $("#ship_to_city").append('<option value="' +
+                                        value
+                                        .id + '">' + value.name + '</option>');
+                                });
+                                $("#ship_to_city").trigger('change');
+
+                                @if (!is_null(old('residential.city')))
+                                    $('#ship_to_city').val({{ old('residential.city') }});
+                                    $('#ship_to_city').trigger('change')
+                                @endif
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    title: 'Are You Sure',
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+
+                        }
+                    });
+                } else {
+
+                }
+
+
+            });
+        })
+
+
+        function countries() {
+
+            $('#ship_from_country').html('<option value="">Select Country</option>');
+            $('#ship_to_country').html('<option value="">Select Country</option>');
+            var _token = '{{ csrf_token() }}';
+            let url = "{{ route('ajax-get-countries') }}";
+            $.ajax({
+                url: url,
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    '_token': _token
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $.each(response.countries, function(key, value) {
+                            $("#ship_from_country").append('<option value="' + value.id +
+                                '">' + value.name + '</option>');
+                            $("#ship_to_country").append('<option value="' + value.id +
+                                '">' + value.name + '</option>');
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
         function submit_form() {
             if (!$('#order-form')[0].checkValidity()) {
                 alert('please fill all required fields, all fileds marked * are required')
@@ -937,6 +1143,9 @@
 
         function removeRow(obj) {
             $(obj).closest('tr').remove();
+            setTimeout(() => {
+                $('input[name="weight[]"]').trigger('input');
+            }, 200);
         }
 
         function calculateTot() {
@@ -977,18 +1186,24 @@
                         tax_code: tax_code,
                     },
                     success: function(data) {
-                        console.log(data);
                         data = JSON.parse(data);
                         if (data.isValid == true) {
                             // Populate the "Gender" and "D.O.B" fields
                             $('#gender').val(data.gender);
-                            $('#dob').val(data.dob.date.split(' ')[0]); // Extract and set the date part
+                            $('#dob').val(data.dob);
                             $('#surname').val(data.surname);
                             $('#name').val(data.name);
                             $('#doc_num').val(data.doc_num);
                             $('#doc_type').val(data.doc_type);
+                            $('#doc_front_img').attr('src', data.doc_front_img);
+                            $('#doc_back_img').attr('src', data.doc_back_img);
+                            $('.stage0').removeClass('d-none');
 
-                            $('.stage0').show();
+                            $('#ship_from_country').select2();
+                            $('#ship_from_city').select2();
+                            $('#ship_to_country').select2();
+                            $('#ship_to_city').select2();
+
                             $('#tax_code_status_text').addClass('text-success');
                             $('#tax_code_status_text').removeClass('text-danger');
                             $('#tax_code_status_text').text('Customer No / Tax Code Is Valid');
@@ -1003,17 +1218,19 @@
                                 $('#kyc_status_text').text('KYC Status Is Not Yet Set');
                             }
                         } else {
-                            // Handle invalid tax code
-                            // alert("Invalid tax code");
                             $('#tax_code_status_text').text(
                                 'Customer No / Tax Code Is Invalid, Please fill data accordingly');
                             $('#kyc_status_text').addClass('text-danger');
                             $('#kyc_status_text').removeClass('text-success');
-                            $('.stage0').show();
+                            $('.stage0').removeClass('d-none');
+
+                            $('#ship_from_country').select2();
+                            $('#ship_from_city').select2();
+                            $('#ship_to_country').select2();
+                            $('#ship_to_city').select2();
                         }
                     },
                     error: function(xhr, status, error) {
-                        // Handle AJAX errors
                         console.error("Error:", status, error);
                         alert("An error occurred while processing your request. Please try again later.");
                     }
@@ -1059,14 +1276,11 @@
         $('#doc_back').change(setDocBackSrc);
 
         function getRates() {
-            let origin = $('#origin_id').val();
-            let dest = $('#dest_id').val();
-            let width = $('#width_tot').val();
-            let height = $('#height_tot').val();
-            let weight = $('#weight_tot').val();
-            let length = $('#len_tot').val();
-            let count = $('#count_tot').val();
 
+            let ship_from_country = $('#ship_from_country').val();
+            let ship_from_city = $('#ship_from_city').val();
+            let ship_to_country = $('#ship_to_country').val();
+            let ship_to_city = $('#ship_to_city').val();
             let widthArray = [];
             let heightArray = [];
             let weightArray = [];
@@ -1076,73 +1290,59 @@
             let countArray = [];
 
             $('input[name="width[]"]').each(function() {
-                // Push the value of each input to the widthArray
                 widthArray.push(parseFloat($(this).val()));
             });
 
             $('input[name="height[]"]').each(function() {
-                // Push the value of each input to the widthArray
                 heightArray.push(parseFloat($(this).val()));
             });
 
             $('input[name="weight[]"]').each(function() {
-                // Push the value of each input to the widthArray
                 weightArray.push(parseFloat($(this).val()));
             });
 
             $('input[name="length[]"]').each(function() {
-                // Push the value of each input to the widthArray
                 lengthArray.push(parseFloat($(this).val()));
             });
 
             $('input[name="count[]"]').each(function() {
-                // Push the value of each input to the widthArray
                 countArray.push(parseFloat($(this).val()));
             });
 
             $('input[name="item_value[]"]').each(function() {
-                // Push the value of each input to the widthArray
                 valueArray.push(parseFloat($(this).val()));
             });
 
             $('input[name="item_desc[]"]').each(function() {
-                // Push the value of each input to the widthArray
                 descArray.push($(this).val());
             });
 
+            $.ajax({
+                url: "{{ route('rates.fetch') }}",
+                type: "GET",
+                data: {
+                    ship_from_country: ship_from_country,
+                    ship_from_city: ship_from_city,
+                    ship_to_country: ship_to_country,
+                    ship_to_city: ship_to_city,
+                    origin: origin,
+                    widthArray: widthArray,
+                    heightArray: heightArray,
+                    weightArray: weightArray,
+                    lengthArray: lengthArray,
+                    descArray: descArray,
+                    valueArray: valueArray,
+                    countArray: countArray
+                },
+                success: function(data) {
+                    console.log(data);
 
-            // if (widthArray.length == heightArray.length == weightArray.length == lengthArray.length) {
-
-            if (origin != '' && dest != '' && width != "" && height != "" && weight != "" && length != "" && count !=
-                "") {
-                $.ajax({
-                    url: "{{ route('rates.fetch') }}",
-                    type: "GET",
-                    data: {
-                        origin: origin,
-                        dest: dest,
-                        width: width,
-                        height: height,
-                        weight: weight,
-                        length: length,
-                        count: count,
-                        widthArray: widthArray,
-                        heightArray: heightArray,
-                        weightArray: weightArray,
-                        lengthArray: lengthArray,
-                        descArray: descArray,
-                        valueArray: valueArray,
-                        countArray: countArray
-                    },
-                    success: function(data) {
-                        console.log(data);
-
-                        if (data.siopay.length > 0 || data.fedex) {
-                            siopay = data.siopay;
-                            let fedex = data.fedex;
-                            let mar = '';
-                            for (let j = 0; j < siopay.length; j++) {
-                                mar += `
+                    if (data.siopay.length > 0 || data.fedex) {
+                        siopay = data.siopay;
+                        let fedex = data.fedex;
+                        let mar = '';
+                        for (let j = 0; j < siopay.length; j++) {
+                            mar += `
                                     <tr>
                                         <td>
                                             <input type = 'radio' value = ${siopay[j].id} name = 'rate' id = "rate_${siopay[j].id}" required>
@@ -1163,10 +1363,10 @@
                                     </tr>
 
                                 `;
-                            }
-                            $('#shipping_rate_list').html(mar);
-                            if(fedex){
-                                mar += `
+                        }
+                        $('#shipping_rate_list').html(mar);
+                        if (fedex) {
+                            mar += `
                                     <tr>
                                         <td>
                                             <input type = 'radio' value = 'FEDEX' name = 'rate' id = "rate_fedex" required>
@@ -1193,25 +1393,25 @@
                                     </tr>
 
                                 `;
-                            }
-                            $('#shipping_rate_list').html(mar);
-                            //show second stage of form
-                            $('.stage_2').show();
-                        } else {
-                            console.log('No results');
-                            ($('#shipping_rate_list').html(
-                                '<tr><td colspan="6">No results found</td></tr>'));
-                            //hide second stage of form
-                            $('.stage_2').hide();
                         }
+                        $('#shipping_rate_list').html(mar);
+                        //show second stage of form
+                        $('.stage_2').show();
+                    } else {
+                        console.log('No results');
+                        ($('#shipping_rate_list').html(
+                            '<tr><td colspan="6">No results found</td></tr>'));
+                        //hide second stage of form
+                        $('.stage_2').hide();
                     }
-                });
-            } else {
-                alert('Please fill out all fields accordingly in order to get rates ');
-            }
-            // } else {
-            //     alert('Please fill out all fields accordingly in order to get rates ');
-            // }
+                },
+                error: function(data) {
+                    console.log(data);
+
+                }
+            });
+
+
 
         }
     </script>

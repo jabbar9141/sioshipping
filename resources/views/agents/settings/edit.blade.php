@@ -62,15 +62,15 @@
                     <!-- Modal -->
                     <div class="modal fade" id="registrationDocumentModal" tabindex="-1" aria-labelledby="registrationDocumentModalLabel"
                         aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="registrationDocumentModalLabel">Registration Document</h5>
+                                    <h5 class="modal-title" id="registrationDocumentModalLabel">Agnet Registration Document</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    
+                                    <iframe class="pdf" src="{{ asset($agent->agent->front_attachment) }}" width="100%" height="650"></iframe>  
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -81,15 +81,15 @@
                     <!-- Modal -->
                     <div class="modal fade" id="fullDocumentModal" tabindex="-1" aria-labelledby="fullDocumentModalLabel"
                         aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="fullDocumentModalLabel">Full Document</h5>
+                                    <h5 class="modal-title" id="fullDocumentModalLabel">Agent Full Document</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    
+                                    <iframe class="pdf" src="{{ asset($agent->agent->attachment_path) }}" width="100%" height="650"></iframe>  
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -106,7 +106,7 @@
                 <h5 class="card-title fw-semibold mb-4">Agent Information</h5>
 
                 <hr>
-                <form action="{{ route('agents.update', $agent) }}" method="post">
+                <form action="{{ route('agents.update', $agent->agent) }}" method="post" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="row">

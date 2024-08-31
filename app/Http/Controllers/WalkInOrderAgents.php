@@ -165,8 +165,7 @@ class WalkInOrderAgents extends Controller
      */
     public function create()
     {
-        $locations = Location::all();
-        return view('agents.orders.new', ['locations' => $locations]);
+        return view('agents.orders.new');
     }
 
     public static $supported_apis = ['FEDEX'];

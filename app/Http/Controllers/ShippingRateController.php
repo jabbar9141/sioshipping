@@ -82,8 +82,7 @@ class ShippingRateController extends Controller
      */
     public function rates_fetch(Request $request)
     {
-
-        // dd($request->all());
+        dd($request->all());
         $request->validate([
             'origin' => 'required|numeric',
             'dest' => 'required|numeric',
