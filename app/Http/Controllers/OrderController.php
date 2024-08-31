@@ -110,8 +110,8 @@ class OrderController extends Controller
                 return $mar;
             })
             ->addColumn('location', function ($order) {
-                $mar = "Origin : " . $order->pickup_location->name . "<br>";
-                $mar .= "Destination:" . $order->delivery_location->name;
+                $mar = "Origin : " . $order?->pickup_location?->name ?? '' . "<br>";
+                $mar .= "Destination:" . $order?->delivery_location?->name ?? '' . "<br>";
                 return $mar;
             })
             ->addColumn('date', function ($order) {
@@ -135,7 +135,7 @@ class OrderController extends Controller
             //     }
             // })
             ->addColumn('price', function ($order) {
-                $mar = $order->shipping_rate->price . "<br>";
+                $mar = $order->val_of_goods . "<br>";
                 return $mar;
             })
             ->addColumn('view', function ($order) {

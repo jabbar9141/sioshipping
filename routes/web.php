@@ -95,15 +95,21 @@ Route::get('/test', function(){
     // ]);
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_30_182959_change_column_order_batches_table.php'
-    // ])
+    // ]);
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_30_184059_add_column_order_batches_table.php'
     // ]);
     // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_08_31_121342_remove_contrained_from_orders_table.php'
+    //     '--path' => 'database/migrations/2024_08_31_121341_remove_contrained_from_orders_table.php'
     // ]);
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_145846_add_new_columns_orders_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_30_185559_add_column_new_order_batches_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_31_222045_add_current_location_address_into_batchlogs_table.php'
     // ]);
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_190358_add_new_columns_orderss_table.php'
