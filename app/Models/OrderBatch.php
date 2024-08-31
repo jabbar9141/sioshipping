@@ -14,7 +14,7 @@ class OrderBatch extends Model
         'dispatcher_id',
         'status',
         'location_id',
-        'batch_tracking_id'
+        'batch_tracking_id',
     ];
 
     public function location()

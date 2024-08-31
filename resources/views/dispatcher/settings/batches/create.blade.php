@@ -13,13 +13,13 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                @if($errors->any())
-                @foreach ($errors->all() as $error)
-                    <li class="text-danger">{{ $error }}</li>
-                @endforeach
-                
+                {{--  @if ($errors->any())
+                    @foreach ($errors->all() as $error)
+                        <li class="text-danger">{{ $error }}</li>
+                    @endforeach
+
                 @endif
-                @include('admin.partials.notification')
+                @include('admin.partials.notification')  --}}
 
                 <form action="{{ route('batches.store') }}" method="post">
                     @csrf
@@ -34,7 +34,7 @@
 
                         <div class="col-12 col-lg-6">
                             <label for="origin">Select Orders<i class="text-danger">*</i> : </label>
-                            <select  name="order_id[]" id="orders" class="form-control" multiple>
+                            <select name="order_id[]" id="orders" class="form-control" multiple>
                             </select>
                             @error('order_id')
                                 <p class="text-danger">{{ $message }}</p>
@@ -45,38 +45,53 @@
                     <div class="row">
                         <div class="col-12 col-lg-6">
                             <label for="origin">Shipping from Country<i class="text-danger">*</i> : </label>
-                            <select name="shipt_from_country_id" id="ship_from_country" class="form-control">
+                            <select name="ship_from_country_id" id="ship_from_country" class="form-control">
 
                             </select>
-                            @error('shipt_from_country_id')
-                            <p class="text-danger">{{ $message }}</p>
-                        @enderror
+                            @error('ship_from_country_id')
+                                <p class="text-danger">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="col-12 col-lg-6 ">
                             <label for="origin">Shipping from City<i class="text-danger">*</i> : </label>
-                            <select name="shipt_from_city_id" id="ship_from_city" class="form-control">
+                            <select name="ship_from_city_id" id="ship_from_city" class="form-control">
                             </select>
-                            @error('shipt_from_city_id')
-                            <p class="text-danger">{{ $message }}</p>
-                        @enderror
+                            @error('ship_from_city_id')
+                                <p class="text-danger">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-12 col-lg-6">
                             <label for="origin">Shipping to Country<i class="text-danger">*</i> : </label>
-                            <select name="shipt_to_country_id" id="ship_to_country" class="form-control">
+                            <select name="ship_to_country_id" id="ship_to_country" class="form-control">
 
                             </select>
-                            @error('shipt_to_country_id')
+                            @error('ship_to_country_id')
                                 <p class="text-danger">{{ $message }}</p>
                             @enderror
                         </div>
                         <div class="col-12 col-lg-6">
                             <label for="origin">Shipping to City<i class="text-danger">*</i> : </label>
-                            <select name="shipt_to_city_id" id="ship_to_city" class="form-control">
+                            <select name="ship_to_city_id" id="ship_to_city" class="form-control">
                             </select>
-                            @error('shipt_to_city_id')
+                            @error('ship_to_city_id')
+                                <p class="text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-12 col-lg-6">
+                            <label for="origin">Dispachers<i class="text-danger">*</i> : </label>
+                            <select name="dispatcher_id" id="dispatcher_id" class="form-control">
+                                <option value="">Select Dispatcher</option>
+                                @foreach ($dispachers as $dispacher)
+                                    <option value="{{ $dispacher->id }}">{{ $dispacher->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('dispatcher_id')
                                 <p class="text-danger">{{ $message }}</p>
                             @enderror
                         </div>
@@ -303,8 +318,9 @@
 
         }
         gitOrders();
+
         function gitOrders() {
-            let Url =  "{{ route('ajax-get-paced-orders') }}";
+            let Url = "{{ route('ajax-get-paced-orders') }}";
             $('#orders').html('<option value="" >Select Order</option>');
             $.ajax({
                 url: Url,
@@ -314,7 +330,8 @@
                     console.log(responce.ordres);
                     if (responce.ordres) {
                         $.each(responce.ordres, function(key, value) {
-                            $("#orders").append('<option value="' + value.id + '">' + value.tracking_id +
+                            $("#orders").append('<option value="' + value.id + '">' + value
+                                .tracking_id +
                                 '</option>')
                         });
                     } else {
@@ -328,8 +345,7 @@
 
             });
 
-           
+
         }
-        
     </script>
 @endsection

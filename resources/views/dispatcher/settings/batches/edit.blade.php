@@ -14,12 +14,12 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                @include('admin.partials.notification')
+                {{--  @include('admin.partials.notification')  --}}
                 <div class="d-flex gap-5">
-                <p><b>Batch Name : {{ $batch->name }}</b></p>
-                <p><b>Batch Trackind : {{ $batch->batch_tracking_id }}</b></p>
-            </div>
-                
+                    <p><b>Batch Name : {{ $batch->name }}</b></p>
+                    <p><b>Batch Trackind : {{ $batch->batch_tracking_id }}</b></p>
+                </div>
+
                 <form action="{{ route('batches.update', $batch->id) }}" method="post">
                     @csrf
                     @method('PUT')
@@ -27,39 +27,47 @@
                         <div class="col-6">
                             <div class="ui-widget">
                                 <label for="origin">Shipping From Country </label>
-                                <input type="text" id="origin" name="origin_" value="{{ $batch->batchlogs->first()->shipFromCountry->name }}"
-                                    class="form-control" autocomplete="off" readonly>
-                               
+                                <input type="text" id="origin" name="origin_"
+                                    value="{{ $batch->batchlogs->first()->shipFromCountry->name }}" class="form-control"
+                                    autocomplete="off" readonly>
+                                <input type="hidden" name="ship_from_country_id" value="{{ $lastCountryId }}">    
+
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="ui-widget">
                                 <label for="origin">Shipping From City </label>
-                                <input type="text" id="origin" name="origin_" value="{{ $batch->batchlogs->first()->shipFromCity->name }}"
-                                    class="form-control" autocomplete="off" readonly>
-                               
+                                <input type="text" id="origin" name="origin_"
+                                    value="{{ $batch->batchlogs->first()->shipFromCity->name }}" class="form-control"
+                                    autocomplete="off" readonly>
+                                <input type="hidden" name="ship_from_city_id" value="{{ $lastCityId }}">    
+
                             </div>
                         </div>
+                    </div>
+             
+                    <div class="row mb-2">
+                        <div class="col-12 col-lg-6">
+                            <label for="origin">Shipping to Country<i class="text-danger">*</i> : </label>
+                            <select id="ship_to_country_id" name="ship_to_country_id" class="form-select">
+                    
+                            </select>
+                            @error('ship_to_country_id')
+                                <p class="text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <label for="origin">Shipping to City<i class="text-danger">*</i> : </label>
+                            <select name="ship_to_city_id" id="ship_to_city_id" class="form-control">
+                            </select>
+                            @error('ship_to_city_id')
+                                <p class="text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                     </div>
                     <div class="row mb-2">
-                        <div class="col-6">
-                            <div class="ui-widget">
-                                <label for="origin">Shipping To Country </label>
-                                <input type="text" id="origin" name="origin_" value=""
-                                    class="form-control" autocomplete="off" readonly>
-                               
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="ui-widget">
-                                <label for="origin">Shipping To City </label>
-                                <input type="text" id="origin" name="origin_" value=""
-                                    class="form-control" autocomplete="off" readonly>
-                               
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
                         <div class="form-group">
                             <label for="status">Status</label>
                             <select name="status" id="status" class="form-control">
@@ -74,7 +82,7 @@
                             </select>
                         </div>
                     </div>
-                  
+
                     <br>
                     <button type="submit"
                         onclick="return confirm('Are you sure you wish to update this batch, all changes set will affect all associated orders')"
@@ -102,5 +110,106 @@
                 event.preventDefault();
             }
         });
+
+        $(document).ready(function() {
+            $('#ship_to_country_id').select2();
+            $('#ship_to_city_id').select2();
+
+            countries();
+            function countries() {
+                $('#ship_to_country_id').html('<option value="">Select Country</option>');
+                var _token = '{{ csrf_token() }}';
+                let url = "{{ route('ajax-edit-countries') }}";
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        '_token': _token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $.each(response.countries, function(key, value) {
+                                $("#ship_to_country_id").append('<option value="' + value.id +
+                                    '">' + value.name + '</option>');
+                            });
+ 
+                            @if (isset($lastCountryId))
+                                $('#ship_to_country_id').val({{ $lastCountryId }});
+                                $('#ship_to_country_id').trigger('change');
+                            @endif
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+
+
+            }
+        });
+
+
+        var ship_to_country_id = $("#ship_to_country_id");
+            ship_to_country_id.wrap('<div class="position-relative"></div>');
+            ship_to_country_id.on('change', function() {
+                $("#ship_to_city_id").empty()
+                $('#ship_to_city_id').html('<option value="">Select City</option>');
+
+                var _token = '{{ csrf_token() }}';
+                let url =
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
+                if ($(this).val() > 0) {
+
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.cities, function(key, value) {
+                                    $("#ship_to_city_id").append('<option value="' +
+                                        value
+                                        .id + '">' + value.name + '</option>');
+                                });
+                                $("#ship_to_city_id").trigger('change');
+
+                                @if (isset($lastCityId))
+                                    $('#ship_to_city_id').val({{ $lastCityId }});
+                                    $('#ship_to_city_id').trigger('change')
+                                @endif
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    title: 'Are You Sure',
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+
+                        }
+                    });
+                } else {
+
+                }
+
+
+            });
+        
     </script>
 @endsection
