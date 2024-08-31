@@ -49,7 +49,8 @@ class Order extends Model
         'val_cur',
         'terms_of_sale',
         'customs_inv_num',
-        'provider'
+        'provider',
+        'shipping_cost'
     ];
 
     public function customer()

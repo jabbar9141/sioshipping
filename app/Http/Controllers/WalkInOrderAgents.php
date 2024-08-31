@@ -367,12 +367,12 @@ class WalkInOrderAgents extends Controller
             $l->delivery_location_city_id = $request->ship_to_city;
             $l->save();
             // for ($o = 0; $o < count($request->group-a); $o++) {
-            $l = Order::find(30);
+           
             $totalWeight = 0;
             foreach ($request->items as $key => $item) {
                    
                 $orderPackage = new OrderPackage;
-                $orderPackage->order_id = 30;
+                $orderPackage->order_id = $l->id;
                 $orderPackage->type = $item['type'];
                 $orderPackage->length = $item['len'];
                 $orderPackage->width = $item['width'];
@@ -381,7 +381,6 @@ class WalkInOrderAgents extends Controller
                 $orderPackage->qty = $item['count'];
                 $orderPackage->item_desc = $item['item_desc'];
                 $orderPackage->item_value = $item['item_value'];
-                // return $orderPackage;
                 $orderPackage->save();
             }
 
@@ -477,7 +476,7 @@ class WalkInOrderAgents extends Controller
             // }
 
             DB::commit();
-            return redirect()->route('walk_in_customer_order.index')->with(['message' => 'Order saved You can proceed to add it to a batch', 'message_type' => 'success']);
+            return redirect()->route('agentsOrders')->with(['message' => 'Order saved You can proceed to add it to a batch', 'message_type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage(), ['exception' => $e]);
