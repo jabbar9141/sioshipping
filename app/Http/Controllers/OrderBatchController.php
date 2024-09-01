@@ -19,6 +19,7 @@ use Carbon\Carbon;
 
 use App\Mail\PaymentEmail;
 use App\Models\Dispatcher;
+use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Mail;
 
 class OrderBatchController extends Controller
@@ -81,6 +82,10 @@ class OrderBatchController extends Controller
     public function batchOrdersList($batch_id)
     {
         $orders = Order::where('batch_id', $batch_id)->orderBy('created_at', 'DESC')->get();
+        $batchLog = Batchlog::where('batch_id', $batch_id)->first();
+        $originLocation =  $batchLog->shipFromCountry->name . ", " . $batchLog->shipFromCity->name ?? " ";
+        $destinationLocation =  $batchLog->shipToCountry->name . ", " . $batchLog->shipToCity->name ?? " ";
+        $currentLocation =  Batchlog::where('batch_id', $batch_id)->orderBy('id', 'desc')->first()->shipCurrentCountry->name . ", " . Batchlog::where('batch_id', $batch_id)->orderBy('id', 'desc')->first()->shipCurrentCity->name ?? " ";
 
         return Datatables::of($orders)
             ->addIndexColumn()
@@ -88,15 +93,17 @@ class OrderBatchController extends Controller
                 $mar = "<span class= 'badge bg-secondary'>" . $order->status . "</span>";
                 return $mar;
             })
-            ->addColumn('location', function ($order) {
-                $mar = "Origin : " . $order->pickup_location->name . "<br>";
-                $mar .= "Destination:" . $order->delivery_location->name;
+            ->addColumn('location', function ($order) use ($originLocation, $destinationLocation, $currentLocation) {
+                $mar = "Origin : " . $originLocation . "<br>";
+                $mar .= "Destination :" . $destinationLocation . "<br>";
+                $mar .= "Current :" . $currentLocation;
+
                 return $mar;
             })
             ->addColumn('date', function ($order) {
-                $mar = "<b> Tracking ID : " . $order->tracking_id . "</b><br><br>";
-                $mar .= "Created at : " . $order->created_at . "<br>";
-                $mar .= "Last updated:" . $order->updated_at;
+                $mar = "<b> Tracking ID : " . $order->tracking_id . "<br>";
+                $mar .= "Created at : " . SupportCarbon::parse($order->created_at)->format('F j, Y,') . "<br>";
+                $mar .= "Last updated:" . SupportCarbon::parse($order->updated_at)->format('F j, Y,');
                 return $mar;
             })
             ->addColumn('parties', function ($order) {
@@ -109,7 +116,7 @@ class OrderBatchController extends Controller
                 return '<a href="' . $edit_url . '" class="btn btn-info btn-sm" ><i class="fa fa-pencil"></i> Edit</a>';
             })
             ->addColumn('price', function ($order) {
-                $mar = $order->shipping_rate->price . "<br>";
+                $mar = $order->val_of_goods . "<br>";
                 return $mar;
             })
             ->addColumn('view', function ($order) {
@@ -199,13 +206,15 @@ class OrderBatchController extends Controller
                 'ship_from_city_id' => $request->ship_from_city_id,
                 'ship_to_country_id' => $request->ship_to_country_id,
                 'ship_to_city_id' => $request->ship_to_city_id,
+                'current_location_county_id' => $request->ship_to_country_id,
+                'current_location_city_id' => $request->ship_to_city_id,
                 'batch_id' => $b->id,
             ]);
-                
+
             Order::whereIn('id', $request->order_id)->update([
-                   'batch_id' => $b->id,
+                'batch_id' => $b->id,
             ]);
-            
+
             foreach ($request->order_id as $value) {
                 $batchorder_log = new BatchorderLog();
                 $batchorder_log->batch_id = $b->id;
@@ -230,8 +239,40 @@ class OrderBatchController extends Controller
     public function show($orderBatch)
     {
         $batch = OrderBatch::where('id', $orderBatch)->first();
-        
-        return view('dispatcher.settings.batches.show', ['batch' => $batch]);
+        $batchLogs = $batch->batchlogs()->orderBy('id', 'asc')->get();
+        $loactions = [];
+        $start = 1;
+        $end = count($batchLogs);
+        if (count($batchLogs) > 0) {
+            foreach ($batchLogs as $log) {
+                if ($start == 1) {
+                    $loactions[] = [
+                        'name' => $log->shipFromCountry->name . ', ' . $log->shipFromCity->name,
+                        'latitude' => $log->shipFromCity->latitude,
+                        'longitude' => $log->shipFromCity->longitude,
+                        'type' => 'pickup'
+                    ];
+                }else{
+                    $loactions[] = [
+                        'name' => $log->shipCurrentCountry->name . ', ' . $log->shipCurrentCity->name,
+                        'latitude' => $log->shipCurrentCity->latitude,
+                        'longitude' => $log->shipCurrentCity->longitude,
+                        'type' => 'current'
+                    ];
+                }
+                if ($start == $end) {
+                    $loactions[] = [
+                        'name' => $log->shipToCountry->name . ', ' . $log->shipToCity->name,
+                        'latitude' => $log->shipToCity->latitude,
+                        'longitude' => $log->shipToCity->longitude,
+                        'type' => 'delivery'
+                    ];
+                }
+               
+                $start++;
+            }
+        }
+        return view('dispatcher.settings.batches.show', ['batch' => $batch, 'loactions' => $loactions]);
     }
 
     /**
@@ -243,13 +284,13 @@ class OrderBatchController extends Controller
     public function edit($orderBatch)
     {
         $orderBatch = OrderBatch::where('id', $orderBatch)->first();
-        $lastCountryId = Batchlog::where('batch_id', $orderBatch->id)->orderBy('id','desc')->first()->ship_to_country_id ?? 0;
-        $lastCityId = Batchlog::where('batch_id', $orderBatch->id)->orderBy('id','desc')->first()->ship_to_city_id ?? 0;
- 
+        $lastCountryId = Batchlog::where('batch_id', $orderBatch->id)->orderBy('id', 'desc')->first()->current_location_county_id ?? 0;
+        $lastCityId = Batchlog::where('batch_id', $orderBatch->id)->orderBy('id', 'desc')->first()->current_location_city_id ?? 0;
+
         $data = [
-           'batch' => $orderBatch,
-           'lastCountryId'=> $lastCountryId,
-           'lastCityId' => $lastCityId
+            'batch' => $orderBatch,
+            'lastCountryId' => $lastCountryId,
+            'lastCityId' => $lastCityId
         ];
         //  return $data;
         // $loc_str = $orderBatch->location->postcode . '-' . $orderBatch->location->name . ' [Lat: ' . $orderBatch->location->latitude . ', Long: ' . $orderBatch->location->longitude . ']';
@@ -294,10 +335,9 @@ class OrderBatchController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $orderBatch)
-    {   
+    {
+        // return $request;
         $request->validate([
-            'ship_from_country_id' => 'required|numeric',
-            'ship_from_city_id' => 'required|numeric',
             'ship_to_country_id' => 'required|numeric',
             'ship_to_city_id' => 'required|numeric',
             'status' => 'required'
@@ -309,12 +349,15 @@ class OrderBatchController extends Controller
             $orderBatch->update([
                 'status' => $request->status
             ]);
-        
+            $firstLog = Batchlog::where('batch_id', $orderBatch->id)->first();
+
             $batch_log = Batchlog::create([
-                'ship_from_country_id' => $request->ship_from_country_id,
-                'ship_from_city_id' => $request->ship_from_city_id,
-                'ship_to_country_id' => $request->ship_to_country_id,
-                'ship_to_city_id' => $request->ship_to_city_id,
+                'ship_from_country_id' => $firstLog->ship_from_country_id,
+                'ship_from_city_id' => $firstLog->ship_from_city_id,
+                'ship_to_country_id' => $firstLog->ship_to_country_id,
+                'ship_to_city_id' => $firstLog->ship_to_city_id,
+                'current_location_county_id' => $request->ship_to_country_id,
+                'current_location_city_id' => $request->ship_to_city_id,
                 'batch_id' => $orderBatch->id,
             ]);
 
@@ -323,22 +366,27 @@ class OrderBatchController extends Controller
                 'status' => $request->status,
                 // 'current_location_id' => $request->origin_id
             ]);
-    
+
+
+
+            DB::commit();
             $oo = Order::where('batch_id', $orderBatch->id)->get();
             foreach ($oo as $o) {
-                Mail::to($o->customer->user->email)->send(new PaymentEmail($o));
-
-                Mail::to($o->pickup_email)->send(new PaymentEmail($o));
-
-                Mail::to($o->delivery_email)->send(new PaymentEmail($o));
+                if ($o->customer) {
+                    Mail::to($o->customer->user->email)->send(new PaymentEmail($o));
+                }
+                if ($o->pickup_email) {
+                    Mail::to($o->pickup_email)->send(new PaymentEmail($o));
+                }
+                if ($o->delivery_email) {
+                    Mail::to($o->delivery_email)->send(new PaymentEmail($o));
+                }
             }
-  
-            DB::commit();
             return back()->with(['message' => 'Batch Updated', 'message_type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage(), ['exception' => $e]);
-            return back()->with('message', "An error occured " . $e->getMessage());
+            return back()->with(['message' => "An error occured " . $e->getMessage()]);
         }
     }
 

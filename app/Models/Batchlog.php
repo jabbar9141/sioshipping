@@ -14,6 +14,8 @@ class Batchlog extends Model
         'ship_from_city_id',
         'ship_to_country_id',
         'ship_to_city_id',
+        'current_location_county_id',
+        'current_location_city_id',
         'batch_id',
     ];
 
@@ -39,5 +41,13 @@ class Batchlog extends Model
     {
         return $this->belongsTo(City::class, 'ship_to_city_id');
     }
-   
+
+    public function shipCurrentCountry()
+    {
+        return $this->belongsTo(Country::class, 'current_location_county_id');
+    }
+    public function shipCurrentCity()
+    {
+        return $this->belongsTo(City::class, 'current_location_city_id');
+    }
 }

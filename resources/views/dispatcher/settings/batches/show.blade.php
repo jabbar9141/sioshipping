@@ -9,15 +9,15 @@
         {{-- <hr> --}}
         <div class="card">
             <div class="card-header">
-               <h5>Show Batch</h5> 
+                <h5>Show Batch</h5>
                 {{-- <a href="{{ route('batches.index') }}" class="btn btn-danger float-right"><i
                                 class="fa fa-times"></i>Exit</a> --}}
             </div>
             <!-- /.card-header -->
             <div class="card-body">
                 <p><b>Batch Name : [{{ $batch->name }}]</b></p>
-                <p><b>Current Location : {{ $batch->location->name }}Lat: {{ $batch->location->latitude }} &nbsp;
-                    &nbsp; Long: {{ $batch->location->longitude }} </b></p>
+                {{-- <p><b>Current Location : {{ $batch->location->name }}Lat: {{ $batch->location->latitude }} &nbsp;
+                    &nbsp; Long: {{ $batch->location->longitude }} </b></p> --}}
                 <hr>
                 <h5>Geolocation data</h5>
                 <hr>
@@ -37,7 +37,7 @@
                                 <th>Price(&euro;)</th>
                                 <th>Status</th>
                                 <th>View / Track</th>
-                                <th>Edit</th>
+                                {{-- <th>Edit</th> --}}
                             </tr>
                         </thead>
 
@@ -52,21 +52,46 @@
 @section('scripts')
     <script>
         // Get latitude and longitude values from the server
-        var latitude = {{ $batch->location->latitude }};
-        var longitude = {{ $batch->location->longitude }};
+        let locations = @json($loactions);
 
-        // Initialize the map
-        var map = L.map('map').setView([latitude, longitude], 10); // 16 is the zoom level
+        var map = L.map('map').setView([locations[0].latitude, locations[0].longitude], 5);
 
         // Add OpenStreetMap as the base layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Add a marker at the specified location
-        L.marker([latitude, longitude]).addTo(map)
-            .bindPopup('{{ $batch->location->name }}')
-            .openPopup();
+        var latLngs = [];
+        for (let i = 0; i < locations.length; i++) {
+            var marker = L.marker([locations[i].latitude, locations[i].longitude])
+                .addTo(map)
+                .bindPopup(locations[i].name + ' - ' + locations[i].type);
+
+            if (locations[i].type === 'current') {
+                marker.openPopup();
+            }
+
+            latLngs.push([locations[i].latitude, locations[i].longitude]);
+        }
+        L.polyline(latLngs, {
+            color: 'blue' 
+        }).addTo(map);
+        console.log(latLngs);
+        
+        map.fitBounds(latLngs);
+
+        // // Initialize the map
+        // var map = L.map('map').setView([latitude, longitude], 10); // 16 is the zoom level
+
+        // // Add OpenStreetMap as the base layer
+        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        // }).addTo(map);
+
+        // // Add a marker at the specified location
+        // L.marker([latitude, longitude]).addTo(map)
+        //     .bindPopup('{{ $batch->name }}')
+        //     .openPopup();
     </script>
     <script>
         $('#orders_tbl').DataTable({
@@ -104,9 +129,9 @@
                 {
                     "data": "view"
                 },
-                {
-                    "data": "edit"
-                },
+                // {
+                //     "data": "edit"
+                // },
                 // {
                 //     "data": "delete"
                 // }

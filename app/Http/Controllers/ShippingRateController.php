@@ -375,7 +375,7 @@ class ShippingRateController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(ShippingRate $shippingRate)
-    {
+    {   
         return view('admin.settings.shipping_rates.show')->with('rate', $shippingRate);
     }
 
