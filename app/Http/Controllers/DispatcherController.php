@@ -13,12 +13,16 @@ use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use App\Mail\PaymentEmail;
 use App\Mail\SignUpEmail;
+use App\Models\Batchlog;
+use App\Models\BatchorderLog;
 use App\Models\City;
 use App\Models\Country;
+use App\Models\OrderBatch;
 use App\Models\State;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use LDAP\Result;
 
 class DispatcherController extends Controller
 {
@@ -80,29 +84,47 @@ class DispatcherController extends Controller
      */
     public function orderAccept(Request $request, $order_id)
     {
-        $request->validate([
-            'batch_id' => 'required|numeric|exists:order_batches,id'
-        ]);
-
+        // return $request;
         try {
-
+          
             $o = Order::where('id', $order_id)->first();
-            $p = $o->shipping_rate->price;
+            $p = $o->val_of_goods;
             if (getAccountbalances(Auth::id())['balance'] >= $p) {
+                DB::beginTransaction();
+                $batch = new OrderBatch();
+                $batch->name = 'BA-' . time() . '-' . $request->batch_ ?? '';
+                $batch->user_id = Auth::user()->id;
+                $batch->dispatcher_id = $request->dispatcher_id;
+                $batch->save();
+                $batch->batch_tracking_id = 'BA-' . rand(99999999, 100000000) . '_' . $batch->id;
+                $batch->save();
+
+
+                Batchlog::create([
+                    'ship_from_country_id' => $o->pickup_location_country_id,
+                    'ship_from_city_id' => $o->pickup_location_city_id,
+                    'ship_to_country_id' => $o->delivery_location_country_id,
+                    'ship_to_city_id' => $o->delivery_location_city_id,
+                    'current_location_county_id' => $o->current_location_country_id,
+                    'current_location_city_id' => $o->current_location_city_id,
+                    'batch_id' => $batch->id,
+                ]);
+
+                $batchorder_log = new BatchorderLog();
+                $batchorder_log->batch_id = $batch->id;
+                $batchorder_log->order_id = $o->id;
+                $batchorder_log->save();
+
                 Order::where('id', $order_id)->update([
                     'status' => 'assigned',
-                    'batch_id' => $request->batch_id,
-                    'dispatcher_id' => Auth::user()->dispatcher->id,
+                    'batch_id' => $batch->id,
+                    'dispatcher_id' => $request->dispatcher_id,
                     'pickup_time' => Carbon::now(),
                 ]);
 
                 $u = updateAccountBalance(Auth::id(), ($p), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id);
                 $c = updateAccountBalance(Auth::id(), ($p * 0.015), $o->tracking_id, 'debit', 'Order Commision ' . $o->tracking_id);
-
-                if ($o->customer) {
-                    Mail::to($o->customer->user->email)->send(new PaymentEmail($o));
-                }
-
+                DB::commit();
                 Mail::to($o->pickup_email)->send(new PaymentEmail($o));
 
                 Mail::to($o->delivery_email)->send(new PaymentEmail($o));
@@ -112,6 +134,7 @@ class DispatcherController extends Controller
                 return back()->with(['message' => 'Insufficent Balance to complete Order']);
             }
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error($e->getMessage(), ['exception' => $e]);
             return back()->with('message', "An error occured " . $e->getMessage());
         }
@@ -121,14 +144,16 @@ class DispatcherController extends Controller
      * dispatcher accpt order
      */
     public function orderPickedUp(Request $request, $order_id)
-    {
+    {   
         try {
             $o = Order::where('id', $order_id)->first();
-
+            OrderBatch::where('id',$o->batch_id)->update([
+                'status' =>  'in_transit'
+            ]);
             Order::where('id', $order_id)->update([
-                'status' => 'picked_up',
+                'status' => 'in_transit',
                 'delivery_time' => Carbon::now(),
-                'current_location_id' => $o->delivery_location_id
+                'current_location_id' => $o->delivery_location_city_id
             ]);
 
             return back()->with(['message' => 'Order Marked As Picked Up', 'message_type' => 'success']);
@@ -146,7 +171,7 @@ class DispatcherController extends Controller
     public function create()
     {
         try {
-         
+
             $d = Dispatcher::where('user_id', Auth::id())->first();
             if ($d) {
                 return view('dispatcher.settings.profile', ['dispatcher' => $d]);
@@ -166,7 +191,7 @@ class DispatcherController extends Controller
 
     public function createDispatcher()
     {
-        return view('dispatcher.settings.create');        
+        return view('dispatcher.settings.create');
     }
 
     /**
@@ -177,7 +202,7 @@ class DispatcherController extends Controller
      */
     public function store(Request $request)
     {
-      
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -195,7 +220,7 @@ class DispatcherController extends Controller
             'residential_state' => ['required'],
             'residential_city' => ['required'],
         ]);
-        
+
 
         $user = DB::transaction(function () use ($request) {
             $user = User::create([
@@ -230,7 +255,7 @@ class DispatcherController extends Controller
             ]);
             return $user;
         });
-        Mail::to($user->email)->send(new SignUpEmail($user,$request->password));
+        Mail::to($user->email)->send(new SignUpEmail($user, $request->password));
         return redirect()->route('allUsers')->with('message', "Dispatcher Created Successfully !")->with('message_type', "success");
     }
 
@@ -252,7 +277,7 @@ class DispatcherController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Dispatcher $dispatcher)
-    {   
+    {
         $dispatcher = Dispatcher::find($dispatcher->id);
         return view('dispatcher.settings.edit', compact('dispatcher'));
     }
@@ -265,7 +290,7 @@ class DispatcherController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Dispatcher $dispatcher)
-    {   
+    {
         $dispatcher = Dispatcher::find($dispatcher->id);
         $request->validate([
             'name' => 'required|string',

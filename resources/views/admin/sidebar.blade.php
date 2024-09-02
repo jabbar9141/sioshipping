@@ -65,7 +65,7 @@
                         </a>
                     </li> --}}
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('dispatcher.accept') }}" aria-expanded="false">
+                        <a class="sidebar-link @if (Route::is('agent.accept') || Route::is('agent.accept.search')) active @endif" href="{{ route('agent.accept') }}" aria-expanded="false">
                             <span>
                                 <i class="ti ti-article"></i>
                             </span>

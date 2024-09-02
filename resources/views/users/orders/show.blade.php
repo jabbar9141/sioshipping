@@ -35,52 +35,57 @@
                                         <tr>
                                             <th>Origin</th>
                                             <td>
-                                                {{ $order->pickup_location->postcode }} -
-                                                {{ $order->pickup_location->name }}
-                                                [Lat: {{ $order->pickup_location->longitude }}, Long:
-                                                {{ $order->pickup_location->longitude }}]
+                                                <b>Origin</b>:
+                                                {{ $order->pickupCountry->name . ', ' . $order->pickupCity->name }}
+                                                <p style="margin: 0px !important" class="text-nowrap">[Lat:
+                                                    {{ $order->pickupCity->latitude }}, Long:
+                                                    {{ $order->pickupCity->longitude }}]</p>
                                                 <br>
-                                                Picked up at: {{ $order->pickup_time }}
+                                                <b>Picked up at :</b>
+                                                {{ $order->pickup_time }}
                                             </td>
                                             <th>Destination / Current Location </th>
                                             <td>
-                                                <b>Destination</b>: {{ $order->delivery_location->postcode }} -
-                                                {{ $order->delivery_location->name }} [Lat:
-                                                {{ $order->delivery_location->longitude }}, Long:
-                                                {{ $order->delivery_location->longitude }}]
+                                                <b>Destination</b>:
+                                                {{ $order->deliveryCountry->name . ', ' . $order->deliveryCity->name }}
+                                                <p style="margin: 0px !important" class="text-nowrap">
+                                                    [Lat:{{ $order->deliveryCity->latitude }}, Long:
+                                                    {{ $order->deliveryCity->longitude }}]</p>
+                                                {{-- <br> --}}
+
+                                                <b>Current Location</b> :
+                                                {{ $order->currentCountry->name . ', ' . $order->currentCity->name }}
+                                                <p style="margin: 0px !important" class="text-nowrap">
+                                                    [Lat:{{ $order->currentCity->latitude }},
+                                                    Long:{{ $order->currentCity->longitude }}]</p>
+                                                {{-- <br> --}}
+                                                <b>Shipping Cost : </b> {{ number_format($order->shipping_cost, 2) }}
                                                 <br>
-                                                <br>
-                                                <b>Current Location</b> : {{ $order->current_location->postcode }} -
-                                                {{ $order->current_location->name }} [Lat:
-                                                {{ $order->current_location->longitude }}, Long:
-                                                {{ $order->current_location->longitude }}]
-                                                <br>
-                                                <br>
-                                                <b>Dilevery at</b>: {{ $order->delivery_time }}
+
+
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Status</th>
-                                            <td class="d-flex">
-                                                <span class="badge bg-secondary" style="height: 28px !important;">{{ $order->status }}</span>
-                                                @if ($order->status == 'unpaid')
-                                                    <a href="{{ route('payment.summary', ['order_id' => $order->id]) }}"
-                                                        class="btn btn-primary" >$ Pay</a>
-                                                @endif
+                                            <td>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="badge bg-secondary">{{ $order->status }}</span>
 
-                                                @if ($order->status && request()->get('mode') != '0')
-                                                    <form action="{{ route('cancelOrder') }}" method="post"
-                                                        class="form-inline">
-                                                        @csrf
-                                                        <input type="hidden" value="{{ $order->id }}" name="order_id">
-                                                        <button class="btn btn-danger ms-2"
-                                                            onclick="return confirm('Are you sure you wish to cancel this order')">x
-                                                            Cancel Order</button>
-                                                    </form>
-                                                @endif
+                                                    @if ($order->status == 'unpaid')
+                                                        <form action="{{ route('cancelOrder') }}" method="post">
+                                                            @csrf
+                                                            <input type="hidden" value="{{ $order->id }}"
+                                                                name="order_id">
+                                                            <button class="btn btn-sm btn-danger"
+                                                                onclick="return confirm('Are you sure you wish to cancel this order')">Cancel
+                                                                Orrder</button>
+                                                        </form>
+                                                    @endif
+                                                </div>
+
                                             </td>
                                             <th>Price(&euro;)</th>
-                                            <td>{{ $order->shipping_rate->price }}</td>
+                                            <td>{{ number_format($order->val_of_goods + $order->shipping_cost, 2) }}</td>
                                         </tr>
                                         <tr>
                                             <th>Sender Name</th>
@@ -148,7 +153,7 @@
                                             <th>Condition of Goods</th>
                                             <td>{{ $order->cond_of_goods }}</td>
                                             <th>Value of goods</th>
-                                            <td>{{ $order->val_of_goods }} [{{ $order->val_cur }}]</td>
+                                            <td>{{ number_format($order->val_of_goods, 2) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -210,19 +215,18 @@
         integrity="sha256-UuAyU0w/mJdq2Vy4wguvgO0MyD1CWQYCqM8dsW4uIu0=" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
-            let trakingId = "TID_{{ $order->tracking_id }}" 
+            let trakingId = "TID_{{ $order->tracking_id }}"
             JsBarcode("#barcode", trakingId, {
                 format: "CODE128"
             });
         });
-
         // Get latitude and longitude values for the two locations from the server
-        var latitude1 = {{ $order->pickup_location->latitude }};
-        var longitude1 = {{ $order->pickup_location->longitude }};
-        var latitude2 = {{ $order->delivery_location->latitude }};
-        var longitude2 = {{ $order->delivery_location->longitude }};
-        var latitude3 = {{ $order->current_location->latitude }};
-        var longitude3 = {{ $order->current_location->longitude }};
+        var latitude1 = {{ $order->pickupCity->latitude }};
+        var longitude1 = {{ $order->pickupCity->longitude }};
+        var latitude2 = {{ $order->deliveryCity->latitude }};
+        var longitude2 = {{ $order->deliveryCity->longitude }};
+        var latitude3 = {{ $order->currentCity->latitude }};
+        var longitude3 = {{ $order->currentCity->longitude }};
 
         // Initialize the map
         var map = L.map('map').setView([latitude1, longitude1], 5);
@@ -232,11 +236,12 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Add markers for the two locations
-        var marker1 = L.marker([latitude1, longitude1]).addTo(map).bindPopup('{{ $order->pickup_location->name }}');
-        var marker2 = L.marker([latitude2, longitude2]).addTo(map).bindPopup('{{ $order->delivery_location->name }}');
+        // Add markers
+        // for the two locations
+        var marker1 = L.marker([latitude1, longitude1]).addTo(map).bindPopup('{{ $order->pickupCity->name }}');
+        var marker2 = L.marker([latitude2, longitude2]).addTo(map).bindPopup('{{ $order->deliveryCity->name }}');
         var marker3 = L.marker([latitude3, longitude3]).addTo(map).bindPopup(
-            '{{ $order->current_location->name }} - Cur. loc.').openPopup();;
+            '{{ $order->currentCity->name }} - Cur. loc.').openPopup();;
 
         // Create a polyline between the two markers
         // Create a blue polyline between origin and current location
@@ -255,7 +260,7 @@
             color: 'gray'
         }).addTo(map);
 
-        // Fit the map to the bounds of the polyline
+       
         map.fitBounds([latitude1, longitude1], [latitude2, longitude2]);
     </script>
     <script>

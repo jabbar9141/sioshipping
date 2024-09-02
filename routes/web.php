@@ -241,6 +241,7 @@ Route::post('cancelOrder', [OrderController::class, 'cancelOrder'])->name('cance
 
 Route::get('allOrders', [OrderController::class, 'allOrders'])->name('allOrders')->middleware(['auth']);
 Route::get('allOrdersList', [OrderController::class, 'allOrdersList'])->name('allOrdersList')->middleware(['auth']);
+
 Route::resource('orders', OrderController::class)->middleware(['auth']);
 
 Route::get('allUsers', [AdminController::class, 'allUsers'])->name('allUsers')->middleware(['auth']);
@@ -304,6 +305,10 @@ Route::get('batchList', [OrderBatchController::class, 'batchList'])->name('batch
 
 Route::resource('dispatchers', DispatcherController::class)->middleware(['auth']);
 Route::resource('agents', AgentController::class)->middleware(['auth']);
+
+Route::get('agent/accept', [AgentController::class, 'accept'])->name('agent.accept')->middleware(['auth']);
+Route::get('agent/accept-search', [AgentController::class, 'accept_search'])->name('agent.accept.search')->middleware(['auth']);
+
 Route::get('agentSetting', [AgentController::class, 'settings'])->name('agent.profile')->middleware(['auth']);
 
 

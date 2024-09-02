@@ -180,7 +180,6 @@ class WalkInOrderAgents extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
         $request->validate([
             'tax_code_' => 'required',
             'surname_' => 'required',
@@ -189,8 +188,8 @@ class WalkInOrderAgents extends Controller
             'dob_' => 'required|date',
             'doc_type_' => 'required',
             'doc_num_' => 'required',
-            'doc_front_' => 'required|file|mimes:jpg,jpeg,png,pdf',
-            'doc_back_' => 'required|file|mimes:jpg,jpeg,png,pdf',
+            'doc_front_' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
+            'doc_back_' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
             // 'origin_id' => 'required|numeric|exists:locations,id',
             // 'dest_id' => 'required|numeric|exists:locations,id',
             // 'rate' => 'required|numeric|exists:shipping_rates,id',
@@ -199,7 +198,7 @@ class WalkInOrderAgents extends Controller
             'rx_email' => 'required|string|email',
             'rx_phone_alt' => 'required|string',
             'rx_address1' => 'required|string',
-            'rx_address2' => 'string',
+            'rx_address2' => 'nullable|string',
             'rx_zip' => 'required|string',
             'customer_city_id' => 'required|string',
             'customer_state_id' => 'required|string',
@@ -244,22 +243,22 @@ class WalkInOrderAgents extends Controller
             'terms_of_sale' => 'required',
             'customs_inv_num' => 'required'
         ]);
+    
         
         try {
             DB::beginTransaction();
             $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->first();
-            // dd($);
+            
             if (!$cus) {
                 //upload file
                 if ($request->hasFile('doc_front_') && $request->hasFile('doc_back_')) {
                     $docFront = $request->file('doc_front_');
                     $docBack = $request->file('doc_back_');
 
-                    // Generate unique filenames for the uploaded files
                     $docFrontFileName = 'doc_front_' . time() . '.' . $docFront->getClientOriginalExtension();
                     $docBackFileName = 'doc_back_' . time() . '.' . $docBack->getClientOriginalExtension();
 
-                    // Move the uploaded files to the public directory
+                  
                     $docFront->move(public_path('uploads'), $docFrontFileName);
                     $docBack->move(public_path('uploads'), $docBackFileName);
 
@@ -285,7 +284,9 @@ class WalkInOrderAgents extends Controller
                         'tax_code' => $request->tax_code_
                     ]);
                 }
+                $customer = $cus;
             } else {
+                $customer = $cus;
                 //upload file
                 if ($request->hasFile('doc_front_') && $request->hasFile('doc_back_')) {
                     $docFront = $request->file('doc_front_');
@@ -322,11 +323,10 @@ class WalkInOrderAgents extends Controller
                     ]);
                 }
             }
-
             $l = new Order;
-            $l->customer_id = Auth::id(); //id of the Agent
-            $l->agend_id = Auth::id(); //id of the Agent
-            $l->walk_in_customer_id = $cus->id;
+            $l->customer_id = $customer->id; 
+            $l->agend_id = Auth::user()->id; 
+            $l->walk_in_customer_id = $customer->id;
             $l->pickup_location_id = $request->origin_id;
             $l->delivery_location_id = $request->dest_id;
             $l->current_location_id = $request->origin_id;
@@ -387,7 +387,6 @@ class WalkInOrderAgents extends Controller
             $shipFromCountryId = $l->pickup_location_country_id;
             $shipFromCityId = $l->pickup_location_city_id;
             $shipToCountryId = $l->delivery_location_country_id;
-            $shipToCityId = $l->delivery_location_city_id;
             $totalWeight = (int) OrderPackage::where('order_id', $l->id)->sum('weight');
             
             $shippingCostPrice = 0;
@@ -406,75 +405,7 @@ class WalkInOrderAgents extends Controller
             $l->val_of_goods = OrderPackage::where('order_id', $l->id)->sum('item_value');
             $l->shipping_cost = $shippingCostPrice;
             $l->save();
-                
-            // }
-
-            // if ($request->rate == 'FEDEX') {
-            //     //prepare fedex data
-            //     $o = Location::find($request->origin_id);
-            //     $d = Location::find($request->dest_id);
-            //     $commodities = [];
-
-
-            //     for ($i = 0; $i < count($request->count); $i++) {
-            //         $r = [
-            //             'description' => $request->item_desc[$i],
-            //             'numberOfPieces' => $request->count[$i],
-            //             'weight' => [
-            //                 'value' => $request->weight[$i],
-            //                 'units' => 'KG'
-            //             ],
-            //             'quantity' => $request->count[$i],
-            //             'quantityUnits' => 'PCS',
-            //             'unitPrice' => [
-            //                 'amount' => $request->item_value[$i],
-            //                 'currency' => 'EUR'
-            //             ],
-            //             'customsValue' => [
-            //                 'amount' => $request->item_value[$i],
-            //                 'currency' => 'EUR'
-            //             ]
-            //         ];
-
-            //         array_push($commodities, $r);
-            //     }
-
-            //     $fedExData = [
-            //         'shipper_city' => $request->s_city,
-            //         'recipient_city' => $request->rx_city,
-            //         'shipper_zip' => $request->s_zip,
-            //         'recipient_zip' => $request->rx_zip,
-            //         'shipper_country_code' => $request->s_country,
-            //         'recipient_country_code' => $request->rx_country,
-            //         'shipper_address1' => $request->s_address1,
-            //         'shipper_address2' => $request->s_address2 ?? '',
-            //         'recipient_address1' => $request->rx_address1,
-            //         'recipient_address2' => $request->rx_address2,
-            //         'recipient_phone' => $request->rx_phone,
-            //         'recipient_name' => $request->rx_name,
-            //         'recipient_email' => $request->rx_email,
-            //         'shipper_phone' => $request->s_phone,
-            //         'shipper_name' => $request->s_name,
-            //         'shipper_email' => $request->s_email,
-            //         'customs_note' => $request->cond_of_goods,
-            //         'customs_terms_of_sale' => $request->terms_of_sale,
-            //         'commodities' => $commodities,
-            //         'shipDatestamp' => $request->r_date,
-            //         'customs_inv_num' => $request->customs_inv_num,
-            //         'requestedPackageLineItems' => [
-            //             [
-            //                 'weight' => [
-            //                     'value' => $request->weight,
-            //                     'units' => 'KG'
-            //                 ]
-            //             ]
-            //         ]
-
-            //     ];
-
-            //     $fedExResponse = FedExController::ship($fedExData);
-            // }
-
+          
             DB::commit();
             return redirect()->route('agentsOrders')->with(['message' => 'Order saved You can proceed to add it to a batch', 'message_type' => 'success']);
         } catch (\Exception $e) {

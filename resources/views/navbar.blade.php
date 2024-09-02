@@ -19,7 +19,7 @@
         </button>
 
         <div class="lg:flex space-x-3 items-center hidden">
-            <a href="/">{{ trans('nav.1') }}</a>
+            <a href="/">{{ trans('nav.1') }} </a>
             <a class="" href="{{ route('who_we_are') }}">{{ trans('nav.2') }}</a>
             <div class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
