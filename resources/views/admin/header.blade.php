@@ -1,5 +1,5 @@
-<header class="app-header">
-    <nav class="navbar navbar-expand-lg navbar-light">
+<header class="app-header d-flex justify-content-end">
+    <nav class="navbar navbar-expand w-25  navbar-light">
         <ul class="navbar-nav">
             <li class="nav-item d-block d-xl-none">
                 <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
@@ -13,7 +13,7 @@
                 </a>
             </li>
         </ul>
-        <div class="navbar-collapse justify-content-right px-0" id="navbarNavLang">
+        <div class="navbar-collapse px-0" id="navbarNavLang">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                 <li class="nav-item dropdown">
                     <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop3"

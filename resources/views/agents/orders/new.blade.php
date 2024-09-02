@@ -730,6 +730,17 @@
                                 @enderror
                             </div>
                         </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="invoice_document">Invoice Document</label>
+                                <input type="file" name="invoice_document" value="{{ old('invoice_document') }}"
+                                    class="form-control" id="invoice_document">
+                                @error('invoice_document')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
                         <hr>
                         <p>By clicking Proceed bellow, you attest that you have read and understood our terms.</p>
                         <button type="submit" class="btn proccess_btn btn-primary"><i class="fa fa-save"></i>

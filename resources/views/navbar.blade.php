@@ -54,11 +54,15 @@
             <div class="modal rounded fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog rounded modal-dialog-scrollable modal-lg modal-dialog-centered">
-                    <div class="modal-content">
+                    <div style="border-radius: 12px" class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Logs</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Order Tracking Logs</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                                aria-label="Close">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                  </svg>
+                            </button>
                         </div>
                         <div class="modal-body">
                             <form class="mb-4" action="" method="post">
@@ -286,18 +290,13 @@
             success: function(response) {
                 console.log(response.logs);
                 if (response.success) {
-                    $("#ship_to_country").empty();
+                    $("#logList").empty();
                     var tr = '<tr></tr>';
                     $.each(response.logs, function(key, value) {
                         console.log(value);
-                        $.each(value, function(index, item) {
-                            tr += '<tr><td>' + item.type + ':</td><td>' + item
-                                .country_name + '</td><td>' + item.city_name +
+                            tr += '<tr><td>' + value.type + ':</td><td>' + value
+                                .country_name + '</td><td>' + value.city_name +
                                 '</td></tr>';
-                            tr += '<tr><td>' + item.type + ':</td><td>' + item
-                                .country_name + '</td><td>' + item.city_name +
-                                '</td></tr>';
-                        });
                     });
                     $(".hide_dev").removeClass('d-none');
                     $("#logList").html(tr);

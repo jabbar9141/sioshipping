@@ -57,6 +57,7 @@ class Order extends Model
         'pickup_location_city_id',
         'delivery_location_country_id',
         'delivery_location_city_id',
+        'invoice_document',
 
     ];
 

@@ -19,6 +19,7 @@ use App\Http\Controllers\ShippingRateController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\IntlFundTransferOrderController;
+use App\Http\Controllers\myController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserFundsController;
@@ -379,6 +380,7 @@ Route::post('ajax-get-states/{countryId}', [StateController::class, 'getStates']
 Route::get('ajax-get-countries/', [CountryController::class, 'getCountries'])->name('ajax-get-countries');
 Route::post('ajax-get-batchlogs', [CityController::class, 'getBatchLogs'])->name('ajax-get-batchlogs');
 
+Route::get('notification', [myController::class, 'notification'])->name('notification');
 
 Route::get('/import-test', function () {
     ShippingCost::truncate();

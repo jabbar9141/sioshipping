@@ -62,32 +62,27 @@ class CityController extends Controller
         $batch = OrderBatch::where('id', $order->batch_id)->first();
         $batch_logs = Batchlog::where('batch_id', $batch->id)->get();
 
-
-        $data = [];
-
-
-        $data[] = [
+        $data[] =
             [
                 'country_name' => Country::where('id', $batch_logs[0]->ship_to_country_id)->first()->name,
                 'city_name' => City::where('id', $batch_logs[0]->ship_to_city_id)->first()->name,
                 'status' => $batch->status,
                 'type' => 'Delivery'
-            ],
-            [
-                'country_name' => Country::where('id', $batch_logs[0]->ship_from_country_id)->first()->name,
-                'city_name' => City::where('id', $batch_logs[0]->ship_from_city_id)->first()->name,
-                'type' => "Pickup"
-            ],
+            ];
+        $data[] =    [
+            'country_name' => Country::where('id', $batch_logs[0]->ship_from_country_id)->first()->name,
+            'city_name' => City::where('id', $batch_logs[0]->ship_from_city_id)->first()->name,
+            'type' => "Pickup"
         ];
 
         foreach ($batch_logs as $batch_log) {
-            $data[][]  = [
+            $data[]  = [
                 'country_name' => Country::where('id', $batch_log->current_location_county_id)->first()->name,
                 'city_name' => City::where('id', $batch_log->current_location_city_id)->first()->name,
                 'type' => "Current"
             ];
         }
-        
+
         return response()->json([
             'success' => true,
             'logs' => $data,

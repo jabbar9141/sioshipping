@@ -217,6 +217,7 @@ class WalkInOrderAgents extends Controller
             'cond_of_goods' => 'required|string',
             'val_of_goods' => 'required|string',
             'val_cur' => 'required|string',
+            'invoice_document' => 'required|file|mimes:jpg,jpeg,png,pdf',
             'type' => 'array',
             'len' => 'array',
             'width' => 'array',
@@ -243,12 +244,12 @@ class WalkInOrderAgents extends Controller
             'terms_of_sale' => 'required',
             'customs_inv_num' => 'required'
         ]);
-    
-        
+
+
         try {
             DB::beginTransaction();
             $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->first();
-            
+
             if (!$cus) {
                 //upload file
                 if ($request->hasFile('doc_front_') && $request->hasFile('doc_back_')) {
@@ -258,7 +259,7 @@ class WalkInOrderAgents extends Controller
                     $docFrontFileName = 'doc_front_' . time() . '.' . $docFront->getClientOriginalExtension();
                     $docBackFileName = 'doc_back_' . time() . '.' . $docBack->getClientOriginalExtension();
 
-                  
+
                     $docFront->move(public_path('uploads'), $docFrontFileName);
                     $docBack->move(public_path('uploads'), $docBackFileName);
 
@@ -323,9 +324,15 @@ class WalkInOrderAgents extends Controller
                     ]);
                 }
             }
+            if ($request->hasFile('invoice_document')) {
+                $invoiceDoc = $request->file('invoice_document');
+                $invoiceDoc_name = 'invoice_doc' . time() . '.' . $invoiceDoc->getClientOriginalExtension();
+                $invoiceDoc->move(public_path('uploads/orders/', $invoiceDoc_name));
+            }
+
             $l = new Order;
-            $l->customer_id = $customer->id; 
-            $l->agend_id = Auth::user()->id; 
+            $l->customer_id = $customer->id;
+            $l->agend_id = Auth::user()->id;
             $l->walk_in_customer_id = $customer->id;
             $l->pickup_location_id = $request->origin_id;
             $l->delivery_location_id = $request->dest_id;
@@ -365,12 +372,13 @@ class WalkInOrderAgents extends Controller
             $l->pickup_location_city_id = $request->ship_from_city;
             $l->delivery_location_country_id = $request->ship_to_country;
             $l->delivery_location_city_id = $request->ship_to_city;
+            $l->invoice_document = $request->invoiceDoc_name;
             $l->save();
             // for ($o = 0; $o < count($request->group-a); $o++) {
-           
+
             $totalWeight = 0;
             foreach ($request->items as $key => $item) {
-                   
+
                 $orderPackage = new OrderPackage;
                 $orderPackage->order_id = $l->id;
                 $orderPackage->type = $item['type'];
@@ -388,7 +396,7 @@ class WalkInOrderAgents extends Controller
             $shipFromCityId = $l->pickup_location_city_id;
             $shipToCountryId = $l->delivery_location_country_id;
             $totalWeight = (int) OrderPackage::where('order_id', $l->id)->sum('weight');
-            
+
             $shippingCostPrice = 0;
             $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight', $totalWeight)->first();
             if ($shipFromCountryId == $shipToCountryId) {
@@ -400,12 +408,12 @@ class WalkInOrderAgents extends Controller
                 $shippingCostPrice = (float) $shippingCost->cost;
             }
 
-      
+
             $l->cond_of_goods = OrderPackage::where('order_id', $l->id)->sum('qty');
             $l->val_of_goods = OrderPackage::where('order_id', $l->id)->sum('item_value');
             $l->shipping_cost = $shippingCostPrice;
             $l->save();
-          
+
             DB::commit();
             return redirect()->route('agentsOrders')->with(['message' => 'Order saved You can proceed to add it to a batch', 'message_type' => 'success']);
         } catch (\Exception $e) {
