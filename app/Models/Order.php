@@ -50,7 +50,14 @@ class Order extends Model
         'terms_of_sale',
         'customs_inv_num',
         'provider',
-        'shipping_cost'
+        'shipping_cost',
+        'current_location_country_id',
+        'current_location_city_id',
+        'pickup_location_country_id',
+        'pickup_location_city_id',
+        'delivery_location_country_id',
+        'delivery_location_city_id',
+
     ];
 
     public function customer()
@@ -114,9 +121,34 @@ class Order extends Model
     {
         return $this->belongsTo(WalkInCustomer::class, 'walk_in_customer_id', 'id');
     }
-    
-    public function city()
+
+    public function currentCountry()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Country::class, 'current_location_country_id');
+    }
+
+    public function currentCity()
+    {
+        return $this->belongsTo(City::class,'current_location_city_id');
+    }
+
+    public function pickupCountry()
+    {
+        return $this->belongsTo(Country::class, 'pickup_location_country_id');
+    }
+
+    public function pickupCity()
+    {
+        return $this->belongsTo(City::class,'pickup_location_city_id');
+    }
+
+    public function deliveryCountry()
+    {
+        return $this->belongsTo(Country::class, 'delivery_location_country_id');
+    }
+
+    public function deliveryCity()
+    {
+        return $this->belongsTo(City::class,'delivery_location_city_id');
     }
 }

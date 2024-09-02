@@ -19,6 +19,7 @@ use Carbon\Carbon;
 
 use App\Mail\PaymentEmail;
 use App\Models\Dispatcher;
+use App\Models\User;
 use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Mail;
 
@@ -166,8 +167,7 @@ class OrderBatchController extends Controller
      */
     public function create()
     {
-
-        $dispachers = Dispatcher::get();
+        $dispachers = User::where('user_type','dispatcher')->get();
         return view('dispatcher.settings.batches.create', compact('dispachers'));
     }
 
@@ -213,6 +213,8 @@ class OrderBatchController extends Controller
 
             Order::whereIn('id', $request->order_id)->update([
                 'batch_id' => $b->id,
+                'current_location_country_id' => $request->ship_to_country_id,
+                'current_location_city_id' => $request->ship_to_city_id,
             ]);
 
             foreach ($request->order_id as $value) {
@@ -364,23 +366,15 @@ class OrderBatchController extends Controller
             //update status of associated orders
             Order::where('batch_id', $orderBatch->id)->update([
                 'status' => $request->status,
-                // 'current_location_id' => $request->origin_id
+                'current_location_country_id' => $request->ship_to_country_id,
+                'current_location_city_id' => $request->ship_to_city_id,
             ]);
-
-
 
             DB::commit();
             $oo = Order::where('batch_id', $orderBatch->id)->get();
             foreach ($oo as $o) {
-                if ($o->customer) {
-                    Mail::to($o->customer->user->email)->send(new PaymentEmail($o));
-                }
-                if ($o->pickup_email) {
-                    Mail::to($o->pickup_email)->send(new PaymentEmail($o));
-                }
-                if ($o->delivery_email) {
-                    Mail::to($o->delivery_email)->send(new PaymentEmail($o));
-                }
+                Mail::to($o->pickup_email)->send(new PaymentEmail($o));
+                Mail::to($o->delivery_email)->send(new PaymentEmail($o));
             }
             return back()->with(['message' => 'Batch Updated', 'message_type' => 'success']);
         } catch (\Exception $e) {

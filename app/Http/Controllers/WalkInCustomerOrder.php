@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use App\Mail\PaymentEmail;
+use App\Models\City;
+use App\Models\Country;
 use App\Models\ShippingRate;
 use Illuminate\Support\Facades\Mail;
 
@@ -112,8 +114,12 @@ class WalkInCustomerOrder extends Controller
                 return $mar;
             })
             ->addColumn('location', function ($order) {
-                $mar = "Origin : " . $order->pickup_location->name . "<br>";
-                $mar .= "Destination:" . $order->delivery_location->name;
+                $current  = Country::where('id', $order->current_location_country_id)->first()->name .", ". City::find($order->current_location_city_id)->name;
+                $destination = Country::where('id', $order->delivery_location_country_id)->first()->name .", ". City::find($order->delivery_location_city_id)->name;
+                $origin = Country::where('id', $order->pickup_location_country_id)->first()->name .", ". City::find($order->pickup_location_city_id)->name;
+                $mar = "Origin : " . $origin . "<br>";
+                $mar .= "Destination:" . $destination . "<br>";
+                $mar .= "Current : ". $current;
                 return $mar;
             })
             ->addColumn('date', function ($order) {

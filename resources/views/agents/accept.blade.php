@@ -1,3 +1,7 @@
+@php
+    use App\Models\User;
+    $dispatures = User::where('user_type', 'dispatcher')->get();
+@endphp
 @extends('admin.app')
 @section('page_title', 'Accept Order')
 @section('content')
@@ -8,7 +12,7 @@
                 <p class="mb-0">Accept an order and assign it to a batch </p>
                 @include('admin.partials.notification')
                 <hr>
-                <form action="{{ route('dispatcher.accept.search') }}" method="get" class="form-inline">
+                <form action="{{ route('agent.accept.search') }}" method="get" class="form-inline">
                     <div class="row">
                         <div class="col-sm-10">
                             <label for="order_track_id"> Tracking Id</label>
@@ -30,51 +34,54 @@
                                 <tr>
                                     <th>Origin</th>
                                     <td>
-                                        {{ $order->pickup_location->postcode }} - {{ $order->pickup_location->name }} [Lat:
-                                        {{ $order->pickup_location->longitude }}, Long:
-                                        {{ $order->pickup_location->longitude }}]
+                                        {{ $order->pickupCountry->name . ', ' . $order->pickupCity->name }}
+                                        <p style="margin: 0px !important" class="text-nowrap">[Lat:
+                                            {{ $order->pickupCity->latitude }}, Long:
+                                            {{ $order->pickupCity->longitude }}]</p>
                                         <br>
                                         Picked up at: {{ $order->pickup_time }}
                                     </td>
                                     <th>Destination / Current Location </th>
                                     <td>
-                                        <b>Destination</b>: {{ $order->delivery_location->postcode }} -
-                                        {{ $order->delivery_location->name }} [Lat:
-                                        {{ $order->delivery_location->longitude }}, Long:
-                                        {{ $order->delivery_location->longitude }}]
+                                        <b>Destination</b>:
+                                        {{ $order->deliveryCountry->name . ', ' . $order->deliveryCity->name }}
+                                        <p style="margin: 0px !important" class="text-nowrap">
+                                            [Lat:{{ $order->deliveryCity->latitude }}, Long:
+                                            {{ $order->deliveryCity->longitude }}]</p>
                                         <br>
+
+                                        <b>Current Location</b> :
+                                        {{ $order->currentCountry->name . ', ' . $order->currentCity->name }}
+                                        <p style="margin: 0px !important" class="text-nowrap">
+                                            [Lat:{{ $order->currentCity->latitude }},
+                                            Long:{{ $order->currentCity->longitude }}]</p>
                                         <br>
-                                        <b>Current Location</b> : {{ $order->current_location->postcode }} -
-                                        {{ $order->current_location->name }} [Lat:
-                                        {{ $order->current_location->longitude }}, Long:
-                                        {{ $order->current_location->longitude }}]
+                                        <b>Shipping Cost : </b> {{ $order->shipping_cost }}
                                         <br>
-                                        <b>Estimated Transit Time(days):</b> {{ $order->shipping_rate->transit_days }}
-                                        <br>
-                                        <b>Dilevery at</b>: {{ $order->delivery_time }}
-                                        
+
+
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Status</th>
                                     <td>
-                                        <span class="badge bg-secondary">{{ $order->status }}</span>
-                                        @if ($order->status == 'unpaid')
-                                            {{-- <a href="#" class="btn btn-primary">$ Pay</a> --}}
-                                        @endif
+                                        <div class="d-flex justify-content-between">
+                                            <span class="badge bg-secondary">{{ $order->status }}</span>
 
-                                        @if ($order->status && request()->get('mode') != '0')
-                                            <form action="{{ route('cancelOrder') }}" method="post">
-                                                @csrf
-                                                <input type="hidden" value="{{ $order->id }}" name="order_id">
-                                                <button class="btn btn-danger"
-                                                    onclick="return confirm('Are you sure you wish to cancel this order')">x
-                                                    Cancel Order</button>
-                                            </form>
-                                        @endif
+                                            @if ($order->status == 'unpaid')
+                                                <form action="{{ route('cancelOrder') }}" method="post">
+                                                    @csrf
+                                                    <input type="hidden" value="{{ $order->id }}" name="order_id">
+                                                    <button class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('Are you sure you wish to cancel this order')">Cancel
+                                                        Orrder</button>
+                                                </form>
+                                            @endif
+                                        </div>
+
                                     </td>
-                                    <th>Price(&euro;)</th>
-                                    <td>{{ $order->shipping_rate->price }}</td>
+                                    <th>Price(&euro;)  </th>
+                                    <td>{{ $order->val_of_goods }}</td>
                                 </tr>
                                 <tr>
                                     <th>Sender Name</th>
@@ -189,11 +196,11 @@
                     <h5>Accept/ Assign batch</h5>
                     <p>Your Wallet will be billed for this order</p>
                     <hr>
-                    @if (null == $order->batch_id)
+                    @if ($order->batch_id == null)
                         <form action="{{ route('orderAccept', $order->id) }}" method="post">
                             @csrf
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-6">
                                     <div class="ui-widget">
                                         <label for="origin">Batch <i class="text-danger">*</i> : </label>
                                         <input type="text" id="batch" name="batch_"
@@ -201,6 +208,19 @@
                                             autocomplete="off" required>
                                         <input type="hidden" name="batch_id" value="{{ $order->batch_id }}"
                                             id="batch_id">
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="ui-widget">
+                                        <label for="origin">Select Dispature <i class="text-danger">*</i> : </label>
+                                        <select class="form-select" aria-label="Default select example"
+                                            name="dispatcher_id">
+                                            <option selected>Open this select menu</option>
+                                            @foreach ($dispatures as $dispature)
+                                                <option value="{{ $dispature->id }}">{{ $dispature->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -216,17 +236,17 @@
                         <h5>Mark As Picked-Up</h5>
                         <p>Only fill this if the item is about to be picked Up</p>
                         <hr>
-                        @if ($order->status != 'picked_up')
-                        <form action="{{ route('orderPickedUp', $order->id) }}" method="post">
-                            @csrf
-                            <button type="submit" class="btn btn-primary"
-                                onclick="return confirm('Are you sure you wish to mark this item as Picked-up?')"><i
-                                    class="fa fa-save"></i> Order Picked-up</button>
-                        </form>
+                        @if ($order->status == 'assigned')
+                            <form action="{{ route('orderPickedUp', $order->id) }}" method="post">
+                                @csrf
+                                <button type="submit" class="btn btn-primary"
+                                    onclick="return confirm('Are you sure you wish to mark this item as Picked-up?')"><i
+                                        class="fa fa-save"></i> Order Picked-up</button>
+                            </form>
                         @else
-                        <b>Order Has been Picked Up on - {{$order->delivery_time}}</b>
+                            <b>Order Has been Picked Up on - {{ $order->delivery_time }}</b>
                         @endif
-                        
+
                     @endif
                 @endif
             </div>
@@ -235,19 +255,19 @@
 @endsection
 @section('scripts')
     <script>
-        $('#batch').autocomplete({
-            source: "{{ route('batches.search') }}",
-            minLength: 1,
-            select: function(event, ui) {
-                // Update the hidden input field with the selected value
-                $('#batch_id').val(ui.item.value);
+        // $('#batch').autocomplete({
+        //     source: "{{ route('batches.search') }}",
+        //     minLength: 1,
+        //     select: function(event, ui) {
+        //         // Update the hidden input field with the selected value
+        //         $('#batch_id').val(ui.item.value);
 
-                // Update the visible input field with the label
-                $('#batch').val(ui.item.label);
+        //         // Update the visible input field with the label
+        //         $('#batch').val(ui.item.label);
 
-                // Prevent the default behavior of filling the input with the label
-                event.preventDefault();
-            }
-        });
+        //         // Prevent the default behavior of filling the input with the label
+        //         event.preventDefault();
+        //     }
+        // });
     </script>
 @endsection

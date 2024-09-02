@@ -27,33 +27,40 @@
                 <tr>
                     <th>Origin</th>
                     <td>
-                        {{ $order->pickup_location->postcode }} - {{ $order->pickup_location->name }} [Lat:
-                        {{ $order->pickup_location->longitude }}, Long: {{ $order->pickup_location->longitude }}]
+                        {{ $order->pickupCountry->name . ', ' . $order->pickupCity->name }}
+                        <p style="margin: 0px !important" class="text-nowrap">[Lat:
+                            {{ $order->pickupCity->latitude }}, Long:
+                            {{ $order->pickupCity->longitude }}]</p>
                         <br>
                         Picked up at: {{ $order->pickup_time }}
                     </td>
                     <th>Destination / Current Location </th>
                     <td>
-                        <b>Destination</b>: {{ $order->delivery_location->postcode }} -
-                        {{ $order->delivery_location->name }} [Lat: {{ $order->delivery_location->longitude }}, Long:
-                        {{ $order->delivery_location->longitude }}]
+                        <b>Destination</b>:
+                        {{ $order->deliveryCountry->name . ', ' . $order->deliveryCity->name }}
+                        <p style="margin: 0px !important" class="text-nowrap">[Lat:{{ $order->deliveryCity->latitude }},
+                            Long:
+                            {{ $order->deliveryCity->longitude }}]</p>
                         <br>
+
+                        <b>Current Location</b> : {{ $order->currentCountry->name . ', ' . $order->currentCity->name }}
+                        <p style="margin: 0px !important" class="text-nowrap">[Lat:{{ $order->currentCity->latitude }},
+                            Long:{{ $order->currentCity->longitude }}]</p>
                         <br>
-                        <b>Current Location</b> : {{ $order->current_location->postcode }} -
-                        {{ $order->current_location->name }} [Lat: {{ $order->current_location->longitude }}, Long:
-                        {{ $order->current_location->longitude }}]
+                        <b>Shipping Cost</b> {{ $order->shipping_cost }}
                         <br>
-                        <br>
-                        <b>Dilevery at</b>: {{ $order->delivery_time }}
+
+
                     </td>
                 </tr>
+           
                 <tr>
                     <th>Status</th>
                     <td>
                         <span class="badge bg-secondary">{{ $order->status }}</span>
                     </td>
                     <th>Price(&euro;)</th>
-                    <td>{{ $order->shipping_rate->price }}</td>
+                    <td>{{ $order->val_of_goods }}</td>
                 </tr>
                 <tr>
                     <th>Sender Name</th>
@@ -123,7 +130,7 @@
                 </tr>
             </tbody>
         </table>
-        &copy; {{date('Y')}} <a href="http://siopay.eu">{{env('APP_NAME')}}</a>
+        &copy; {{ date('Y') }} <a href="http://siopay.eu">{{ env('APP_NAME') }}</a>
     </div>
 </body>
 

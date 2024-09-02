@@ -49,7 +49,7 @@ class AgentController extends Controller
      */
 
     public function accept()
-    {
+    {   
         return view('agents.accept');
     }
 
@@ -197,7 +197,7 @@ class AgentController extends Controller
             'agency_type' => 'required',
             'tax_id_code' => 'required',
         ]);
-        // try {
+        try {
             $agent = Agent::find($agent->id);
             $destinationDirectory = public_path('uploads/documents');
             if (!file_exists($destinationDirectory)) {
@@ -256,10 +256,10 @@ class AgentController extends Controller
                 'country_id' => $request->residential_country ?? ''
             ]);
             return back()->with(['message' => 'Record Updated Successfully!', 'message_type' => 'success']);
-        // } catch (\Exception $e) {
-        //     Log::error($e->getMessage(), ['exception' => $e]);
-        //     return back()->with(['message', "An error occured " . $e->getMessage()]);
-        // }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), ['exception' => $e]);
+            return back()->with(['message', "An error occured " . $e->getMessage()]);
+        }
     }
 
     /**

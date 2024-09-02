@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use App\Mail\PaymentEmail;
+use App\Models\City;
+use App\Models\Country;
+use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
@@ -110,12 +113,16 @@ class OrderController extends Controller
                 return $mar;
             })
             ->addColumn('location', function ($order) {
-                $mar = "Origin : " . $order?->pickup_location?->name ?? '' . "<br>";
-                $mar .= "Destination:" . $order?->delivery_location?->name ?? '' . "<br>";
+                $current  = Country::where('id', $order->current_location_country_id)->first()->name .", ". City::find($order->current_location_city_id)->name;
+                $destination = Country::where('id', $order->delivery_location_country_id)->first()->name .", ". City::find($order->delivery_location_city_id)->name;
+                $origin = Country::where('id', $order->pickup_location_country_id)->first()->name .", ". City::find($order->pickup_location_city_id)->name;
+                $mar = "Origin : " . $origin . "<br>";
+                $mar .= "Destination:" . $destination . "<br>";
+                $mar .= "Current : ". $current;
                 return $mar;
             })
             ->addColumn('date', function ($order) {
-                $mar = "<b> Tracking ID : " . $order->tracking_id . "</b><br><br>";
+                $mar = "<b> Tracking ID : " . $order->tracking_id . "</b><br>";
                 $mar .= "Created at : " . $order->created_at . "<br>";
                 $mar .= "Last updated:" . $order->updated_at;
                 return $mar;
@@ -237,7 +244,7 @@ class OrderController extends Controller
     public function agentsOrdersList()
     {
         $orders = Order::where('pickup_city', 'LIKE', '%' . Auth::user()->agent->city->name . '%')->orWhere('delivery_city', 'LIKE', '%' . Auth::user()->agent->city->name . '%')->orderBy('created_at', 'DESC')->get();
-
+       
         return Datatables::of($orders)
             ->addIndexColumn()
             ->addColumn('status', function ($order) {
@@ -245,14 +252,18 @@ class OrderController extends Controller
                 return $mar;
             })
             ->addColumn('location', function ($order) {
-                $mar = "Origin : " . $order->pickup_location->name . "<br>";
-                $mar .= "Destination:" . $order->delivery_location->name;
+                $current  = Country::where('id', $order->current_location_country_id)->first()->name .", ". City::find($order->current_location_city_id)->name;
+                $destination = Country::where('id', $order->delivery_location_country_id)->first()->name .", ". City::find($order->delivery_location_city_id)->name;
+                $origin = Country::where('id', $order->pickup_location_country_id)->first()->name .", ". City::find($order->pickup_location_city_id)->name;
+                $mar = "Origin : " . $origin . "<br>";
+                $mar .= "Destination:" . $destination . "<br>";
+                $mar .= "Current : ". $current;
                 return $mar;
             })
             ->addColumn('date', function ($order) {
-                $mar = "<b> Tracking ID : " . $order->tracking_id . "</b><br><br>";
-                $mar .= "Created at : " . $order->created_at . "<br>";
-                $mar .= "Last updated:" . $order->updated_at;
+                $mar = "<b> Tracking ID : " . $order->tracking_id . "</b><br>";
+                $mar .= "Created at : " . SupportCarbon::parse($order->created_at)->format('F j, Y') . "<br>";
+                $mar .= "Last updated:" . SupportCarbon::parse($order->updated_at)->format('F j, Y');
                 return $mar;
             })
             ->addColumn('parties', function ($order) {
@@ -270,16 +281,16 @@ class OrderController extends Controller
             //     }
             // })
             ->addColumn('price', function ($order) {
-                $mar = $order->shipping_rate->price . "<br>";
+                $mar = $order->val_of_goods . "<br>";
                 return $mar;
             })
             ->addColumn('view', function ($order) {
                 if ($order->status != 'unpaid') {
-                    $url = route('dispatcher.accept', ['order_track_id' => $order->tracking_id]);
+                    $url = route('agent.accept', ['order_track_id' => $order->tracking_id]);
                     return '<a href="' . $url . '" class="btn btn-info btn-sm" ><i class="fa fa-eye"></i> Pickup/ Accept</a>';
                 } else {
                     // $url = '#';
-                    $url = route('dispatcher.accept', ['order_track_id' => $order->tracking_id]);
+                    $url = route('agent.accept', ['order_track_id' => $order->tracking_id]);
                     return '<a href="' . $url . '" class="btn btn-info btn-sm" ><i class="fa fa-eye"></i> Pickup/ Accept</a>';
                 }
             })
