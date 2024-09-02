@@ -1,4 +1,5 @@
 <!-- Topbar Start -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 <nav class="navbar navbar-expand-lg">
     <div class="md:px-44 w-full p-2 flex justify-between items-center">
         <div>
@@ -28,8 +29,7 @@
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{{ route('shipping_page') }}">{{ trans('hompage.42') }}</a>
-                    <a class="dropdown-item"
-                        href="{{ route('pick_up_point_page') }}">{{ trans('hompage.46') }}</a>
+                    <a class="dropdown-item" href="{{ route('pick_up_point_page') }}">{{ trans('hompage.46') }}</a>
                     <a class="dropdown-item" href="{{ route('showcase') }}">Agro Procuct Trade</a>
 
                     <a class="dropdown-item" href="{{ route('shipping_page') }}">Food Packaging and storage</a>
@@ -50,10 +50,51 @@
                     </li>
                 </ul>
             </div>
+            {{--  modal  --}}
+            <div class="modal rounded fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog rounded modal-dialog-scrollable modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Logs</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="mb-4" action="" method="post">
+                                @csrf
+                                <label for="tracking">Add Tracking Id</label>
+                                <input class="form-control mb-2 rounded" type="text" id="tarcking_id"
+                                    name="tarcking_id" value="">
+                                    <div class="text-end">
+                                <button onclick="trackingFunction()" id="trackingForm" class="btn btn-primary"
+                                    type="button">Submit</button>
+                                </div>
+                            </form>
+                            <div class="d-none hide_dev">
+                                <h5 class="mb-4">Logs</h5>
+                                <table class="table log_table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Country Name</th>
+                                            <th>City Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="logList">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{--  modal  --}}
+            <a class="" data-bs-toggle="modal" data-bs-target="#exampleModal" href="">Tracking</a>
             <a class="" href="{{ route('contact') }}">{{ trans('nav.9') }}</a>
             <div class="nav-item dropdown">
-                <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
+                <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
                     @if ((session('locale') && session('locale') == 'en') || app()->getLocale() == 'en')
                         English
                     @else
@@ -87,8 +128,8 @@
                 @endif
             @else
                 <li class="nav-item dropdown">
-                    <a id="navbarDropdown" class=" dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false" v-pre>
+                    <a id="navbarDropdown" class=" dropdown-toggle" href="#" role="button"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         {{ Auth::user()->name }}
                     </a>
                     <ul class="dropdown-menu service-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -125,11 +166,10 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="{{ route('shipping_page') }}">{{ trans('hompage.42') }}</a>
-                    <a class="dropdown-item"
-                        href="{{ route('pick_up_point_page') }}">{{ trans('hompage.46') }}</a>
-                    <a class="dropdown-item" href="{{ route('showcase') }}">Agro Procuct Trade</a>
+                <a class="dropdown-item" href="{{ route('pick_up_point_page') }}">{{ trans('hompage.46') }}</a>
+                <a class="dropdown-item" href="{{ route('showcase') }}">Agro Procuct Trade</a>
 
-                    <a class="dropdown-item" href="{{ route('shipping_page') }}">Food Packaging and storage</a>
+                <a class="dropdown-item" href="{{ route('shipping_page') }}">Food Packaging and storage</a>
             </ul>
         </div>
         <div class="nav-item dropdown">
@@ -201,6 +241,7 @@
         border: none;
     }
 </style>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if (session('success'))
@@ -224,4 +265,55 @@
         });
     </script>
 @endif
+<script>
+    // $(document).ready(function(){
+    var _token = '{{ csrf_token() }}';
 
+    function trackingFunction() {
+        var tarcking_id = $('#tarcking_id').val();
+
+
+        let url = "{{ url('ajax-get-batchlogs') }}";
+
+        $.ajax({
+            url: url,
+            type: 'post',
+            dataType: 'json',
+            data: {
+                '_token': _token,
+                'tarckingId': tarcking_id,
+            },
+            success: function(response) {
+                console.log(response.logs);
+                if (response.success) {
+                    $("#ship_to_country").empty();
+                    var tr = '<tr></tr>';
+                    $.each(response.logs, function(key, value) {
+                        console.log(value);
+                        $.each(value, function(index, item) {
+                            tr += '<tr><td>' + item.type + ':</td><td>' + item
+                                .country_name + '</td><td>' + item.city_name +
+                                '</td></tr>';
+                            tr += '<tr><td>' + item.type + ':</td><td>' + item
+                                .country_name + '</td><td>' + item.city_name +
+                                '</td></tr>';
+                        });
+                    });
+                    $(".hide_dev").removeClass('d-none');
+                    $("#logList").html(tr);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
+
+    $('#yourButton').on('click', trackingFunction);
+</script>

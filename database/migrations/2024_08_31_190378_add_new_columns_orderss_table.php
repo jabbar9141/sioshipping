@@ -17,7 +17,7 @@ class AddNewColumnsOrderssTable extends Migration
           
           $table->float('shipping_cost')->nullable();
           $table->bigInteger('agend_id')->nullable();
-          
+          $table->string('cost_document')->nullable();
           
         });
     }

@@ -51,6 +51,7 @@
                         </li>
                         <li class="nav-item px-2"><a class="nav-link" aria-current="page" href="{{route('who_we_are')}}">About Us</a>
                         </li>
+                        
                         {{-- <li class="nav-item px-2"><a class="nav-link" href="#services">Our Services</a></li> --}}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button"
@@ -83,6 +84,7 @@
                                 <li><a class="dropdown-item" href="{{ route('prohibited_goods') }}">Prohibited Goods</a></li>
                             </ul>
                         </li>
+                         
                         <li class="nav-item px-2"><a class="nav-link" href="#findUs">Find Us</a></li>
                         @guest
                             @if (Route::has('login'))

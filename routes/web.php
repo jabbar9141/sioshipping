@@ -108,14 +108,14 @@ Route::get('/test', function(){
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_30_185559_add_column_new_order_batches_table.php'
     // ]);
-    // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_08_31_222045_add_current_location_address_into_batchlogs_table.php'
-    // ]);
-    // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_08_31_190358_add_new_columns_orderss_table.php'
-    // ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_08_31_190378_add_new_columns_orderss_table.php'
+    ]);
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_190623_add_new_columns_order_packages_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_31_222045_add_current_location_address_into_batchlogs_table.php'
     // ]);
     return "Success";
 });
@@ -372,6 +372,7 @@ Route::get('ajax-get-paced-orders', [CityController::class, 'getOrder'])->name('
 
 Route::post('ajax-get-states/{countryId}', [StateController::class, 'getStates'])->name('ajax-get-states');
 Route::get('ajax-get-countries/', [CountryController::class, 'getCountries'])->name('ajax-get-countries');
+Route::post('ajax-get-batchlogs', [CityController::class, 'getBatchLogs'])->name('ajax-get-batchlogs');
 
 
 Route::get('/import-test', function () {
