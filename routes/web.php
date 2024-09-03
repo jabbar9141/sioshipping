@@ -109,15 +109,16 @@ Route::get('/test', function(){
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_30_185559_add_column_new_order_batches_table.php'
     // ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_08_31_190378_add_new_columns_orderss_table.php'
-    ]);
+   
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_190623_add_new_columns_order_packages_table.php'
     // ]);
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_222045_add_current_location_address_into_batchlogs_table.php'
     // ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_03_202603_add_shipping_cost_to_orders_table.php'
+    ]);
     return "Success";
 });
 

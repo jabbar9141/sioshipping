@@ -179,7 +179,8 @@ class WalkInOrderAgents extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+       
         $request->validate([
             'tax_code_' => 'required',
             'surname_' => 'required',
@@ -217,7 +218,7 @@ class WalkInOrderAgents extends Controller
             'cond_of_goods' => 'required|string',
             'val_of_goods' => 'required|string',
             'val_cur' => 'required|string',
-            'invoice_document' => 'required|file|mimes:jpg,jpeg,png,pdf',
+            'invoice_document' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
             'type' => 'array',
             'len' => 'array',
             'width' => 'array',
@@ -244,7 +245,6 @@ class WalkInOrderAgents extends Controller
             'terms_of_sale' => 'required',
             'customs_inv_num' => 'required'
         ]);
-
 
         try {
             DB::beginTransaction();
@@ -372,7 +372,7 @@ class WalkInOrderAgents extends Controller
             $l->pickup_location_city_id = $request->ship_from_city;
             $l->delivery_location_country_id = $request->ship_to_country;
             $l->delivery_location_city_id = $request->ship_to_city;
-            $l->invoice_document = $request->invoiceDoc_name;
+            $l->invoice_document = $invoiceDoc_name ?? null;
             $l->save();
             // for ($o = 0; $o < count($request->group-a); $o++) {
 

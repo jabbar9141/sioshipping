@@ -5,11 +5,11 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">New Order</h5>
-                {{-- @if ($errors->any())
+                @if ($errors->any())
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
-                @endif --}}
+                @endif
                 <hr>
                 <form action="{{ route('walkInOrderAgents.store') }}" method="post" id="order-form"
                     enctype="multipart/form-data">

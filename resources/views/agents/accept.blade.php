@@ -56,7 +56,7 @@
                                             [Lat:{{ $order->currentCity->latitude }},
                                             Long:{{ $order->currentCity->longitude }}]</p>
                                         <br>
-                                        <b>Shipping Cost : </b> {{ $order->shipping_cost }}
+                                        <b>Shipping Cost (€) : </b> {{ number_format($order->shipping_cost,2) }}
                                         <br>
 
 
@@ -74,14 +74,14 @@
                                                     <input type="hidden" value="{{ $order->id }}" name="order_id">
                                                     <button class="btn btn-sm btn-danger"
                                                         onclick="return confirm('Are you sure you wish to cancel this order')">Cancel
-                                                        Orrder</button>
+                                                        Order</button>
                                                 </form>
                                             @endif
                                         </div>
 
                                     </td>
                                     <th>Price(&euro;)  </th>
-                                    <td>{{ $order->val_of_goods }}</td>
+                                    <td>{{ number_format($order->val_of_goods, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Sender Name</th>
@@ -146,8 +146,8 @@
                                 <tr>
                                     <th>Condition of Goods</th>
                                     <td>{{ $order->cond_of_goods }}</td>
-                                    <th>Value of goods</th>
-                                    <td>{{ $order->val_of_goods }} [{{ $order->val_cur }}]</td>
+                                    <th>Value of goods (€) </th>
+                                    <td>{{ number_format($order->val_of_goods, 2) }} </td>
                                 </tr>
                             </tbody>
                         </table>

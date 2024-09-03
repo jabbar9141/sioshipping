@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddNewColumnsOrderssTable extends Migration
+class AddShippingCostToOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,9 @@ class AddNewColumnsOrderssTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-          
-        //   $table->float('shipping_cost')->nullable();
-        //   $table->bigInteger('agent_id')->nullable();
-          $table->string('invoice_document')->nullable();
-          
+            $table->float('shipping_cost')->nullable();
+            $table->bigInteger('agent_id')->nullable();
+            $table->string('invoice_document')->nullable();
         });
     }
 

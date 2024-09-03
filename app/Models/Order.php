@@ -58,6 +58,7 @@ class Order extends Model
         'delivery_location_country_id',
         'delivery_location_city_id',
         'invoice_document',
+        'agnet_id'
 
     ];
 
