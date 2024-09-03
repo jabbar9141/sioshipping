@@ -17,7 +17,7 @@ if (!function_exists('getAccountbalances')) {
         $earntToday = UserFunds::where('flag', 'debit')->where('user_id', $user_id)->where('description', '!=', 'Wallet Funding')
             ->whereDate('created_at', $today)
             ->sum('amount');
-
+ 
         $spentToday = UserFunds::where('flag', 'credit')->where('user_id', $user_id)
             ->whereDate('created_at', $today)
             ->sum('amount');

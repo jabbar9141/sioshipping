@@ -69,13 +69,13 @@ class OrderController extends Controller
             })
             ->addColumn('price', function ($order) {
                 if ($order->status == 'unpaid') {
-                    $mar = $order->shipping_rate->price . "<br>";
+                    $mar = number_format($order->shipping_rate->price, 2) . "<br>";
                     $url = route('payment.summary', ['order_id' => $order->id]);
                     $mar .= '<a href="' . $url . '" class="btn btn-info " >$ Pay</a>';
                     return $mar;
                 } else {
-                    $mar = $order->shipping_rate->price . "<br>";
-                    return $mar;
+                    $mar = number_format($order->shipping_rate->price, 2) . "<br>";
+                    return number_format($mar, 2);
                 }
             })
             ->addColumn('view', function ($order) {
@@ -142,7 +142,7 @@ class OrderController extends Controller
             //     }
             // })
             ->addColumn('price', function ($order) {
-                $mar = $order->val_of_goods . "<br>";
+                $mar = number_format($order->val_of_goods, 2) . "<br>";
                 return $mar;
             })
             ->addColumn('view', function ($order) {
@@ -206,7 +206,7 @@ class OrderController extends Controller
             //     }
             // })
             ->addColumn('price', function ($order) {
-                $mar = $order->shipping_rate->price . "<br>";
+                $mar = number_format($order->shipping_rate->price, 2) . "<br>";
                 return $mar;
             })
             ->addColumn('view', function ($order) {
@@ -281,7 +281,7 @@ class OrderController extends Controller
             //     }
             // })
             ->addColumn('price', function ($order) {
-                $mar = $order->val_of_goods . "<br>";
+                $mar = number_format($order->val_of_goods, 2) . "<br>";
                 return $mar;
             })
             ->addColumn('view', function ($order) {

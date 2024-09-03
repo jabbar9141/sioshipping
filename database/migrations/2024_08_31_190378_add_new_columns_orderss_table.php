@@ -15,9 +15,9 @@ class AddNewColumnsOrderssTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
           
-          $table->float('shipping_cost')->nullable();
-          $table->bigInteger('agend_id')->nullable();
-          $table->string('cost_document')->nullable();
+        //   $table->float('shipping_cost')->nullable();
+        //   $table->bigInteger('agent_id')->nullable();
+          $table->string('invoice_document')->nullable();
           
         });
     }

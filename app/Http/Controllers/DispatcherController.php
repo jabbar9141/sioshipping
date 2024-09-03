@@ -88,8 +88,9 @@ class DispatcherController extends Controller
         try {
           
             $o = Order::where('id', $order_id)->first();
-            $p = $o->val_of_goods;
-            if (getAccountbalances(Auth::id())['balance'] >= $p) {
+            $subTotal = $o->val_of_goods;
+            $total =  (float) $subTotal + (float) $o->shipping_cost;
+            if (getAccountbalances(Auth::id())['balance'] >= $total) {
                 DB::beginTransaction();
                 $batch = new OrderBatch();
                 $batch->name = 'BA-' . time() . '-' . $request->batch_ ?? '';
@@ -122,8 +123,8 @@ class DispatcherController extends Controller
                     'pickup_time' => Carbon::now(),
                 ]);
 
-                $u = updateAccountBalance(Auth::id(), ($p), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id);
-                $c = updateAccountBalance(Auth::id(), ($p * 0.015), $o->tracking_id, 'debit', 'Order Commision ' . $o->tracking_id);
+                $u = updateAccountBalance(Auth::id(), ($total), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id);
+                $c = updateAccountBalance(Auth::id(), ($subTotal * 0.015), $o->tracking_id, 'debit', 'Order Commision ' . $o->tracking_id);
                 DB::commit();
                 Mail::to($o->pickup_email)->send(new PaymentEmail($o));
 

@@ -332,7 +332,7 @@ class WalkInOrderAgents extends Controller
 
             $l = new Order;
             $l->customer_id = $customer->id;
-            $l->agend_id = Auth::user()->id;
+            $l->agent_id = Auth::user()->id;
             $l->walk_in_customer_id = $customer->id;
             $l->pickup_location_id = $request->origin_id;
             $l->delivery_location_id = $request->dest_id;

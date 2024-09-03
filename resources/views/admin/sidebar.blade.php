@@ -14,7 +14,7 @@
             <ul id="sidebarnav">
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{ route('home') }}" aria-expanded="false">
+                    <a class="sidebar-link @if (Route::is('home*')) active @endif" href="{{ route('home') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-layout-dashboard"></i>
                         </span>

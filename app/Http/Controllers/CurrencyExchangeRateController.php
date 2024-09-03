@@ -28,7 +28,7 @@ class CurrencyExchangeRateController extends Controller
                 return (($item->country->iso2 ?? 'N/A'));
             })
             ->addColumn('exchange_rate', function ($item) {
-                return $item->exchange_rate . ' ' . $item->country?->currency_symbol;
+                return number_format($item->exchange_rate,2) . ' ' . $item->country?->currency_symbol;
             })
             ->addColumn('action', function ($item) {
 

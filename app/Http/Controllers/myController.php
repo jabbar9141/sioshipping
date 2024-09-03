@@ -10,9 +10,15 @@ use Illuminate\Support\Facades\Notification;
 class myController extends Controller
 {
     public function notification(){
-        $users = User::all();
-        Notification::send($users, new myNotification($users)); 
+        $users = User::select('name', 'email')->first();
+
+        $data = [];  
+        $data = [
+            'name' => $users->name,
+            'comment' => 'Some One comment on your Post',
+        ];   
+         Notification::send($users, new myNotification($data)); 
         
-        return view('home');
+        return view('sendNotification');
     }
 }

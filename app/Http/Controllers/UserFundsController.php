@@ -25,7 +25,6 @@ class UserFundsController extends Controller
                     return view('agents.settings.wallet')->with(['message' => 'Deposit successfully received', 'message_type' => 'success']);
                 } else {
                     $u = updateAccountBalance(Auth::id(), ($stripeIntent->amount_received / 100), $stripeIntent->id, 'debit', 'Wallet Funding');
-
                     if ($u) {
                         return view('agents.settings.wallet')->with(['message' => 'Deposit successfully received', 'message_type' => 'success']);
                     } else {

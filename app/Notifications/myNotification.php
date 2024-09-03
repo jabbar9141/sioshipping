@@ -10,15 +10,20 @@ use Illuminate\Notifications\Notification;
 class myNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    public $users;
+
+    public $name;
+    public $comment;
+
     /**
      * Create a new notification instance.
      *
+     * @param array $data
      * @return void
      */
-    public function __construct($users)
+    public function __construct(array $data)
     {
-        $this->users = $users;
+        $this->name = $data['name'];
+        $this->comment = $data['comment'];
     }
 
     /**
@@ -29,7 +34,7 @@ class myNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'broadcast'];
     }
 
     /**
@@ -41,8 +46,9 @@ class myNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line($this->users;)
-                    ->action('Notification Action', url('/'))
+                    ->line("Hello, {$this->name}")
+                    ->line($this->comment)
+                    ->action('View Post', url('notification'))
                     ->line('Thank you for using our application!');
     }
 
@@ -55,7 +61,18 @@ class myNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+            'name' => $this->name,
+            'comment' => $this->comment,
         ];
+    }
+
+    /**
+     * Get the channels the notification should broadcast on.
+     *
+     * @return \Illuminate\Broadcasting\Channel|array
+     */
+    public function broadcastOn()
+    {
+        return ['my-channel'];
     }
 }

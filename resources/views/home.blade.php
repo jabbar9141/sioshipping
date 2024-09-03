@@ -22,11 +22,18 @@
             transform: scale(1.08);
             /* Adjust the scale value for the zoom effect */
         }
+
+        .dashboard_ul li {
+            width: 20%;
+        }
     </style>
+
+    {{--  @dd($dispatcher_rep);  --}}
     <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">Welcome, To SioShipping Managment Dashboard</h5>
+
                 {{-- @if (Auth::user()->user_type == 'user' || optional(auth()->user()->admin)->can == 'all')
                     <div class="row">
                         <h5>User Reports</h5>
@@ -501,6 +508,127 @@
                 @endif
             </div>
         </div>
+        @if ($dispatcher_rep)
+            <ul class="d-flex dashboard_ul mb-5 gap-3">
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Customer</p>
+                    <h2 class="text-center">
+                        <b>{{ $dispatcher_rep['customer'] }}</b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Sales</p>
+                    <h2 class="text-center">
+                        <b>{{ number_format($dispatcher_rep['total_sales'], 2) }}</b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Today Spending</p>
+                    <h2 class="text-center">
+                        <b>{{ number_format($dispatcher_rep['total_today_spent'], 2) }}</b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Account Balance</p>
+                    <h2 class="text-center">
+                        <b> {{ number_format($dispatcher_rep['totalWalletAmout'], 2) }} </b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Spent Amount</p>
+                    <h2 class="text-center">
+                        <b> {{ number_format($dispatcher_rep['toatalSpendAmount'], 2) }} </b>
+                    </h2>
+                </li>
+            </ul>
+            <ul class="d-flex dashboard_ul mb-5 gap-3">
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Orders</p>
+                    <h2 class="text-center">
+                        <b>{{ $dispatcher_rep['total_orders'] }}</b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Placed Orders</p>
+                    <h2 class="text-center">
+                        <b>{{ $dispatcher_rep['total_placed_orders'] }}</b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total In-Transit Orders</p>
+                    <h2 class="text-center">
+                        <b>{{ $dispatcher_rep['total_in_transit_orders'] }}</b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Delivered Orders</p>
+                    <h2 class="text-center">
+                        <b>{{ $dispatcher_rep['total_delivered_orders'] }}</b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Canceled Orders</p>
+                    <h2 class="text-center">
+                        <b>{{ $dispatcher_rep['total_cancelled_orders'] }}</b>
+                    </h2>
+                </li>
+            </ul>
+            <div class="container-fluid">
+          <div class="row gx-5">
+            <div class="col-md-6 p-3 shadow rounded">
+                <h3>Customers</h3>
+                <table class="table table-bordered table-striped"
+                aria-describedby="orders_tbl_info">
+                <thead>
+                    <tr>
+                        <td>S/NO</td>
+                        <td>Fullname</td>
+                        <td>Email</td>
+                        <td>Tax Code</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($dispatcher_rep['customers_list'] as $key => $customer)
+                        <tr>
+                            <td>{{ $key + 1 }}</td>
+                            <td>{{ $customer->surname }}  {{ $customer->name }}</td>
+                            <td>{{ $customer->email }}</td>
+                            <td>{{ $customer->tax_code }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            {!! $dispatcher_rep['customers_list']->links() !!}
+            </div>
+            <div class="col-md-6 p-3 shadow rounded">
+                <h3>Latest Orders</h3>
+                <table class="table table-bordered table-striped"
+                aria-describedby="orders_tbl_info">
+                <thead>
+                    <tr>
+                        <td>S/NO</td>
+                        <td>Tracking Id</td>
+                        <td>Status</td>
+                        <td>Value of goods</td>
+                        <td>Shipping Cost</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($dispatcher_rep['latest_orders'] as $key => $order)
+                        <tr>
+                            <td>{{ $key + 1 }}</td>
+                            <td>{{ $order->tracking_id }}</td>
+                            <td>{{ $order->status }}</td>
+                            <td>{{ number_format($order->val_of_goods, 2) }}</td>
+                            <td>{{ number_format($order->shipping_cost, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+        @endif
     </div>
     </div>
 @endsection

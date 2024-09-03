@@ -15,9 +15,9 @@
                         <h4>Wallet History</h4>
                         <h6 class="hide-menu">Today's Commision (&euro;) :
                             {{ getAccountbalances(Auth::id())['earningsToday'] }}</h6>
-                        <h6 class="hide-menu">Today's Spendings (&euro;) : {{ getAccountbalances(Auth::id())['spentToday'] }}
+                        <h6 class="hide-menu">Today's Spendings (&euro;) : {{ number_format(getAccountbalances(Auth::id())['spentToday'], 2) }}
                         </h6>
-                        <h6 class="hide-menu">Account Balance (&euro;) : {{ getAccountbalances(Auth::id())['balance'] }}</h6>
+                        <h6 class="hide-menu">Account Balance (&euro;) : {{ number_format(getAccountbalances(Auth::id())['balance'], 2) }}</h6>
                         <hr>
                         <form action="" method="get" class="from-inline">
                             {{-- <p>{{$message}}</p> --}}
@@ -37,7 +37,7 @@
                         </form>
                         <hr>
                         @if (isset($wallet_history))
-                            <table class="table table-sm table-stripped table-border">
+                            <table class="table table-sm table-stripped table-bordered">
                                 <thead>
                                     <th>#</th>
                                     <th>Amount(&euro;)</th>
