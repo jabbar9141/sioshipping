@@ -1,3 +1,8 @@
+@php
+    use App\Models\BankDetail;
+    use App\Models\PaymentRequest;
+    $bank_details = BankDetail::select('id', 'bank_name', 'iban')->get();
+@endphp
 @extends('admin.app')
 @section('page_title', 'Wallet')
 @section('content')
@@ -31,10 +36,10 @@
                             @foreach ($paymentRequests as $request)
                                 <tr>
                                     <td> {{ $request->id }}</td>
-                                    <td> {{ $request->paymentRequest->bank_name }}</td>
-                                    <td> {{ $request->paymentRequest->iban }}</td>
-                                    <td> {{ $request->paymentRequest->country->name }}</td>
-                                    <td> {{ $request->paymentRequest->city->name }}</td>
+                                    <td> {{ $request->bankDetail?->bank_name }}</td>
+                                    <td> {{ $request->bankDetail?->iban }}</td>
+                                    <td> {{ $request->bankDetail?->country->name }}</td>
+                                    <td> {{ $request->bankDetail?->city->name }}</td>
                                     <td> {{ $request->amount }}</td>
                                     <td> {{ $request->status }}</td>
                                     <td> <a class="btn btn-primary btn-sm"
@@ -46,13 +51,6 @@
                         </tbody>
                     </table>
                 @else
-                    {{--  @php  --}}
-                    use App\Models\BankDetail;
-                    use App\Models\PaymentRequest;
-                    $bank_details = BankDetail::select('id', 'bank_name', 'iban')->get();
-                    $paymentRequests = PaymentRequest::select('reciept_attachement')->get();
-                    {{--  @endphp  --}}
-
                     <div class="card">
                         <div class="card-header">
                             <h5>Add Payment Request</h5>

@@ -54,7 +54,7 @@ class UserFundsController extends Controller
             $recordsBetweenDates = UserFunds::where('user_id', Auth::id())->whereBetween('created_at', [$dateFrom, $dateTo])->get();
             $paymentRequests = session('paymentRequests', []);
         
-            return view('my-wallet.index', compact('paymentRequests'));
+            // return view('my-wallet.index', compact('paymentRequests'));
             return view('agents.settings.wallet', ['wallet_history' => $recordsBetweenDates]);
         } else {
            

@@ -21,7 +21,7 @@ class PaymentRequest extends Model
     ];
 
 
-    public function paymentRequest()
+    public function bankDetail()
     {
         return $this->belongsTo(BankDetail::class, 'bank_detail_id');
     }

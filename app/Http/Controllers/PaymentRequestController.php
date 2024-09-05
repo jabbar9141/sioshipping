@@ -46,8 +46,8 @@ class PaymentRequestController extends Controller
                         <tbody>
                            <tr>
                                 <td>' . $row->id . '</td>
-                                <td>' . $row->paymentRequest->bank_name . '</td>
-                                <td>' . $row->paymentRequest->iban . '</td>
+                                <td>' . $row->bankDetail->bank_name . '</td>
+                                <td>' . $row->bankDetail->iban . '</td>
                                 <td>' . $row->amount . '</td>
                                 <td class="text-center"><span class="badge py-2 text-white bg-info text-dark">' . $row->status . '</span></td>
                             </tr>
@@ -64,7 +64,7 @@ class PaymentRequestController extends Controller
                     return $buttons;
                 })
                 ->addColumn('bank_detail_id', function ($row) {
-                    $bank_name = $row->paymentRequest->bank_name;
+                    $bank_name = $row->bankDetail->bank_name;
                     return $bank_name;
                 })
                 ->addColumn('status', function ($row) {
