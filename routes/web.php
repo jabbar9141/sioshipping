@@ -121,7 +121,13 @@ Route::get('/test', function () {
     //     '--path' => 'database/migrations/2024_08_31_222045_add_current_location_address_into_batchlogs_table.php'
     // ]);
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_03_175159_create_bank__details_table.php'
+        '--path' => 'database/migrations/2024_09_04_124546_create_bank_details_table.php'
+    ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_04_161629_create_payment_requests_table.php'
+    ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_04_171247_change_datatype_in_payment_requests_table.php'
     ]);
     return "Success";
 });
