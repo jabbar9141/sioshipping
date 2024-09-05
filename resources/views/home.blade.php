@@ -574,7 +574,7 @@
                 </li>
             </ul>
             <div class="container-fluid">
-          <div class="row gx-5">
+          <div class="row justify-content-between">
             <div class="col-md-6 p-3 shadow rounded">
                 <h3>Customers</h3>
                 <table class="table table-bordered table-striped"

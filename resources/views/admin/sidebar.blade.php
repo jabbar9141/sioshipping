@@ -105,6 +105,15 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
+                        <a class="sidebar-link @if (Route::is('bank_details.*')) active @endif"
+                            href="{{ route('bank_details.index') }}" aria-expanded="false">
+                            <span>
+                                <i class="fa-solid fa-coins"></i>
+                            </span>
+                            <span class="hide-menu">Bank Details</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a class="sidebar-link  @if (Route::is('batches.*')) active @endif"
                             href="{{ route('batches.index') }}" aria-expanded="false">
                             <span>

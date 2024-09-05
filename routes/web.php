@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BankDetailsController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\CurrencyExchangeRateController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\IntlFundTransferOrderController;
 use App\Http\Controllers\myController;
+use App\Http\Controllers\PaymentRequestController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserFundsController;
@@ -51,7 +53,7 @@ use Illuminate\Support\Facades\File;
 |
 */
 
-Route::get('/test', function(){
+Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_24_161206_create_coutries_table.php'
     // ]);
@@ -109,15 +111,18 @@ Route::get('/test', function(){
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_30_185559_add_column_new_order_batches_table.php'
     // ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_08_31_190378_add_new_columns_orderss_table.php'
-    ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_08_31_190378_add_new_columns_orderss_table.php'
+    // ]);
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_190623_add_new_columns_order_packages_table.php'
     // ]);
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_222045_add_current_location_address_into_batchlogs_table.php'
     // ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_03_175159_create_bank__details_table.php'
+    ]);
     return "Success";
 });
 
@@ -220,12 +225,12 @@ Route::post('updateWeightShippingCost', [ShippingRateController::class, 'updateW
 Route::get('getCityShippingCost/{id}', [ShippingRateController::class, 'getCityShippingCost'])->name('get-city-shipping-cost')->middleware(['auth']);
 Route::post('saveCityShippingCostPercentage/{countryId}', [ShippingRateController::class, 'saveCityShippingCostPercentage'])->name('save-city-shipping-cost-percentage')->middleware(['auth']);
 
-Route::get('currencyExchangeView',[CurrencyExchangeRateController::class,'index'])->name('currency-view')->middleware(['auth']);
-Route::get('currencyExchangeRateList',[CurrencyExchangeRateController::class,'currencyExchangeRateList'])->name('currencyExchangeRateList')->middleware(['auth']);
+Route::get('currencyExchangeView', [CurrencyExchangeRateController::class, 'index'])->name('currency-view')->middleware(['auth']);
+Route::get('currencyExchangeRateList', [CurrencyExchangeRateController::class, 'currencyExchangeRateList'])->name('currencyExchangeRateList')->middleware(['auth']);
 // 
-Route::get('getCurrencyExchangeRate/{id}',[CurrencyExchangeRateController::class,'getCurrencyExchangeRate'])->name('getCurrencyExchangeRate')->middleware(['auth']);
-Route::post('updateCurrencyExchangeRate',[CurrencyExchangeRateController::class,'updateCurrencyExchangeRate'])->name('updateCurrencyExchangeRate')->middleware(['auth']);
-Route::post('storeCurrencyExchangeRate',[CurrencyExchangeRateController::class,'storeCurrencyExchangeRate'])->name('storeCurrencyExchangeRate')->middleware(['auth']);
+Route::get('getCurrencyExchangeRate/{id}', [CurrencyExchangeRateController::class, 'getCurrencyExchangeRate'])->name('getCurrencyExchangeRate')->middleware(['auth']);
+Route::post('updateCurrencyExchangeRate', [CurrencyExchangeRateController::class, 'updateCurrencyExchangeRate'])->name('updateCurrencyExchangeRate')->middleware(['auth']);
+Route::post('storeCurrencyExchangeRate', [CurrencyExchangeRateController::class, 'storeCurrencyExchangeRate'])->name('storeCurrencyExchangeRate')->middleware(['auth']);
 
 
 Route::resource('eu_fund_rates', EUFundsTransferRatesController::class)->middleware(['auth']);
@@ -313,12 +318,19 @@ Route::get('agent/accept-search', [AgentController::class, 'accept_search'])->na
 Route::get('agentSetting', [AgentController::class, 'settings'])->name('agent.profile')->middleware(['auth']);
 
 
+//paymentRequesr route
 
+Route::get('paymentRequestget', [PaymentRequestController::class, 'index'])->name('paymentRequestget');
+Route::post('paymentRequestpost', [PaymentRequestController::class, 'store'])->name('paymentRequestpost');
+Route::get('admin-paymentRequestget/{id}', [PaymentRequestController::class, 'adminget'])->name('admin-paymentRequestget');
+
+Route::get('admin-accept-paymentRequest/{id}', [PaymentRequestController::class, 'acceptPaymentRequest'])->name('admin-accept-paymentRequest');
+Route::get('admin-reject-paymentRequest/{id}', [PaymentRequestController::class, 'rejectPaymentRequest'])->name('admin-reject-paymentRequest');
 
 
 Route::get('batchOrdersList/{batch_id}', [OrderBatchController::class, 'batchOrdersList'])->name('batchOrdersList')->middleware(['auth']);
 Route::get('batchOrderEdit/{order_id}', [OrderBatchController::class, 'batchOrderEdit'])->name('batchOrderEdit')->middleware(['auth']);
-Route::post('batchOrderEdit/{order_id}', [OrderBatchController::class, 'batchOrderEdit'])->name('batchOrderEdit')->middleware(['auth']);
+// Route::post('batchOrderEdit/{order_id}', [OrderBatchController::class, 'batchOrderEdit'])->name('batchOrderEdit')->middleware(['auth']);
 Route::post('orderAccept/{order_id}', [DispatcherController::class, 'orderAccept'])->name('orderAccept')->middleware(['auth']);
 Route::post('orderPickedUp/{order_id}', [DispatcherController::class, 'orderPickedUp'])->name('orderPickedUp')->middleware(['auth']);
 Route::get('/batches-search', [OrderBatchController::class, 'search'])->name('batches.search')->middleware(['auth']);
@@ -366,9 +378,16 @@ Route::get('showcase', [ProductController::class, 'showcase'])->name('showcase')
 Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.store');
 
 
+//bank details routes
 
+// Route::get('bankdetails-list', [BankDetailsController::class, 'index'])->name('bankdetails-list');
+// Route::post('bankdetails-store', [BankDetailsController::class, 'store'])->name('bankdetails-store');
+// Route::get('bankdetails-create', [BankDetailsController::class, 'create'])->name('bankdetails-create');
+// Route::get('bankdetails-edit', [BankDetailsController::class, 'edit'])->name('bankdetails-edit');
+// Route::put('bankdetails-update', [BankDetailsController::class, 'update'])->name('bankdetails-update');
+// Route::delete('bankdetails-delete', [BankDetailsController::class, 'destroy'])->name('bankdetails-delete');
 
-
+Route::resource('bank_details', BankDetailsController::class)->middleware(['auth']);
 
 
 Route::post('ajax-get-cities/{stateId}', [CityController::class, 'getCities'])->name('ajax-get-cities');

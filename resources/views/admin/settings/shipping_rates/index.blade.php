@@ -3,8 +3,10 @@
 @section('content')
     <div class="container-fluid">
         <div class="card">
-            <div class="card-body">
+            <div class="card-header">
                 <h5>Countries Shipping Costs</h5>
+            </div>
+            <div class="card-body">
                 <div class="table-responsive">
                     <table id="countriesShippingCostTable" class="table table-sm  table-bordered table-striped display">
                         <thead>

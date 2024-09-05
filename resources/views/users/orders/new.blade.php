@@ -2,6 +2,7 @@
 @section('page_title', 'New Shipping Order')
 @section('content')
     <div class="container-fluid">
+       
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">New Order</h5>
@@ -84,8 +85,9 @@
                             <div class="col-md-6">
                                 <div class="ui-widget">
                                     <label for="doc_front">Document Front <i class="text-danger">*</i> : </label>
-                                    <input type="file" id="doc_front" name="doc_front_" value="{{ old('doc_front_') }}"
-                                        class="form-control" autocomplete="off" onchange="setDocFrontSrc()">
+                                    <input type="file" id="doc_front" name="doc_front_"
+                                        value="{{ old('doc_front_') }}" class="form-control" autocomplete="off"
+                                        onchange="setDocFrontSrc()">
                                     <br>
                                     <img src="" alt="doc_front" id="doc_front_img"
                                         style="width: 100%; border:1px solid gray">
@@ -95,8 +97,8 @@
                                 <div class="ui-widget">
                                     <label for="doc_back">Document back <i class="text-danger"
                                             onchange="setDocBackSrc()">*</i> : </label>
-                                    <input type="file" id="doc_back" name="doc_back_" value="{{ old('doc_back_') }}"
-                                        class="form-control" autocomplete="off">
+                                    <input type="file" id="doc_back" name="doc_back_"
+                                        value="{{ old('doc_back_') }}" class="form-control" autocomplete="off">
                                     <br>
                                     <img src="" alt="doc_back" id="doc_back_img"
                                         style="width: 100%; border:1px solid gray">

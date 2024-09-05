@@ -3,8 +3,8 @@
 @section('content')
     <div class="container-fluid">
         <div class="card mb-3">
+            <div class="card-header"><h5 class="mb-4">Add New Currency Exchange Rates</h5></div>
             <div class="card-body">
-                <h5 class="mb-4">Add New Currency Exchange Rates</h5>
                 <form action="{{ route('storeCurrencyExchangeRate') }}" method="POST" id="storeCurrencyExchangeRateForm">
                     @csrf
                     <div class="row mb-3">
@@ -31,9 +31,11 @@
             </div>
         </div>
         <div class="card">
+            <div class="card-header">
+                <h5>Countries Currency Exchange Rates</h5>
+            </div>
             <div class="card-body">
                 <div class=""></div>
-                <h5>Countries Currency Exchange Rates</h5>
                 <div class="table-responsive">
                     <table id="currencyExchangeRateListTable" class="table table-sm  table-bordered table-striped display">
                         <thead>

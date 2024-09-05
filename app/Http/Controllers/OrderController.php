@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use App\Mail\PaymentEmail;
+use App\Models\Bank_Detail;
 use App\Models\City;
 use App\Models\Country;
 use Illuminate\Support\Carbon as SupportCarbon;

@@ -341,12 +341,87 @@ class WalkInCustomerController extends Controller
                         </div>
                     </div>';
 
-                $mar .= '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#document' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Information">
+
+                $mar .= '
+                        <div class="modal fade" id="' . $user->id . 'Modal" tabindex="-1" aria-labelledby="' . $user->id . 'ModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="' . $user->id . 'ModalLabel">' . $user->name . '</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table table-striped">
+                                            <tr>
+                                                <th>Business Name</th>
+                                                <td>' . $user->agent->name . '<td>
+                                                <th>Phone</th>
+                                                <td>' . $user->agent->phone . '<td>
+                                            </tr>
+                                            <tr>
+                                                <th>Phone 2</th>
+                                                <td>' . $user->agent->phone_alt . '<td>
+                                                <th>Address1</th>
+                                                <td>' . $user->agent->address1 . '<td>
+                                            </tr>
+                                            <tr>
+                                                <th>Address 2</th>
+                                                <td>' . $user->agent->address2 . '<td>
+                                                <th>Zip</th>
+                                                <td>' . $user->agent->zip . '<td>
+                                            </tr>
+                                            <tr>
+                                                <th>City </th>
+                                                <td>' . $user->agent->city->name . '<td>
+                                                <th>State</th>
+                                                <td>' . $user->agent->state->name . '<td>
+                                            </tr>
+                                            <tr>
+                                                <th> Country</th>
+                                                <td>' . $user->agent->country->name . '<td>
+                                                <th>Account type</th>
+                                                <td>' . $user->agent->agency_type . '<td>
+                                            </tr>
+                                            <tr>
+                                                <th> Agency Name </th>  
+                                                <td>' . $user->agent->business_name . '<td>
+                                                <th>Tax ID Code</th>
+                                                <td>' . $user->agent->tax_id_code . '<td>
+                                            </tr>
+                                            <tr>
+                                                <th> VAT No. </th>
+                                                <td>' . $user->agent->vat_no . '<td>
+                                                <th>PEC</th>
+                                                <td>' . $user->agent->pec . '<td>
+                                            </tr>
+                                            <tr>
+                                                <th> SDI </th>
+                                                <td>' . $user->agent->sdi . '<td>
+                                                <th></th>
+                                                <td><td>
+                                            </tr>
+                                        </table>        
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+
+                $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" data-bs-toggle="modal" data-bs-target="#document' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Payment Request">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-code" viewBox="0 0 16 16">
             <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
             <path d="M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708"/>
             </svg>
-            </a></div>';
+            </a>';
+                $url_payment = route('admin-paymentRequestget', $user->id);
+                $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" href="' . $url_payment . '">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                </svg>
+            </a>';
 
                 $mar .= '
                 <div class="modal fade" id="document' . $user->id . 'Modal" tabindex="-1" aria-labelledby="document' . $user->id . 'ModalLabel" aria-hidden="true">
@@ -661,8 +736,8 @@ class WalkInCustomerController extends Controller
         $res['phone'] = isset($cus) ? $cus->phone : "";
         $res['address'] = isset($cus) ? $cus->address : "";
         $res['email'] = isset($cus) ? $cus->email : '';
-        $res['doc_back_img'] = isset($cus) && $cus->doc_back ? asset('uploads/'.$cus->doc_back) : '';
-        $res['doc_front_img'] = isset($cus) && $cus->doc_front ? asset('uploads/'.$cus->doc_front) : '';
+        $res['doc_back_img'] = isset($cus) && $cus->doc_back ? asset('uploads/' . $cus->doc_back) : '';
+        $res['doc_front_img'] = isset($cus) && $cus->doc_front ? asset('uploads/' . $cus->doc_front) : '';
 
         echo json_encode($res);
     }

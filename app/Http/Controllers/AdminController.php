@@ -128,7 +128,7 @@ class AdminController extends Controller
                 } else {
                     $url = route('blockUser');
                     $mar .= '<form method="POST" action="' . $url . '">
-                            <input type="hidden" name = "_token" value = ' . csrf_token() . '>
+                            <input type="hidden" name = "_token" value = ' .     csrf_token() . '>
                             <input type="hidden" name = "user_id" value ="' . $user->id . '">
                             <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Update User Status">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
@@ -140,7 +140,7 @@ class AdminController extends Controller
                 }
                 return $mar;
             })
-            ->rawColumns(['user_type', 'email', 'date', 'blocked','actions'])
+            ->rawColumns(['user_type', 'email', 'date', 'blocked', 'actions', 'payment'])
             ->make(true);
     }
 
