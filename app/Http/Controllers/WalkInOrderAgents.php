@@ -183,7 +183,8 @@ class WalkInOrderAgents extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+       
         $request->validate([
             'tax_code_' => 'required',
             'surname_' => 'required',
@@ -222,6 +223,7 @@ class WalkInOrderAgents extends Controller
             'val_of_goods' => 'required|string',
             'val_cur' => 'required|string',
             'invoice_document' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
+            'invoice_document' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
             'type' => 'array',
             'len' => 'array',
             'width' => 'array',
@@ -248,7 +250,6 @@ class WalkInOrderAgents extends Controller
             'terms_of_sale' => 'required',
             'customs_inv_num' => 'required'
         ]);
-
 
         try {
             DB::beginTransaction();
