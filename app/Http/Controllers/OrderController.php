@@ -244,90 +244,56 @@ class OrderController extends Controller
      */
     public function agentsOrdersList(Request $request)
     {
-        // dd($request->all());
         $query = Order::query();
-        $query->where('pickup_city', 'LIKE', '%' . Auth::user()->agent->city->name . '%')
-                ->orWhere('delivery_city', 'LIKE', '%' . Auth::user()->agent->city->name . '%');
+        $cityName = Auth::user()->agent->city->name;
 
-        // if ($request->filled('startDate')) {
-        //     $query->whereDate('created_at', $request->startDate);
-        // } 
-        
-        // if ($request->filled('endDate')) {
-        //     $query->whereDate('created_at', $request->endDate);
-        // } 
+        $query->where(function ($q) use ($cityName) {
+            $q->where('pickup_city', 'LIKE', '%' . $cityName . '%')
+                ->orWhere('delivery_city', 'LIKE', '%' . $cityName . '%');
+        });
 
-        // if ($request->filled('startDate') && $request->filled('endDate')) {
-        //     // dd($request->startDate);
-        //     $startDate = Carbon::parse($request->startDate);
-        //     $endDate = Carbon::parse($request->endDate);
-        //     $query->whereBetween('created_at', [$startDate, $endDate]);
-        // } 
-         
+        if ($request->filled('startDate') && $request->filled('endDate')) {
+            $startDate = Carbon::parse($request->startDate)->startOfDay();
+            $endDate = Carbon::parse($request->endDate)->endOfDay();
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($request->filled('startDate')) {
+            $startDate = Carbon::parse($request->startDate)->startOfDay();
+            $query->whereDate('created_at', '=', $startDate);
+        } elseif ($request->filled('endDate')) {
+            $endDate = Carbon::parse($request->endDate)->endOfDay();
+            $query->whereDate('created_at', '=', $endDate);
+        }
+
         $orders = $query->orderBy('created_at', 'DESC')->get();
 
-        // return dd($orders);
         return Datatables::of($orders)
             ->addIndexColumn()
             ->addColumn('status', function ($order) {
-                $mar = "<span class= 'badge bg-secondary'>" . $order->status . "</span>";
-                return $mar;
+                return "<span class='badge bg-secondary'>" . $order->status . "</span>";
             })
             ->addColumn('location', function ($order) {
-                $current  = Country::where('id', $order->current_location_country_id)->first()->name . ", " . City::find($order->current_location_city_id)->name;
-                $destination = Country::where('id', $order->delivery_location_country_id)->first()->name . ", " . City::find($order->delivery_location_city_id)->name;
-                $origin = Country::where('id', $order->pickup_location_country_id)->first()->name . ", " . City::find($order->pickup_location_city_id)->name;
-                $mar = "Origin : " . $origin . "<br>";
-                $mar .= "Destination:" . $destination . "<br>";
-                $mar .= "Current : " . $current;
-                return $mar;
+                $current  = Country::find($order->current_location_country_id)->name . ", " . City::find($order->current_location_city_id)->name;
+                $destination = Country::find($order->delivery_location_country_id)->name . ", " . City::find($order->delivery_location_city_id)->name;
+                $origin = Country::find($order->pickup_location_country_id)->name . ", " . City::find($order->pickup_location_city_id)->name;
+                return "Origin: " . $origin . "<br>Destination: " . $destination . "<br>Current: " . $current;
             })
             ->addColumn('date', function ($order) {
-                $mar = "<b> Tracking ID : " . $order->tracking_id . "</b><br>";
-                $mar .= "Created at : " . SupportCarbon::parse($order->created_at)->format('F j, Y') . "<br>";
-                $mar .= "Last updated:" . SupportCarbon::parse($order->updated_at)->format('F j, Y');
-                return $mar;
+                return "<b>Tracking ID: " . $order->tracking_id . "</b><br>Created at: " . $order->created_at->format('F j, Y') . "<br>Last updated: " . $order->updated_at->format('F j, Y');
             })
             ->addColumn('parties', function ($order) {
-                $mar = "Sender : " . $order->pickup_name . "<br>";
-                $mar .= "Receiver:" . $order->delivery_name;
-                return $mar;
+                return "Sender: " . $order->pickup_name . "<br>Receiver: " . $order->delivery_name;
             })
-            // ->addColumn('edit', function ($order) {
-            //     if ($order->status == 'unpaid' || $order->status == 'placed') {
-            //         $edit_url = route('orders.edit', $order->id);
-            //         return '<a href="' . $edit_url . '" class="btn btn-info btn-sm" ><i class="fa fa-pencil"></i> Edit</a>';
-            //     } else {
-            //         $edit_url = '#';
-            //         return '<a href="' . $edit_url . '" class="btn btn-info btn-sm disabled" ><i class="fa fa-pencil"></i> Edit</a>';
-            //     }
-            // })
             ->addColumn('price', function ($order) {
-                $mar = fromEuroView(auth()->user()->currency_id ?? 0, $order->val_of_goods) . "<br>";
-                return $mar;
+                return fromEuroView(auth()->user()->currency_id ?? 0, $order->val_of_goods);
             })
             ->addColumn('view', function ($order) {
-                if ($order->status != 'unpaid') {
-                    $url = route('agent.accept', ['order_track_id' => $order->tracking_id]);
-                    return '<a href="' . $url . '" class="btn btn-info btn-sm" ><i class="fa fa-eye"></i> Pickup/ Accept</a>';
-                } else {
-                    // $url = '#';
-                    $url = route('agent.accept', ['order_track_id' => $order->tracking_id]);
-                    return '<a href="' . $url . '" class="btn btn-info btn-sm" ><i class="fa fa-eye"></i> Pickup/ Accept</a>';
-                }
+                $url = route('agent.accept', ['order_track_id' => $order->tracking_id]);
+                return '<a href="' . $url . '" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Pickup/ Accept</a>';
             })
-            // ->addColumn('delete', function ($order) {
-            //     $url = route('shipping_rates.destroy', $order->id);
-            //     return '<form method="POST" action="' . $url . '">
-            //                 <input type="hidden" name = "_token" value = ' . csrf_token() . '>
-            //                 <input type="hidden" name = "_method" value ="DELETE">
-            //                 <button type="submit" onclick="return confirm(\'Are you sure you wish to delete this entry?\')" class="btn btn-sm btn-danger">Delete</button>
-            //             </form>';
-            // })
             ->rawColumns(['status', 'location', 'view', 'parties', 'date', 'price'])
             ->make(true);
-        
     }
+
 
     /**
      * Show the form for creating a new resource.

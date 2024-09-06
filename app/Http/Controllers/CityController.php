@@ -9,6 +9,7 @@ use App\Models\Country;
 use App\Models\Dispatcher;
 use App\Models\Order;
 use App\Models\OrderBatch;
+use App\Models\State;
 use Illuminate\Bus\Batch;
 use Illuminate\Http\Request;
 
@@ -33,6 +34,17 @@ class CityController extends Controller
             'cities' => $cities->toArray(),
         ], 200);
     }
+
+    public function getCountryState($countryId)
+    {
+        $states = State::select('name', 'id')->where('country_id', $countryId)->get();
+
+        return response()->json([
+            'success' => true,
+            'cities' => $states->toArray(),
+        ], 200);
+    }
+
 
     public function getOrder()
     {

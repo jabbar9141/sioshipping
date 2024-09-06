@@ -31,8 +31,10 @@ class CurrencyExchangeRateController extends Controller
                 return number_format($item->exchange_rate, 2) . ' ' . $item->country?->currency_symbol;
             })
             ->addColumn('action', function ($item) {
-
-                return '<a href="javascript:void(0)" onclick="editWeightCost(' . $item->id . ')" class="btn btn-info btn-sm" ><i class="fa fa-pencil"></i> Edit Cost</a>';
+                // removeCurrencyExchangeRate
+                $btn = '<a href="javascript:void(0)" onclick="editWeightCost(' . $item->id . ')" class="btn btn-info btn-sm" ><i class="fa fa-pencil"></i> Edit </a>';
+                $btn .= '<a href="'.route('removeCurrencyExchangeRate', $item->id).'"  class="btn btn-danger btn-sm ms-2" ><i class="fa fa-trash"></i> Remove </a>';
+                return $btn;
             })
             ->rawColumns(['action', 'exchange_rate'])
             ->make(true);
@@ -91,5 +93,11 @@ class CurrencyExchangeRateController extends Controller
                 'message' => 'Something went wrong!'
             ]);
         }
+    }
+
+    public function removeCurrencyExchangeRate($id){
+        $currency = CurrencyExchangeRate::find($id);
+        $currency->delete();
+        return redirect()->back()->with(['message' => 'Record Removed Successfully !', 'message_type' => 'success']);
     }
 }

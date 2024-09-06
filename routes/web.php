@@ -129,8 +129,11 @@ Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_09_04_171247_change_datatype_in_payment_requests_table.php'
     // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_05_164933_add_new_column_in_users_table.php'
+    // ]);
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_05_164933_add_new_column_in_users_table.php'
+        '--path' => 'database/migrations/2024_09_06_200454_add_tow_column_in_orders_table.php'
     ]);
     return "Success";
 });
@@ -240,7 +243,7 @@ Route::get('currencyExchangeRateList', [CurrencyExchangeRateController::class, '
 Route::get('getCurrencyExchangeRate/{id}', [CurrencyExchangeRateController::class, 'getCurrencyExchangeRate'])->name('getCurrencyExchangeRate')->middleware(['auth']);
 Route::post('updateCurrencyExchangeRate', [CurrencyExchangeRateController::class, 'updateCurrencyExchangeRate'])->name('updateCurrencyExchangeRate')->middleware(['auth']);
 Route::post('storeCurrencyExchangeRate', [CurrencyExchangeRateController::class, 'storeCurrencyExchangeRate'])->name('storeCurrencyExchangeRate')->middleware(['auth']);
-
+Route::get('removeCurrencyExchangeRate/{id}', [CurrencyExchangeRateController::class, 'removeCurrencyExchangeRate'])->name('removeCurrencyExchangeRate')->middleware(['auth']);
 
 Route::resource('eu_fund_rates', EUFundsTransferRatesController::class)->middleware(['auth']);
 Route::get('EUFundsTransferRatesList', [EUFundsTransferRatesController::class, 'EUFundsTransferRatesList'])->name('EUFundsTransferRatesList')->middleware(['auth']);
@@ -402,6 +405,7 @@ Route::resource('bank_details', BankDetailsController::class)->middleware(['auth
 
 Route::post('ajax-get-cities/{stateId}', [CityController::class, 'getCities'])->name('ajax-get-cities');
 Route::post('ajax-get-country-cities/{countryId}', [CityController::class, 'getCountryCities'])->name('ajax-get-country-cities');
+Route::post('ajax-get-country-state/{countryId}', [CityController::class, 'getCountryState'])->name('ajax-get-country-state');
 Route::get('ajax-edit-countries', [CityController::class, 'editCountriy'])->name('ajax-edit-countries');
 Route::get('ajax-get-paced-orders', [CityController::class, 'getOrder'])->name('ajax-get-paced-orders');
 

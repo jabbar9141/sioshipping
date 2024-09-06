@@ -26,7 +26,7 @@
 
     <!-- Libraries Stylesheet -->
     <link href="{{ asset('landing2/lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Customized Bootstrap Stylesheet -->
     <link href="{{ asset('landing2/css/style.css') }}" rel="stylesheet">
     <style>
@@ -120,23 +120,103 @@
                     <div class="tab-pane fade {{ !empty(request()->get('origin_id')) || empty($_GET) ? 'show active' : '' }}"
                         id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
                         <hr>
-                        <form action="" method="get" class="form-inline justify-content-left">
-                            <div class="col-md-4" style="width: 100%">
-                                <input type="text" id="origin" name="origin_"
-                                    value="{{ request()->get('origin_') }}" class="form-control" autocomplete="off"
-                                    placeholder="{{ __('hompage.ship_from') }}" style="width: 100%">
+                        {{--  <form class="mt-4" action="" method="get" class="">  --}}
+                            <div class="row mb-4">
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="origin">Shipping from Country<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <select name="ship_from_country" id="ship_from_country" class="form-control">
 
+                                        </select>
+                                        @error('ship_from_country')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="ship_from_state">Shipping from State<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <select name="ship_from_state" id="ship_from_state" class="form-control">
+
+                                        </select>
+                                        @error('ship_from_state')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="origin">Shipping from City<i class="text-danger">*</i> : </label>
+                                        <br>
+                                        <select name="ship_from_city" id="ship_from_city" class="form-control">
+                                        </select>
+                                        @error('ship_from_city')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="weight_tot">Total Weight<i class="text-danger">*</i> : </label>
+                                        <br>
+                                        <input type="number" class="form-control" id="weight_tot">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-4" style="width: 100%">
-                                <input type="text" id="dest" name="dest_"
-                                    value="{{ request()->get('dest_') }}" class="form-control" autocomplete="off"
-                                    placeholder="{{ __('hompage.ship_to') }}" style="width: 100%">
+                            <div class="row mb-4">
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="ship_to_country">Shipping to Country<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <select name="ship_to_country" id="ship_to_country" class="form-control">
+
+                                        </select>
+                                        @error('ship_to_country')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="ship_to_state">Shipping to State<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <select name="ship_to_state" id="ship_to_state"
+                                            class="form-select select2 w-100">
+                                        </select>
+                                        @error('ship_to_state')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="ship_to_city">Shipping to City<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <select name="ship_to_city" id="ship_to_city"
+                                            class="form-select w-100 select2">
+                                        </select>
+                                        @error('ship_to_city')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="card ui-widget">
+                                       <h4>Shipping Cost</h4>
+                                       <h5 id="shipping_rate_list"></h5>
+                                    </div>
+                                </div>
+                                
                             </div>
-                            <div class="col-md-4" style="width: 100%">
-                                <button class="btn btn-primary m-1" type="submit">{{ __('hompage.proceed') }}</button>
-                                <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a>
+                            <div class="col-md-4 ps-0 text-start" style="width: 100%">
+                                <button class="btn btn-primary m-1"
+                                    onclick="getRates()">{{ __('hompage.proceed') }}</button>
+                                {{--  <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a>  --}}
                             </div>
-                        </form>
+                        {{--  </form>  --}}
                         @if (!empty(request()->get('origin_id') && !empty(request()->get('dest_id'))))
                             <div class="bg-dark text-secondary p-2">
                                 <div class="justify-items-left">
@@ -668,15 +748,19 @@
         .product-item {
             text-align: center;
             padding: 15px;
-            transform: scale(0.7); /* Scale down each item to 70% of its original size */
+            transform: scale(0.7);
+            /* Scale down each item to 70% of its original size */
         }
 
         .product-img {
-            border-radius: 50%; /* Make the image circular */
+            border-radius: 50%;
+            /* Make the image circular */
             width: 150px;
             height: 200px;
-            object-fit: cover; /* Ensure the image covers the entire area */
-            margin: 0 auto; /* Center the image horizontally */
+            object-fit: cover;
+            /* Ensure the image covers the entire area */
+            margin: 0 auto;
+            /* Center the image horizontally */
         }
 
         .product-name {
@@ -723,7 +807,330 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/blitzer/jquery-ui.min.css"
         integrity="sha512-ibBo2Ns078qm7xZNTPbIrg5XP4pZ+Aujfmz0QFsce2f4LYpCnF1Esy6FkIRFBgXC9cY30XiS7Ui9+RpN8K7ICg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js"></script>
+    //countries city
+    <script>
+        $(document).ready(function() {
 
+            $('#ship_from_country').select2();
+            $('#ship_from_state').select2();
+            $('#ship_from_city').select2();
+            $('#ship_to_country').select2();
+            $('#ship_to_state').select2();
+            $('#ship_to_city').select2();
+
+            countries();
+
+            var ship_from_country = $("#ship_from_country");
+            ship_from_country.wrap('<div class="position-relative"></div>');
+            ship_from_country.on('change', function() {
+                $("#ship_from_state").empty()
+                $('#ship_from_state').html('<option value="">Select City</option>');
+
+                var _token = '{{ csrf_token() }}';
+                let url =
+                    "{{ route('ajax-get-country-state', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
+                if ($(this).val() > 0) {
+                    // showBlockUI();
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.cities, function(key, value) {
+                                    $("#ship_from_state").append('<option value="' +
+                                        value
+                                        .id + '">' + value.name + '</option>');
+                                });
+
+                                $("#ship_from_state").trigger('change');
+                                // hideBlockUI();
+                                @if (!is_null(old('residential.city')))
+                                    $('#ship_from_state').val({{ old('residential.city') }});
+                                    $('#ship_from_state').trigger('change')
+                                @endif
+                            } else {
+                                // hideBlockUI();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    title: 'Are You Sure',
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            // hideBlockUI();
+                        }
+                    });
+                } else {
+                    // hideBlockUI();
+                }
+                // hideBlockUI();
+
+            });
+
+            var ship_from_state = $("#ship_from_state");
+            ship_from_state.wrap('<div class="position-relative"></div>');
+            ship_from_state.on('change', function() {
+                $("#ship_from_city").empty()
+                $('#ship_from_city').html('<option value="">Select City</option>');
+
+                var _token = '{{ csrf_token() }}';
+                let url =
+                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
+                    .replace(':stateId', $(this).val());
+                if ($(this).val() > 0) {
+                    // showBlockUI();
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.cities, function(key, value) {
+                                    $("#ship_from_city").append('<option value="' +
+                                        value
+                                        .id + '">' + value.name + '</option>');
+                                });
+
+                                $("#ship_from_city").trigger('change');
+                                // hideBlockUI();
+                                @if (!is_null(old('residential.city')))
+                                    $('#ship_from_city').val({{ old('residential.city') }});
+                                    $('#ship_from_city').trigger('change')
+                                @endif
+                            } else {
+                                // hideBlockUI();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    title: 'Are You Sure',
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            // hideBlockUI();
+                        }
+                    });
+                } else {
+                    // hideBlockUI();
+                }
+                // hideBlockUI();
+
+            });
+
+            var ship_to_country = $("#ship_to_country");
+            ship_to_country.wrap('<div class="position-relative"></div>');
+            ship_to_country.on('change', function() {
+                $("#ship_to_state").empty()
+                $('#ship_to_state').html('<option value="">Select City</option>');
+
+                var _token = '{{ csrf_token() }}';
+                let url =
+                    "{{ route('ajax-get-country-state', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
+                if ($(this).val() > 0) {
+
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.cities, function(key, value) {
+                                    $("#ship_to_state").append('<option value="' +
+                                        value
+                                        .id + '">' + value.name + '</option>');
+                                });
+                                $("#ship_to_state").trigger('change');
+
+                                @if (!is_null(old('residential.city')))
+                                    $('#ship_to_state').val({{ old('residential.city') }});
+                                    $('#ship_to_state').trigger('change')
+                                @endif
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    title: 'Are You Sure',
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+
+                        }
+                    });
+                } else {
+
+                }
+
+
+            });
+        })
+
+        var ship_to_state = $("#ship_to_state");
+        ship_to_state.wrap('<div class="position-relative"></div>');
+        ship_to_state.on('change', function() {
+            $("#ship_to_city").empty()
+            $('#ship_to_city').html('<option value="">Select City</option>');
+
+            var _token = '{{ csrf_token() }}';
+            let url =
+                "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
+                .replace(':stateId', $(this).val());
+            if ($(this).val() > 0) {
+                // showBlockUI();
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        'stateId': $(this).val(),
+                        '_token': _token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $.each(response.cities, function(key, value) {
+                                $("#ship_to_city").append('<option value="' +
+                                    value
+                                    .id + '">' + value.name + '</option>');
+                            });
+
+                            $("#ship_to_city").trigger('change');
+                            // hideBlockUI();
+                            @if (!is_null(old('residential.city')))
+                                $('#ship_to_city').val({{ old('residential.city') }});
+                                $('#ship_to_city').trigger('change')
+                            @endif
+                        } else {
+                            // hideBlockUI();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                                title: 'Are You Sure',
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        // hideBlockUI();
+                    }
+                });
+            } else {
+                // hideBlockUI();
+            }
+            // hideBlockUI();
+
+        });
+
+
+        function countries() {
+
+            $('#ship_from_country').html('<option value="">Select Country</option>');
+            $('#ship_to_country').html('<option value="">Select Country</option>');
+            $('#customer_country_id').html('<option value="">Select Country</option>');
+            var _token = '{{ csrf_token() }}';
+            let url = "{{ route('ajax-get-countries') }}";
+            $.ajax({
+                url: url,
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    '_token': _token
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $.each(response.countries, function(key, value) {
+                            $("#ship_from_country").append('<option value="' + value.id +
+                                '">' + value.name + '</option>');
+                            $("#ship_to_country").append('<option value="' + value.id +
+                                '">' + value.name + '</option>');
+                            $("#customer_country_id").append('<option value="' + value.id + '">' + value
+                                .name + '</option>')
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function getRates() {
+
+            let ship_from_country = $('#ship_from_country').val();
+            let ship_from_city = $('#ship_from_city').val();
+            let ship_to_country = $('#ship_to_country').val();
+            let ship_to_city = $('#ship_to_city').val();
+            let weightTotal = $('#weight_tot').val();
+            
+
+
+            $.ajax({
+                url: "{{ route('rates.fetch') }}",
+                type: "GET",
+                data: {
+                    ship_from_country: ship_from_country,
+                    ship_from_city: ship_from_city,
+                    ship_to_country: ship_to_country,
+                    ship_to_city: ship_to_city,
+                    weightTotal: weightTotal,
+                    heightTotal: 0,
+                    widthTotal: 0,
+                    lengthTotal: 0,
+                    valueTotal: 0,
+                    countTotal: 0
+                },
+                success: function(data) {
+                    if (data.success) {
+                        console.log(data);
+                        let result = data.data;
+                        $('#shipping_rate_list').html(result.shipping_cost);
+                       
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function(data) {
+                    toastr.error('Something went wrong');
+                }
+            });
+
+
+
+        }
+    </script>
+    //countries city
     @if (!empty($_GET))
         <script>
             document.addEventListener("DOMContentLoaded", function() {

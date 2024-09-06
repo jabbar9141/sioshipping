@@ -169,7 +169,7 @@ class WalkInOrderAgents extends Controller
      */
     public function create()
     {
-       
+
         // return $bank_detals;
         return view('agents.orders.new');
     }
@@ -183,8 +183,8 @@ class WalkInOrderAgents extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {   
-       
+    {
+
         $request->validate([
             'tax_code_' => 'required',
             'surname_' => 'required',
@@ -244,8 +244,10 @@ class WalkInOrderAgents extends Controller
             'customer_state_id' => 'required|numeric',
             'customer_city_id' => 'required|numeric',
             'ship_from_country' => 'required|numeric',
+            'ship_from_state' => 'required|numeric',
             'ship_from_city' => 'required|numeric',
             'ship_to_country' => 'required|numeric',
+            'ship_to_state' => 'required|numeric',
             'ship_to_city' => 'required|numeric',
             'terms_of_sale' => 'required',
             'customs_inv_num' => 'required'
@@ -374,8 +376,10 @@ class WalkInOrderAgents extends Controller
             $l->current_location_country_id = $request->ship_to_country;
             $l->current_location_city_id = $request->ship_to_city;
             $l->pickup_location_country_id = $request->ship_from_country;
+            $l->pickup_location_state_id = $request->ship_from_state;
             $l->pickup_location_city_id = $request->ship_from_city;
             $l->delivery_location_country_id = $request->ship_to_country;
+            $l->delivery_location_state_id = $request->ship_to_state;
             $l->delivery_location_city_id = $request->ship_to_city;
             $l->invoice_document = $invoiceDoc_name;
             $l->save();

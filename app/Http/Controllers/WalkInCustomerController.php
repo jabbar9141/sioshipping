@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dispatcher;
 use App\Models\Kyc;
+use App\Models\PaymentRequest;
 use App\Models\User;
 use App\Models\WalkInCustomer;
 use Carbon\Carbon;
@@ -416,9 +417,13 @@ class WalkInCustomerController extends Controller
             </svg>
             </a>';
                 $url_payment = route('admin-paymentRequestget', $user->id);
-                $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" href="' . $url_payment . '">
-            Payment
-            </a>';
+                $paymentRequests = PaymentRequest::where('user_id', $user->id)->where('status','pending')->count();
+                if ($paymentRequests > 0) {
+                    $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" href="' . $url_payment . '">Pending Payment - <b>'.$paymentRequests.'</b></a>';
+                }else{
+                    $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" href="' . $url_payment . '">Payment</a>';
+                }
+
 
                 $mar .= '
                 <div class="modal fade" id="document' . $user->id . 'Modal" tabindex="-1" aria-labelledby="document' . $user->id . 'ModalLabel" aria-hidden="true">

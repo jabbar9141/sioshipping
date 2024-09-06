@@ -143,7 +143,7 @@
                         <hr>
                         <div class="row">
 
-                            <div class="col-6 mb-2">
+                            <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="origin">Shipping from Country<i class="text-danger">*</i> : </label>
                                     <select name="ship_from_country" id="ship_from_country" class="form-control">
@@ -160,7 +160,19 @@
 
                                 </div>
                             </div>
-                            <div class="col-6 mb-2">
+                            <div class="col-4 mb-2">
+                                <div class="ui-widget">
+                                    <label for="ship_from_state">Shipping from State<i class="text-danger">*</i> :
+                                    </label>
+                                    <select name="ship_from_state" id="ship_from_state" class="form-control">
+
+                                    </select>
+                                    @error('ship_from_state')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="origin">Shipping from City<i class="text-danger">*</i> : </label>
                                     <select name="ship_from_city" id="ship_from_city" class="form-control">
@@ -172,7 +184,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-6 mb-2">
+                            <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="ship_to_country">Shipping to Country<i class="text-danger">*</i> :
                                     </label>
@@ -184,12 +196,12 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-6 mb-2">
+                            <div class="col-4 mb-2">
                                 <div class="ui-widget">
-                                    <label for="ship_to_city">Shipping to City<i class="text-danger">*</i> : </label>
-                                    <select name="ship_to_city" id="ship_to_city" class="form-select select2">
+                                    <label for="ship_to_state">Shipping to State<i class="text-danger">*</i> : </label>
+                                    <select name="ship_to_state" id="ship_to_state" class="form-select select2">
                                     </select>
-                                    @error('ship_to_city')
+                                    @error('ship_to_state')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                     {{-- <label for="dest">Shipping To <i class="text-danger">*</i> : </label>
@@ -198,6 +210,17 @@
                                     <input type="hidden" name="dest_id" value="{{ old('dest_id') }}" id="dest_id"> --}}
                                 </div>
                             </div>
+                            <div class="col-4 mb-2">
+                                <div class="ui-widget">
+                                    <label for="ship_to_city">Shipping to City<i class="text-danger">*</i> : </label>
+                                    <select name="ship_to_city" id="ship_to_city" class="form-select select2">
+                                    </select>
+                                    @error('ship_to_city')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
                         </div>
                         <hr>
                         {{-- <div class="table-responsive"> --}}
@@ -941,8 +964,10 @@
         $(document).ready(function() {
 
             $('#ship_from_country').select2();
+            $('#ship_from_state').select2();
             $('#ship_from_city').select2();
             $('#ship_to_country').select2();
+            $('#ship_to_state').select2();
             $('#ship_to_city').select2();
 
             countries();
@@ -950,13 +975,69 @@
             var ship_from_country = $("#ship_from_country");
             ship_from_country.wrap('<div class="position-relative"></div>');
             ship_from_country.on('change', function() {
+                $("#ship_from_state").empty()
+                $('#ship_from_state').html('<option value="">Select City</option>');
+
+                var _token = '{{ csrf_token() }}';
+                let url =
+                    "{{ route('ajax-get-country-state', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
+                if ($(this).val() > 0) {
+                    // showBlockUI();
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            'stateId': $(this).val(),
+                            '_token': _token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $.each(response.cities, function(key, value) {
+                                    $("#ship_from_state").append('<option value="' +
+                                        value
+                                        .id + '">' + value.name + '</option>');
+                                });
+
+                                $("#ship_from_state").trigger('change');
+                                // hideBlockUI();
+                                @if (!is_null(old('residential.city')))
+                                    $('#ship_from_state').val({{ old('residential.city') }});
+                                    $('#ship_from_state').trigger('change')
+                                @endif
+                            } else {
+                                // hideBlockUI();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    title: 'Are You Sure',
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            // hideBlockUI();
+                        }
+                    });
+                } else {
+                    // hideBlockUI();
+                }
+                // hideBlockUI();
+
+            });
+
+            var ship_from_state = $("#ship_from_state");
+            ship_from_state.wrap('<div class="position-relative"></div>');
+            ship_from_state.on('change', function() {
                 $("#ship_from_city").empty()
                 $('#ship_from_city').html('<option value="">Select City</option>');
 
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
-                    .replace(':countryId', $(this).val());
+                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
+                    .replace(':stateId', $(this).val());
                 if ($(this).val() > 0) {
                     // showBlockUI();
                     $.ajax({
@@ -1006,12 +1087,12 @@
             var ship_to_country = $("#ship_to_country");
             ship_to_country.wrap('<div class="position-relative"></div>');
             ship_to_country.on('change', function() {
-                $("#ship_to_city").empty()
-                $('#ship_to_city').html('<option value="">Select City</option>');
+                $("#ship_to_state").empty()
+                $('#ship_to_state').html('<option value="">Select City</option>');
 
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    "{{ route('ajax-get-country-state', ['countryId' => ':countryId']) }}"
                     .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
 
@@ -1026,15 +1107,15 @@
                         success: function(response) {
                             if (response.success) {
                                 $.each(response.cities, function(key, value) {
-                                    $("#ship_to_city").append('<option value="' +
+                                    $("#ship_to_state").append('<option value="' +
                                         value
                                         .id + '">' + value.name + '</option>');
                                 });
-                                $("#ship_to_city").trigger('change');
+                                $("#ship_to_state").trigger('change');
 
                                 @if (!is_null(old('residential.city')))
-                                    $('#ship_to_city').val({{ old('residential.city') }});
-                                    $('#ship_to_city').trigger('change')
+                                    $('#ship_to_state').val({{ old('residential.city') }});
+                                    $('#ship_to_state').trigger('change')
                                 @endif
                             } else {
 
@@ -1058,6 +1139,62 @@
 
             });
         })
+
+        var ship_to_state = $("#ship_to_state");
+        ship_to_state.wrap('<div class="position-relative"></div>');
+        ship_to_state.on('change', function() {
+            $("#ship_to_city").empty()
+            $('#ship_to_city').html('<option value="">Select City</option>');
+
+            var _token = '{{ csrf_token() }}';
+            let url =
+                "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
+                .replace(':stateId', $(this).val());
+            if ($(this).val() > 0) {
+                // showBlockUI();
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        'stateId': $(this).val(),
+                        '_token': _token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $.each(response.cities, function(key, value) {
+                                $("#ship_to_city").append('<option value="' +
+                                    value
+                                    .id + '">' + value.name + '</option>');
+                            });
+
+                            $("#ship_to_city").trigger('change');
+                            // hideBlockUI();
+                            @if (!is_null(old('residential.city')))
+                                $('#ship_to_city').val({{ old('residential.city') }});
+                                $('#ship_to_city').trigger('change')
+                            @endif
+                        } else {
+                            // hideBlockUI();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                                title: 'Are You Sure',
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        // hideBlockUI();
+                    }
+                });
+            } else {
+                // hideBlockUI();
+            }
+            // hideBlockUI();
+
+        });
 
 
         function countries() {
@@ -1131,8 +1268,8 @@
                 }
             });
 
-       
-           
+
+
 
         });
 
@@ -1230,7 +1367,7 @@
         // Attach the change event handlers to the file input elements
         $('#doc_front').change(setDocFrontSrc);
         $('#doc_back').change(setDocBackSrc);
-        
+
         function getRates() {
 
             let ship_from_country = $('#ship_from_country').val();

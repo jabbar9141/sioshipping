@@ -52,7 +52,8 @@
     <script>
         $("#dateFillter").on('click', function() {
             console.log($("#startDate").val())
-            let url = "{{ route('agentsOrdersList') }}?startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val();
+            let url = "{{ route('agentsOrdersList') }}?startDate=" + $("#startDate").val() + "&endDate=" + $(
+                "#endDate").val();
             console.log(url);
             $('#orders_tbl').DataTable().ajax.url(url).load();
         });
@@ -71,6 +72,10 @@
                 "ajax": {
                     url: "{{ route('agentsOrdersList') }}",
                     typE: "GET",
+                    data: function(d) {
+                        d.startDate = $("#startDate").val();
+                        d.endDate = $("#endDate").val();
+                    },
                 },
                 "columns": [{
                         "data": "DT_RowIndex"

@@ -54,8 +54,10 @@ class Order extends Model
         'current_location_country_id',
         'current_location_city_id',
         'pickup_location_country_id',
+        'pickup_location_state_id',
         'pickup_location_city_id',
         'delivery_location_country_id',
+        'delivery_location_state_id',
         'delivery_location_city_id',
         'invoice_document',
         'agnet_id'
