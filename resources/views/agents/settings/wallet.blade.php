@@ -11,59 +11,140 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-header">
-                    <h5 class="card-title fw-semibold mb-4">My Wallet</h5>
+                    @if (\Route::current()->getName() !== 'admin-paymentRequestget')
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title fw-semibold mb-4">Wallet</h5>
+
+                            <div>
+                                <h4>Wallet History</h4>
+                                <h6 class="hide-menu">Today's Commission:
+                                    {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['earningsToday']) }}
+                                </h6>
+
+                                <h6 class="hide-menu">Today's Spendings :
+                                    {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['spentToday']) }}
+                                </h6>
+                                <h6 class="hide-menu">Account Balance :
+                                    {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['balance']) }}
+                                </h6>
+                            </div>
+                        </div>
+                    @else
+                        <h4>Payment Request</h4>
+                    @endif
                 </div>
                 {{-- <p class="mb-0">This is the Agent Wallet page </p> --}}
                 {{-- @include('dispatcher.settings.nav') --}}
                 @include('admin.partials.notification')
                 <hr>
                 @if (Auth::user()->user_type == 'admin')
-                    <table id="paymentRequestList" class="table table-striped table-bordered">
+                    <style>
+                        #paymentRequestList1 tr th {
+                            text-align: center;
+                            white-space: nowrap;
+                        }
+                    </style>
+                    <table id="paymentRequestList1" class="table table-striped table-bordered">
                         <thead>
                             <tr>
-                                <th>S/No</th>
-                                <th>Bank Name</th>
-                                <th>Iban No</th>
-                                <th>Country</th>
-                                <th>City</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Accept</th>
-                                <th>Reject</th>
+                                <th class="py-2">S/No</th>
+                                <th class="py-2">Bank Name</th>
+                                <th class="py-2">IBAN</th>
+                                <th class="py-2">Country</th>
+                                <th class="py-2">City</th>
+                                <th class="py-2">Amount</th>
+                                <th class="py-2">Status</th>
+                                <th class="py-2">Action</th>
+                                <th class="py-2">View</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {{--  @dd($paymentRequests);  --}}
+
                             @foreach ($paymentRequests as $request)
                                 <tr>
-                                    <td> {{ $request->id }}</td>
-                                    <td> {{ $request->bankDetail?->bank_name }}</td>
-                                    <td> {{ $request->bankDetail?->iban }}</td>
-                                    <td> {{ $request->bankDetail?->country->name }}</td>
-                                    <td> {{ $request->bankDetail?->city->name }}</td>
-                                    <td> {{ $request->amount }}</td>
-                                    <td> {{ $request->status }}</td>
-                                    <td> <a class="btn btn-primary btn-sm"
-                                            href="{{ route('admin-accept-paymentRequest', $request->id) }}">Accept</a></td>
-                                    <td> <a class="btn btn-info btn-sm"
-                                            href="{{ route('admin-reject-paymentRequest', $request->id) }}">Reject</a></td>
+                                    <td class="py-2"> {{ $request->id }}</td>
+                                    <td class="py-2"> {{ $request->bankDetail?->bank_name }}</td>
+                                    <td class="py-2"> {{ $request->bankDetail?->iban }}</td>
+                                    <td class="py-2"> {{ $request->bankDetail?->country->name }}</td>
+                                    <td class="py-2"> {{ $request->bankDetail?->city->name }}</td>
+                                    <td class="py-2">
+                                        {{ fromEuroView(auth()->user()->currency_id ?? 0, $request->amount) }}</td>
+                                    <td class="py-2"> <span class="badge bg-secondary">{{ $request->status }}</span></td>
+                                    <td class="py-2">
+                                        @if ($request->status === 'pending')
+                                            <div class="d-flex align-item-center gap-2">
+                                                <a class="btn btn-primary btn-sm"
+                                                    href="{{ route('admin-accept-paymentRequest', $request->id) }}">Accept</a>
+                                                <a class="btn btn-info btn-sm"
+                                                    href="{{ route('admin-reject-paymentRequest', $request->id) }}">Reject</a>
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td class="py-2">
+                                        <a style="white-space: nowrap;" class="btn btn-sm btn-primary mx-5"
+                                            data-bs-toggle="modal" data-bs-target="#mymodal"><i
+                                                class="fa fa-eye"></i>Veiw</a>
+
+                                        <div class="modal modal-lg fade" id="mymodal" tabindex="-1"
+                                            aria-labelledby="mymodalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="mymodalLabel">Payment Request
+                                                            Attachement</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                        </style>
+                                                        <table
+                                                            class="table table-sm w-100 mb-5 table-bordered table-striped display">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Name</th>
+                                                                    <th>IBAN</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td> {{ $request->bankDetail->bank_name }} </td>
+                                                                    <td> {{ $request->bankDetail->iban }} </td>
+                                                                    <td> {{ fromEuroView(auth()->user()->currency_id ?? 0, $request->amount) }}
+                                                                    </td>
+                                                                    <td class=""><span
+                                                                            class="badge py-2 text-white bg-info text-dark">
+                                                                            {{ $request->status }}</span></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <img class="img-fluid w-100 h-auto"
+                                                            src="{{ asset('/uploads/payment/' . $request->reciept_attachement) }}">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    {{--  modal  --}}
+
+                    {{--  modal  --}}
                 @else
                     <div class="card">
                         <div class="card-header">
                             <h5>Add Payment Request</h5>
                         </div>
                         <div class="card-body">
-                            <h4>Wallet History</h4>
-                            <h6 class="hide-menu">Today's Commission (&euro;):
-                                {{ getAccountbalances(Auth::id())['earningsToday'] }}</h6>
-                            <h6 class="hide-menu">Today's Spendings (&euro;):
-                                {{ number_format(getAccountbalances(Auth::id())['spentToday'], 2) }}</h6>
-                            <h6 class="hide-menu">Account Balance (&euro;):
-                                {{ number_format(getAccountbalances(Auth::id())['balance'], 2) }}</h6>
-                            <hr>
                             <form class="mb-5" id="paymentRequest" action="{{ route('paymentRequestpost') }}"
                                 method="post" enctype="multipart/form-data">
                                 @csrf
@@ -116,19 +197,60 @@
                                 #paymentRequestList tr th {
                                     width: 20% !important;
                                     text-align: center;
+                                    white-space: nowrap;
+                                }
+
+                                #paymentRequestList td {
+                                    padding-top: 5px;
+                                    padding-bottom: 5px;
+                                    text-align: center;
                                 }
                             </style>
+
                             <table id="paymentRequestList" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>S/No</th>
-                                        <th>Bank Name</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>View</th>
+                                        <th class="py-2">S/No</th>
+                                        <th class="py-2">Bank Name</th>
+                                        <th class="py-2">Amount</th>
+                                        <th class="py-2">Status</th>
+                                        <th class="py-2">View</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>All Transits</h5>
+                        </div>
+                        <div class="card-body">
+                            <style>
+                                #paymentRequestList tr th {
+                                    width: 20% !important;
+                                    text-align: center;
+                                }
+
+                                #transit_table td {
+                                    padding-top: 5px;
+                                    padding-bottom: 5px;
+                                }
+                            </style>
+
+                            <table id="transit_table" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="py-2">S/No</th>
+                                        <th class="py-2">Desciption</th>
+                                        <th class="py-2">Amount</th>
+                                        <th class="py-2">Currency</th>
+                                        <th class="py-2">flag</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transit_tbl">
 
                                 </tbody>
                             </table>
@@ -158,7 +280,7 @@
                             <table class="table table-sm table-stripped table-bordered">
                                 <thead>
                                     <th>#</th>
-                                    <th>Amount(&euro;)</th>
+                                    <th>Amount</th>
                                     <th>ID</th>
                                     <th>Date</th>
                                 </thead>
@@ -303,5 +425,43 @@
             });
         </script>
     @endif
+
+    <script>
+        getTransit();
+
+        function getTransit() {
+            $.ajax({
+                url: "{{ route('get-transit') }}",
+                type: 'get',
+                dataType: 'json',
+
+                success: function(data) {
+                    $.each(data.data, function(key, value) {
+                        var id = value.id;
+                        var description = value.description;
+                        var currency = value.currency;
+                        var flag = value.flag;
+                        var amount = value.amount;
+                        $format = amount;
+
+                        var tr = '';
+                        tr += '<tr>';
+                        tr += '<td>' + id + '</td>';
+                        tr += '<td>' + description + '</td>';
+                        tr += '<td>' + amount.toFixed(2) + '</td>';
+                        tr += '<td>' + currency + '</td>';
+                        tr += '<td>' + flag + '</td>';
+                        tr += '</tr>';
+
+                        $("#transit_tbl").append(tr);
+                    });
+                },
+
+                error: function(responce) {
+                    console.log(responce.success);
+                }
+            });
+        }
+    </script>
 
 @endsection

@@ -114,12 +114,12 @@ class OrderController extends Controller
                 return $mar;
             })
             ->addColumn('location', function ($order) {
-                $current  = Country::where('id', $order->current_location_country_id)->first()->name .", ". City::find($order->current_location_city_id)->name;
-                $destination = Country::where('id', $order->delivery_location_country_id)->first()->name .", ". City::find($order->delivery_location_city_id)->name;
-                $origin = Country::where('id', $order->pickup_location_country_id)->first()->name .", ". City::find($order->pickup_location_city_id)->name;
+                $current  = Country::where('id', $order->current_location_country_id)->first()->name . ", " . City::find($order->current_location_city_id)->name;
+                $destination = Country::where('id', $order->delivery_location_country_id)->first()->name . ", " . City::find($order->delivery_location_city_id)->name;
+                $origin = Country::where('id', $order->pickup_location_country_id)->first()->name . ", " . City::find($order->pickup_location_city_id)->name;
                 $mar = "Origin : " . $origin . "<br>";
                 $mar .= "Destination:" . $destination . "<br>";
-                $mar .= "Current : ". $current;
+                $mar .= "Current : " . $current;
                 return $mar;
             })
             ->addColumn('date', function ($order) {
@@ -242,10 +242,31 @@ class OrderController extends Controller
     /**
      * datatable for dispatcher orders
      */
-    public function agentsOrdersList()
+    public function agentsOrdersList(Request $request)
     {
-        $orders = Order::where('pickup_city', 'LIKE', '%' . Auth::user()->agent->city->name . '%')->orWhere('delivery_city', 'LIKE', '%' . Auth::user()->agent->city->name . '%')->orderBy('created_at', 'DESC')->get();
-       
+        // dd($request->all());
+        $query = Order::query();
+        $query->where('pickup_city', 'LIKE', '%' . Auth::user()->agent->city->name . '%')
+                ->orWhere('delivery_city', 'LIKE', '%' . Auth::user()->agent->city->name . '%');
+
+        // if ($request->filled('startDate')) {
+        //     $query->whereDate('created_at', $request->startDate);
+        // } 
+        
+        // if ($request->filled('endDate')) {
+        //     $query->whereDate('created_at', $request->endDate);
+        // } 
+
+        // if ($request->filled('startDate') && $request->filled('endDate')) {
+        //     // dd($request->startDate);
+        //     $startDate = Carbon::parse($request->startDate);
+        //     $endDate = Carbon::parse($request->endDate);
+        //     $query->whereBetween('created_at', [$startDate, $endDate]);
+        // } 
+         
+        $orders = $query->orderBy('created_at', 'DESC')->get();
+
+        // return dd($orders);
         return Datatables::of($orders)
             ->addIndexColumn()
             ->addColumn('status', function ($order) {
@@ -253,12 +274,12 @@ class OrderController extends Controller
                 return $mar;
             })
             ->addColumn('location', function ($order) {
-                $current  = Country::where('id', $order->current_location_country_id)->first()->name .", ". City::find($order->current_location_city_id)->name;
-                $destination = Country::where('id', $order->delivery_location_country_id)->first()->name .", ". City::find($order->delivery_location_city_id)->name;
-                $origin = Country::where('id', $order->pickup_location_country_id)->first()->name .", ". City::find($order->pickup_location_city_id)->name;
+                $current  = Country::where('id', $order->current_location_country_id)->first()->name . ", " . City::find($order->current_location_city_id)->name;
+                $destination = Country::where('id', $order->delivery_location_country_id)->first()->name . ", " . City::find($order->delivery_location_city_id)->name;
+                $origin = Country::where('id', $order->pickup_location_country_id)->first()->name . ", " . City::find($order->pickup_location_city_id)->name;
                 $mar = "Origin : " . $origin . "<br>";
                 $mar .= "Destination:" . $destination . "<br>";
-                $mar .= "Current : ". $current;
+                $mar .= "Current : " . $current;
                 return $mar;
             })
             ->addColumn('date', function ($order) {
@@ -282,7 +303,7 @@ class OrderController extends Controller
             //     }
             // })
             ->addColumn('price', function ($order) {
-                $mar = number_format($order->val_of_goods, 2) . "<br>";
+                $mar = fromEuroView(auth()->user()->currency_id ?? 0, $order->val_of_goods) . "<br>";
                 return $mar;
             })
             ->addColumn('view', function ($order) {
@@ -305,6 +326,7 @@ class OrderController extends Controller
             // })
             ->rawColumns(['status', 'location', 'view', 'parties', 'date', 'price'])
             ->make(true);
+        
     }
 
     /**

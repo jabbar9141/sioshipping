@@ -90,10 +90,11 @@ if (!function_exists('fromEuroView')) {
     {
         if ($currency_id > 0) {
             $currency = CurrencyExchangeRate::find($currency_id);
-            $result = number_format($price * $currency->currency_rate, 2);
+            $result = number_format($price * $currency->exchange_rate, 2);
             return $result . ' ' . $currency->country->currency_symbol;
         } else {
-            return $price . ' ' . "€";
+            $result = number_format($price,2);
+            return $result . ' ' . "€";
         }
     }
 }

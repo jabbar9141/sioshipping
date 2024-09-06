@@ -56,7 +56,7 @@
                                             [Lat:{{ $order->currentCity->latitude }},
                                             Long:{{ $order->currentCity->longitude }}]</p>
                                         <br>
-                                        <b>Shipping Cost (€) : </b> {{ number_format($order->shipping_cost,2) }}
+                                        <b>Shipping Cost : </b> {{ fromEuroView(auth()->user()->currency_id ?? 0,$order->shipping_cost,) }}
                                         <br>
 
 
@@ -81,7 +81,7 @@
 
                                     </td>
                                     <th>Price(&euro;)  </th>
-                                    <td>{{ number_format($order->val_of_goods, 2) }}</td>
+                                    <td>{{ fromEuroView(auth()->user()->currency_id ?? 0,$order->val_of_goods) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Sender Name</th>
@@ -146,8 +146,8 @@
                                 <tr>
                                     <th>Condition of Goods</th>
                                     <td>{{ $order->cond_of_goods }}</td>
-                                    <th>Value of goods (€) </th>
-                                    <td>{{ number_format($order->val_of_goods, 2) }} </td>
+                                    <th>{{--Value of goods (€)--}} </th>
+                                    <td>{{-- fromEuroView(auth()->user()->currency_id ?? 0,$order->val_of_goods) --}} </td>
                                 </tr>
                             </tbody>
                         </table>

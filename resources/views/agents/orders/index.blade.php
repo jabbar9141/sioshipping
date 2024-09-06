@@ -5,16 +5,26 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
-                    <h5>All Orders In My city [{{Auth::user()->agent->city->name}}]</h5>
+                    <h5>All Orders In My city [{{ Auth::user()->agent->city->name }}]</h5>
                     <a href="{{ route('walkInOrderAgents.create') }}" class="btn btn-primary float-right">New Order</a>
                 </div>
                 @include('admin.partials.notification')
                 <hr>
                 <div class="d">
-                    <!-- /.card-header -->
                     <div class="card-body">
+                        <div class="text-end ">
+                            <form class="justify-content-end d-flex gap-3" action="" method="post">
+                                <input style="width: 20%" type="date" id="startDate" name="startDate"
+                                    class="form-control" id="dateFillter" name="dateFillter" id="">
+                                <input style="width:20%" type="date" id="endDate" name="endDate" class="form-control"
+                                    id="dateFillter" name="dateFillter" id="">
+                                <button id="dateFillter" class="btn btn-primary btn-sm" type="button">Save</button>
+                            </form>
+                        </div>
                         <h5>Orders</h5>
+
                         <div class="table-responsive">
+
                             <table id="orders_tbl" class="table table-sm  table-bordered table-striped display">
                                 <thead>
                                     <tr>
@@ -36,9 +46,19 @@
         </div>
     </div>
 @endsection
+
 @section('scripts')
-<script>
-    $('#orders_tbl').DataTable({
+
+    <script>
+        $("#dateFillter").on('click', function() {
+            console.log($("#startDate").val())
+            let url = "{{ route('agentsOrdersList') }}?startDate="+$("#startDate").val()+"&endDate="+$("#endDate").val();
+            console.log(url);
+            $('#orders_tbl').DataTable().ajax.url(url).load();
+        });
+
+        $(document).ready(function() {
+            var table = $('#orders_tbl').DataTable({
                 "dom": 'Bfrtip',
                 "iDisplayLength": 50,
                 "lengthMenu": [
@@ -49,8 +69,8 @@
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('agentsOrdersList') }}",
-                    "type": "GET"
+                    url: "{{ route('agentsOrdersList') }}",
+                    typE: "GET",
                 },
                 "columns": [{
                         "data": "DT_RowIndex"
@@ -72,7 +92,7 @@
                     },
                     {
                         "data": "view"
-                    },
+                    }
                 ],
                 "paging": true,
                 "lengthChange": true,
@@ -81,5 +101,6 @@
                 "info": true,
                 "autoWidth": true
             });
-</script>
+        });
+    </script>
 @endsection

@@ -46,18 +46,16 @@ class UserFundsController extends Controller
                 'currency' => 'eur',
                 'automatic_payment_methods' => ['enabled' => true],
             ]);
-                
+
             return view('agents.settings.wallet', ['stripeIntent' => $stripeIntent, 'amount' => $amt]);
         } elseif (null != request()->get('date_from') && null != request()->get('date_to')) {
             $dateFrom = Carbon::parse(request('date_from'))->startOfDay();
             $dateTo = Carbon::parse(request('date_to'))->endOfDay();
             $recordsBetweenDates = UserFunds::where('user_id', Auth::id())->whereBetween('created_at', [$dateFrom, $dateTo])->get();
-            $paymentRequests = session('paymentRequests', []);
-        
-            // return view('my-wallet.index', compact('paymentRequests'));
+           
             return view('agents.settings.wallet', ['wallet_history' => $recordsBetweenDates]);
         } else {
-           
+
             return view('agents.settings.wallet');
         }
     }
@@ -67,8 +65,7 @@ class UserFundsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         
     }
 
@@ -91,7 +88,7 @@ class UserFundsController extends Controller
      */
     public function show(UserFunds $userFunds)
     {
-        //
+        
     }
 
     /**

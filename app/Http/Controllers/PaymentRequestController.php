@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymentRequest;
 use App\Models\User;
+use App\Models\UserFunds;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,6 +21,11 @@ class PaymentRequestController extends Controller
             $paymentRequests = PaymentRequest::where('user_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
             return DataTables::of($paymentRequests)
                 ->addIndexColumn()
+                ->addColumn('amount', function ($row) {
+                    $buttons = '';
+                    $buttons = '<td>' . fromEuroView(auth()->user()->currency_id ?? 0, $row->amount) . '</td>';
+                    return $buttons;
+                })
                 ->addColumn('veiw', function ($row) {
                     $buttons = '';
                     $buttons .= '<a class="btn btn-sm btn-primary mx-5" data-bs-toggle="modal" data-bs-target="#' . $row->id . '"><i class="fa fa-eye"></i>Veiw</a> ';
@@ -36,7 +42,6 @@ class PaymentRequestController extends Controller
                                  <table class="table table-sm w-100 mb-5 table-bordered table-striped display">
                         <thead>
                             <tr>
-                                <th>S/N</th>
                                 <th>Name</th>
                                 <th>Iban</th>
                                 <th>Amount</th>
@@ -45,15 +50,14 @@ class PaymentRequestController extends Controller
                         </thead>
                         <tbody>
                            <tr>
-                                <td>' . $row->id . '</td>
                                 <td>' . $row->bankDetail->bank_name . '</td>
                                 <td>' . $row->bankDetail->iban . '</td>
-                                <td>' . $row->amount . '</td>
+                                <td>' . fromEuroView(auth()->user()->currency_id ?? 0, $row->amount) . '</td>
                                 <td class="text-center"><span class="badge py-2 text-white bg-info text-dark">' . $row->status . '</span></td>
                             </tr>
                         </tbody>
                     </table>
-                                <iframe class="" src="' . asset("/uploads/payment/" . $row->reciept_attachement) . '"   ></iframe>
+                                <img class="img-fluid w-100 h-auto" src="' . asset("/uploads/payment/" . $row->reciept_attachement) . '"   ></img>
                             </div>
                              <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -72,7 +76,7 @@ class PaymentRequestController extends Controller
                     $buttons .= '<span class="badge py-2 text-white bg-info text-dark">' . $row->status . '</span>';
                     return $buttons;
                 })
-                ->rawColumns(['veiw', 'bank_detail_id', 'status', 'details'])
+                ->rawColumns(['veiw', 'bank_detail_id', 'status', 'details', 'amount'])
                 ->make(true);
         }
         return redirect()->route('my-wallet.index');
@@ -125,6 +129,23 @@ class PaymentRequestController extends Controller
     }
 
 
+    public function getTransit()
+    {
+
+        try {
+            $transits = UserFunds::get();
+            return response()->json([
+                'success' => true,
+                'data' => $transits,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'data' => 'Some thing went Wrong'
+            ]);
+        }
+    }
+
     public function acceptPaymentRequest(string $id)
     {
 
@@ -133,7 +154,7 @@ class PaymentRequestController extends Controller
             $paymentRequest->status = 'accept';
             $paymentRequest->admin_id = Auth::user()->id;
             $paymentRequest->save();
-            $u = updateAccountBalance($paymentRequest->user_id, $paymentRequest->amount, Auth::user()->id, 'debit', 'Wallet Funding');
+            $u = updateAccountBalance($paymentRequest->user_id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'debit', 'Wallet Funding');
             return redirect()->back()->with(['message' => 'Status Updated Successfully!', 'message_type' => 'success']);
         } else {
             return redirect()->back()->with('message', "Something went Wrong!");

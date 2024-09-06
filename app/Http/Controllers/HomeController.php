@@ -71,18 +71,18 @@ class HomeController extends Controller
         $rep['total_assigned_orders'] = Order::where('status', 'assigned')->count();
         $rep['totalWalletAmout'] = UserFunds::where('flag', 'debit')->sum('amount');
         $rep['toatalSpendAmount'] = UserFunds::where('flag', 'credit')->sum('amount');
-        
+        $rep['total_unpaid_orders'] = Order::where('status', 'unpaid')->where('agent_id', Auth::user()->id)->count();
         $rep['total_today_spent'] = UserFunds::where('flag', 'credit')->whereDate('created_at', Carbon::today())->sum('amount');
         $get_customer = Order::pluck('customer_id')->toArray();
         $rep['customer'] = count(array_unique($get_customer));
         $rep['total_sales'] = Order::sum('val_of_goods');
+        $rep['total_users'] = User::count('name');
         // dd($totalWalletAmout);
         $customer_ids = Order::pluck('customer_id')->toArray();
         $rep['customers_list'] = WalkInCustomer::whereIn('id', $customer_ids)->orderBy('id', 'DESC')->paginate(10);
         $rep['latest_orders'] = Order::orderBy('id', 'DESC')->limit(10)->get();
         // $rep['orders_list'] = Order::
-        return $rep;
-
+        $rep['total_transit'] = UserFunds::get();
         return $rep;
     }
 
@@ -113,9 +113,10 @@ class HomeController extends Controller
         $rep['total_placed_orders'] = Order::where('status', 'placed')->where('agent_id', Auth::user()->id)->count();
         $rep['total_cancelled_orders'] = Order::where('status', 'cancelled')->where('agent_id', Auth::user()->id)->count();
         $rep['total_assigned_orders'] = Order::where('status', 'assigned')->where('agent_id', Auth::user()->id)->count();
+        $rep['total_unpaid_orders'] = Order::where('status', 'unpaid')->where('agent_id', Auth::user()->id)->count();
         $rep['totalWalletAmout'] = UserFunds::where('flag', 'debit')->where('user_id', Auth::user()->id)->sum('amount');
         $rep['toatalSpendAmount'] = UserFunds::where('flag', 'credit')->where('user_id', Auth::user()->id)->sum('amount');
-        
+
         $rep['total_today_spent'] = UserFunds::where('flag', 'credit')->where('user_id', Auth::user()->id)->whereDate('created_at', Carbon::today())->sum('amount');
         $get_customer = Order::where('agent_id', Auth::user()->id)->pluck('customer_id')->toArray();
         $rep['customer'] = count(array_unique($get_customer));
@@ -124,10 +125,12 @@ class HomeController extends Controller
         $customer_ids = Order::where('agent_id', Auth::user()->id)->pluck('customer_id')->toArray();
         $rep['customers_list'] = WalkInCustomer::whereIn('id', $customer_ids)->orderBy('id', 'DESC')->paginate(10);
         $rep['latest_orders'] = Order::orderBy('id', 'DESC')->limit(10)->get();
-        // $rep['orders_list'] = Order::
+
+        //total transit 
+        $rep['total_transit'] = UserFunds::get();
         return $rep;
     }
-    
+
 
     /**
      * Show the application dashboard.

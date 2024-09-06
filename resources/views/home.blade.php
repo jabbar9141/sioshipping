@@ -516,28 +516,37 @@
                         <b>{{ $dispatcher_rep['customer'] }}</b>
                     </h2>
                 </li>
+                @if (Auth::user()->user_type === 'admin')
+                    <li class="p-3 shadow rounded">
+                        <p class="fw-bold">Total User</p>
+                        <h2 class="text-center">
+                            <b>{{ $dispatcher_rep['total_users'] }}</b>
+                        </h2>
+                    </li>
+                @endif
+                {{--  @dd(fromEuroView())  --}}
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold">Total Sales</p>
                     <h2 class="text-center">
-                        <b>{{ number_format($dispatcher_rep['total_sales'], 2) }}</b>
+                        <b>{{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['total_sales']) }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold">Total Today Spending</p>
                     <h2 class="text-center">
-                        <b>{{ number_format($dispatcher_rep['total_today_spent'], 2) }}</b>
+                        <b>{{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['total_today_spent']) }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold">Total Account Balance</p>
                     <h2 class="text-center">
-                        <b> {{ number_format($dispatcher_rep['totalWalletAmout'], 2) }} </b>
+                        <b> {{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['totalWalletAmout']) }} </b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold">Total Spent Amount</p>
                     <h2 class="text-center">
-                        <b> {{ number_format($dispatcher_rep['toatalSpendAmount'], 2) }} </b>
+                        <b> {{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['toatalSpendAmount']) }} </b>
                     </h2>
                 </li>
             </ul>
@@ -561,6 +570,12 @@
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
+                    <p class="fw-bold">Total Unpaid Orders</p>
+                    <h2 class="text-center">
+                        <b>{{ $dispatcher_rep['total_unpaid_orders'] }}</b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
                     <p class="fw-bold">Total Delivered Orders</p>
                     <h2 class="text-center">
                         <b>{{ $dispatcher_rep['total_delivered_orders'] }}</b>
@@ -574,60 +589,62 @@
                 </li>
             </ul>
             <div class="container-fluid">
-          <div class="row justify-content-between">
-            <div class="col-md-6 p-3 shadow rounded">
-                <h3>Customers</h3>
-                <table class="table table-bordered table-striped"
-                aria-describedby="orders_tbl_info">
-                <thead>
-                    <tr>
-                        <td>S/NO</td>
-                        <td>Fullname</td>
-                        <td>Email</td>
-                        <td>Tax Code</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($dispatcher_rep['customers_list'] as $key => $customer)
-                        <tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td>{{ $customer->surname }}  {{ $customer->name }}</td>
-                            <td>{{ $customer->email }}</td>
-                            <td>{{ $customer->tax_code }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            {!! $dispatcher_rep['customers_list']->links() !!}
-            </div>
-            <div class="col-md-6 p-3 shadow rounded">
-                <h3>Latest Orders</h3>
-                <table class="table table-bordered table-striped"
-                aria-describedby="orders_tbl_info">
-                <thead>
-                    <tr>
-                        <td>S/NO</td>
-                        <td>Tracking Id</td>
-                        <td>Status</td>
-                        <td>Value of goods</td>
-                        <td>Shipping Cost</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($dispatcher_rep['latest_orders'] as $key => $order)
-                        <tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td>{{ $order->tracking_id }}</td>
-                            <td>{{ $order->status }}</td>
-                            <td>{{ number_format($order->val_of_goods, 2) }}</td>
-                            <td>{{ number_format($order->shipping_cost, 2) }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            </div>
-          </div>
-        </div>
+                <div class="row mb-5 justify-content-between">
+                    <div class="col-md-12 d-flex gap-3">
+                        <div class="card p-3 shadow">
+                            <h3>Customers</h3>
+                            <table class="table table-bordered table-striped" aria-describedby="orders_tbl_info">
+                                <thead>
+                                    <tr>
+                                        <td>S/NO</td>
+                                        <td>Fullname</td>
+                                        <td>Email</td>
+                                        <td>Tax Code</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($dispatcher_rep['customers_list'] as $key => $customer)
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $customer->surname }} {{ $customer->name }}</td>
+                                            <td>{{ $customer->email }}</td>
+                                            <td>{{ $customer->tax_code }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            {!! $dispatcher_rep['customers_list']->links() !!}
+                        </div>
+                        <div class="card shadow p-3">
+                            <h3>Latest Orders</h3>
+                            <table class="table table-bordered table-striped" aria-describedby="orders_tbl_info">
+                                <thead>
+                                    <tr>
+                                        <td>S/NO</td>
+                                        <td>Tracking Id</td>
+                                        <td>Status</td>
+                                        <td>Value of goods</td>
+                                        <td>Shipping Cost</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($dispatcher_rep['latest_orders'] as $key => $order)
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $order->tracking_id }}</td>
+                                            <td>{{ $order->status }}</td>
+                                            <td>{{ fromEuroView(auth()->user()->currency_id ?? 0, $order->val_of_goods, 2) }}
+                                            </td>
+                                            <td>{{ fromEuroView(auth()->user()->currency_id ?? 0, $order->shipping_cost, 2) }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+               
         @endif
     </div>
     </div>

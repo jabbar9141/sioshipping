@@ -11,14 +11,14 @@ class CurrencyExchangeRateController extends Controller
 {
 
     public function index()
-    {   
+    {
         $countries = Country::all();
-        return view('admin.currency_exchange.index',compact('countries'));
+        return view('admin.currency_exchange.index', compact('countries'));
     }
 
     public function currencyExchangeRateList()
     {
-        $items = CurrencyExchangeRate::orderBy('id','desc')->get();
+        $items = CurrencyExchangeRate::orderBy('id', 'desc')->get();
         return DataTables::of($items)
             ->addIndexColumn()
             ->addColumn('name', function ($item) {
@@ -28,7 +28,7 @@ class CurrencyExchangeRateController extends Controller
                 return (($item->country->iso2 ?? 'N/A'));
             })
             ->addColumn('exchange_rate', function ($item) {
-                return number_format($item->exchange_rate,2) . ' ' . $item->country?->currency_symbol;
+                return number_format($item->exchange_rate, 2) . ' ' . $item->country?->currency_symbol;
             })
             ->addColumn('action', function ($item) {
 
@@ -79,6 +79,7 @@ class CurrencyExchangeRateController extends Controller
     public function getCurrencyExchangeRate($id)
     {
         try {
+            
             $currency = CurrencyExchangeRate::find($id);
             return response()->json([
                 'success' => true,

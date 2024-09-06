@@ -28,7 +28,8 @@ class User extends Authenticatable implements JWTSubject
         'user_type',
         'blocked',
         'country',
-        'registration_status'
+        'registration_status',
+        'currency_id',
     ];
 
     /**

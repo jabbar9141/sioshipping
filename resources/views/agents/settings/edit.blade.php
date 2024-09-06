@@ -43,34 +43,66 @@
                 </div>
             </div>
             <div class="card mb-3 col-md-6">
-                <div class="card-body">
-                    <h5 class="mb-4">Agent Details;</h5>
-                    <!-- Button trigger modal -->
-                    <p><b>Name: {{ $agent->name }}</b></p>
-                    <p><b>Email: {{ $agent->email }}</b></p>
-                    <p><b>Agency Type: {{ $agent->agent->agency_type }}</b></p>
+                <div class="card-body d-flex gap-4">
+                    <div>
+                        <h5 class="mb-4">Agent Details;</h5>
+                        <!-- Button trigger modal -->
+                        <p><b>Name: {{ $agent->name }}</b></p>
+                        <p><b>Email: {{ $agent->email }}</b></p>
+                        <p><b>Agency Type: {{ $agent->agent->agency_type }}</b></p>
 
 
-                    <a type="button" class="" data-bs-toggle="modal" data-bs-target="#registrationDocumentModal">
-                        Check Registration Document
-                    </a>
-                    <br>
-                    <a type="button" class="mt-3" data-bs-toggle="modal" data-bs-target="#fullDocumentModal">
-                        Check Full Document
-                    </a>
+                        <a type="button" class="" data-bs-toggle="modal" data-bs-target="#registrationDocumentModal">
+                            Check Registration Document
+                        </a>
+                        <br>
+                        <a type="button" class="mt-3" data-bs-toggle="modal" data-bs-target="#fullDocumentModal">
+                            Check Full Document
+                        </a>
+                    </div>
 
+                    <form class="w-100" action="{{ route('agents.store') }}" method="post">
+                        @csrf
+                        @method('POST')
+                        <div class="row">
+                            <h5 class="mb-4">Currency Details</h5>
+                            <div class="form-group col-md-12">
+                                {{ auth()->user()->currency_id }}
+                                <label for="currency_id">Select Currency<i class="text-danger">*</i></label>
+                                <select class="form-control" id="currency_id" name="currency_id">
+                                    <option value="" selected>Select Currency</option>
+                                    @foreach ($currency_exchange_rates as $currency_exchange_rate)
+                                        <option value="{{ $currency_exchange_rate->id }}"
+                                            @if ($currency_exchange_rate->id == auth()->user()->currency_id) selected @endif>
+                                            {{ $currency_exchange_rate->country->name }}-
+                                            <b>{{ $currency_exchange_rate->country->currency_symbol }}</b>
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('currency_id')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                        <br>
+                        <div class="text-end">
+                            <button class="btn btn-primary btn-sm" type="submit">Save</button>
+                        </div>
+                    </form>
                     <!-- Modal -->
-                    <div class="modal fade" id="registrationDocumentModal" tabindex="-1" aria-labelledby="registrationDocumentModalLabel"
-                        aria-hidden="true">
+                    <div class="modal fade" id="registrationDocumentModal" tabindex="-1"
+                        aria-labelledby="registrationDocumentModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="registrationDocumentModalLabel">Agnet Registration Document</h5>
+                                    <h5 class="modal-title" id="registrationDocumentModalLabel">Agnet Registration Document
+                                    </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <iframe class="pdf" src="{{ asset($agent->agent->front_attachment) }}" width="100%" height="650"></iframe>  
+                                    <iframe class="pdf" src="{{ asset($agent->agent->front_attachment) }}"
+                                        width="100%" height="650"></iframe>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -89,10 +121,12 @@
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <iframe class="pdf" src="{{ asset($agent->agent->attachment_path) }}" width="100%" height="650"></iframe>  
+                                    <iframe class="pdf" src="{{ asset($agent->agent->attachment_path) }}" width="100%"
+                                        height="650"></iframe>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>

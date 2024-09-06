@@ -120,14 +120,17 @@ Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_31_222045_add_current_location_address_into_batchlogs_table.php'
     // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_04_124546_create_bank_details_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_04_161629_create_payment_requests_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_04_171247_change_datatype_in_payment_requests_table.php'
+    // ]);
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_04_124546_create_bank_details_table.php'
-    ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_04_161629_create_payment_requests_table.php'
-    ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_04_171247_change_datatype_in_payment_requests_table.php'
+        '--path' => 'database/migrations/2024_09_05_164933_add_new_column_in_users_table.php'
     ]);
     return "Success";
 });
@@ -307,8 +310,8 @@ Route::post('unapproveIntlFundTransfer', [IntlFundTransferOrderController::class
 Route::post('approveIntlFundTransfer', [IntlFundTransferOrderController::class, 'approveIntlFundTransfer'])->name('approveIntlFundTransfer')->middleware(['auth']);
 
 Route::get('dispatcher/settings', [DispatcherController::class, 'settings'])->name('dispatcher.settings')->middleware(['auth']);
-Route::get('dispatcher/accept', [DispatcherController::class, 'accept'])->name('dispatcher.accept')->middleware(['auth']);
-Route::get('dispatcher/accept-search', [DispatcherController::class, 'accept_search'])->name('dispatcher.accept.search')->middleware(['auth']);
+// Route::get('dispatcher/accept', [DispatcherController::class, 'accept'])->name('dispatcher.accept')->middleware(['auth']);
+// Route::get('dispatcher/accept-search', [DispatcherController::class, 'accept_search'])->name('dispatcher.accept.search')->middleware(['auth']);
 
 Route::get('createDispatcher', [DispatcherController::class, 'createDispatcher'])->name('create.dispatcher')->middleware(['auth']);
 
@@ -332,6 +335,7 @@ Route::get('admin-paymentRequestget/{id}', [PaymentRequestController::class, 'ad
 
 Route::get('admin-accept-paymentRequest/{id}', [PaymentRequestController::class, 'acceptPaymentRequest'])->name('admin-accept-paymentRequest');
 Route::get('admin-reject-paymentRequest/{id}', [PaymentRequestController::class, 'rejectPaymentRequest'])->name('admin-reject-paymentRequest');
+Route::get('get-transit', [PaymentRequestController::class, 'getTransit'])->name('get-transit');
 
 
 Route::get('batchOrdersList/{batch_id}', [OrderBatchController::class, 'batchOrdersList'])->name('batchOrdersList')->middleware(['auth']);

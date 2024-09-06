@@ -24,12 +24,12 @@ class BankDetailsController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $buttons = '';
-                    $buttons .= '<div class="d-flex">
-                    <a class="btn btn-primary mx-5" href="' . route('bank_details.edit', $row->id) . '"><i class="fa fa-pencil"></i>Edit</a> 
+                    $buttons .= '<div class="d-flex justify-content-around">
+                    <a class="btn btn-primary btn-sm" href="' . route('bank_details.edit', $row->id) . '"><i class="fa fa-pencil"></i>Edit</a> 
                     <form style="" action="' . route('bank_details.destroy', $row->id) . '" method="post">
                     <input type="hidden" name="_method" value="DELETE">
                     ' . csrf_field() . '
-                    <button type="submit" class="btn btn-danger mx-5">Delete</button>
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                     </form>
                     </div>';
                     return $buttons;

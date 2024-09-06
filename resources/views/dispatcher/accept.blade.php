@@ -74,7 +74,7 @@
                                         @endif
                                     </td>
                                     <th>Price(&euro;)</th>
-                                    <td>{{ $order->shipping_rate->price }}</td>
+                                    <td>{{ fromEuroView(auth()->user()->currency_id ?? 0, $order->shipping_rate->price) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Sender Name</th>

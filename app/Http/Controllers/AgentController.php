@@ -6,8 +6,10 @@ use App\Mail\PaymentEmail;
 use App\Models\Agent;
 use App\Models\City;
 use App\Models\Country;
+use App\Models\CurrencyExchangeRate;
 use App\Models\Order;
 use App\Models\State;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,10 +31,7 @@ class AgentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
+    public function index() {}
 
     /**
      * hompage for the various dispatcher settings
@@ -41,7 +40,8 @@ class AgentController extends Controller
     public function settings()
     {
         $agent = Auth::user();
-        return view('agents.settings.edit', compact('agent'));
+        $currency_exchange_rates = CurrencyExchangeRate::get();
+        return view('agents.settings.edit', compact('agent', 'currency_exchange_rates'));
     }
 
     /**
@@ -49,7 +49,7 @@ class AgentController extends Controller
      */
 
     public function accept()
-    {   
+    {
         return view('agents.accept');
     }
 
@@ -149,8 +149,23 @@ class AgentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {}
+    public function store(Request $request)
+    {
+        // return $request->all();
+        $validate = $request->validate([
+            'currency_id' => 'required',
+        ]);
 
+        try {
+            $user = User::find(Auth::user()->id);
+            $user->currency_id = $request->currency_id;
+            $user->save();
+            return back()->with(['message' => 'Currency Add Successfully', 'message_type' => 'success']);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage(), ['Exeption', $th]);
+            return back()->with('message', 'An Erorr Accured' . $th->getMessage());
+        }
+    }
     /**
      * Display the specified resource.
      *
@@ -183,7 +198,7 @@ class AgentController extends Controller
      */
     public function update(Request $request, Agent $agent)
     {
-        
+
         $request->validate([
             'name' => 'required|string',
             'phone' => 'required|string',
@@ -203,7 +218,7 @@ class AgentController extends Controller
             if (!file_exists($destinationDirectory)) {
                 mkdir($destinationDirectory, 0755, true);
             }
-            
+
             if ($request->hasFile('attachment')) {
                 $attachment = $request->file('attachment');
                 $filename = rand(100000, 999999) . '.' . $attachment->extension();
@@ -215,9 +230,9 @@ class AgentController extends Controller
                         unlink($oldAttachmentPath);
                     }
                 }
-                
+
                 $agent->update([
-                    'attachment_path' => 'uploads/documents/'.$filename,
+                    'attachment_path' => 'uploads/documents/' . $filename,
                 ]);
             }
             if ($request->hasFile('attachment')) {
@@ -232,7 +247,7 @@ class AgentController extends Controller
                     }
                 }
                 $agent->update([
-                    'front_attachment' => 'uploads/documents/'.$front_filename,
+                    'front_attachment' => 'uploads/documents/' . $front_filename,
                 ]);
             }
             $agent->update([

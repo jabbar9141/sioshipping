@@ -14,7 +14,8 @@
             <ul id="sidebarnav">
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link @if (Route::is('home*')) active @endif" href="{{ route('home') }}" aria-expanded="false">
+                    <a class="sidebar-link @if (Route::is('home*')) active @endif" href="{{ route('home') }}"
+                        aria-expanded="false">
                         <span>
                             <i class="ti ti-layout-dashboard"></i>
                         </span>
@@ -47,9 +48,10 @@
                             <span class="hide-menu">May Wallet</span>
                         </a>
                     </li>
-                   
+
                     <li class="sidebar-item">
-                        <a class="sidebar-link @if (Route::is('agentsOrders') || Route::is('walkInOrderAgents.*') ) active @endif" href="{{ route('agentsOrders') }}" aria-expanded="false">
+                        <a class="sidebar-link @if (Route::is('agentsOrders') || Route::is('walkInOrderAgents.*')) active @endif"
+                            href="{{ route('agentsOrders') }}" aria-expanded="false">
                             <span>
                                 <i class="ti ti-article"></i>
                             </span>
@@ -65,7 +67,8 @@
                         </a>
                     </li> --}}
                     <li class="sidebar-item">
-                        <a class="sidebar-link @if (Route::is('agent.accept') || Route::is('agent.accept.search')) active @endif" href="{{ route('agent.accept') }}" aria-expanded="false">
+                        <a class="sidebar-link @if (Route::is('agent.accept') || Route::is('agent.accept.search')) active @endif"
+                            href="{{ route('agent.accept') }}" aria-expanded="false">
                             <span>
                                 <i class="ti ti-article"></i>
                             </span>
@@ -78,7 +81,10 @@
                 @if (Auth::user()->user_type == 'admin')
                     {{-- @if (Auth::user()->user_type == 'admin' && (optional(auth()->user()->admin)->can == 'all' || optional(auth()->user()->admin)->can == 'kyc')) --}}
                     <li class="sidebar-item">
-                        <a class="sidebar-link @if (Route::is('allUsers') || Route::is('create.dispatcher') || Route::is('dispatchers.*')) active @endif"
+                        <a class="sidebar-link @if (Route::is('allUsers') ||
+                                Route::is('create.dispatcher') ||
+                                Route::is('dispatchers.*') ||
+                                Route::is('admin-paymentRequestget')) active @endif"
                             href="{{ route('allUsers') }}" aria-expanded="false">
                             <span>
                                 <i class="fa-solid fa-users"></i>

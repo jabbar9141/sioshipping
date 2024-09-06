@@ -13,6 +13,11 @@
             <div class="card-body">
                 <div class=""></div>
                 <div class="table-responsive">
+                    <style>
+                        #bankDetailsList th{
+                            width: 16.6666666667% !important;
+                        }
+                    </style>
                     <table id="bankDetailsList" class="table table-sm w-100  table-bordered table-striped display">
                         <thead>
                             <tr>
