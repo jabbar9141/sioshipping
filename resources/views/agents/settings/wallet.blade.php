@@ -14,9 +14,24 @@
                     @if (\Route::current()->getName() !== 'admin-paymentRequestget')
                         <div class="d-flex justify-content-between">
                             <h5 class="card-title fw-semibold mb-4">Wallet</h5>
-
                             <div>
                                 <h4>Wallet History</h4>
+                                <h6 class="hide-menu">Total Account Amount :
+                                    {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['totalAmount']) }}
+                                </h6>
+                                <h6 class="hide-menu">Total Available Balance :
+                                    {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['balance']) }}
+                                </h6>
+
+                                <h6 class="hide-menu">Total Spendings :
+                                    {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['totalSpendings']) }}
+                                </h6>
+                            </div>
+                            <div>
+                                <h4>Today History</h4>
+                                <h6 class="hide-menu">Available Account Balance :
+                                    {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['balance']) }}
+                                </h6>
                                 <h6 class="hide-menu">Today's Commission:
                                     {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['earningsToday']) }}
                                 </h6>
@@ -24,9 +39,7 @@
                                 <h6 class="hide-menu">Today's Spendings :
                                     {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['spentToday']) }}
                                 </h6>
-                                <h6 class="hide-menu">Account Balance :
-                                    {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['balance']) }}
-                                </h6>
+
                             </div>
                         </div>
                     @else
@@ -196,14 +209,14 @@
                             <style>
                                 #paymentRequestList tr th {
                                     width: 20% !important;
-                                    text-align: center;
+                                    text-align: left;
                                     white-space: nowrap;
                                 }
 
                                 #paymentRequestList td {
                                     padding-top: 5px;
                                     padding-bottom: 5px;
-                                    text-align: center;
+                                    text-align: left;
                                 }
                             </style>
 
@@ -223,123 +236,42 @@
                             </table>
                         </div>
                     </div>
+
                     <div class="card">
                         <div class="card-header">
-                            <h5>All Transits</h5>
+                            <h5>All Transections</h5>
                         </div>
                         <div class="card-body">
                             <style>
-                                #paymentRequestList tr th {
+                                #transectionsList tr th {
                                     width: 20% !important;
-                                    text-align: center;
+                                    text-align: left;
+                                    white-space: nowrap;
                                 }
 
-                                #transit_table td {
+                                #transectionsList td {
                                     padding-top: 5px;
                                     padding-bottom: 5px;
+                                    text-align: left;
                                 }
                             </style>
 
-                            <table id="transit_table" class="table table-striped table-bordered">
+                            <table id="transectionsList" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
                                         <th class="py-2">S/No</th>
+                                        <th class="py-2">Trnsection ID #</th>
                                         <th class="py-2">Desciption</th>
-                                        <th class="py-2">Amount</th>
-                                        <th class="py-2">Currency</th>
                                         <th class="py-2">flag</th>
+                                        <th class="py-2">Amount</th>
                                     </tr>
                                 </thead>
-                                <tbody id="transit_tbl">
-
+                                <tbody>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 @endif
-                {{--  <div class="row">
-                    <div class="col-sm-8">
-                        
-                        <form action="" method="get" class="from-inline">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <input type="date" name="date_from" id="date_from" class="form-control"
-                                        placeholder="Start date">
-                                </div>
-                                <div class="col-sm-4">
-                                    <input type="date" name="date_to" id="date_to" class="form-control"
-                                        placeholder="End date">
-                                </div>
-                                <div class="col-sm-4">
-                                    <button type="submit" class="btn btn-primary">Get History</button>
-                                </div>
-                            </div>
-                        </form>
-                        <hr>
-                        @if (isset($wallet_history))
-                            <table class="table table-sm table-stripped table-bordered">
-                                <thead>
-                                    <th>#</th>
-                                    <th>Amount</th>
-                                    <th>ID</th>
-                                    <th>Date</th>
-                                </thead>
-                                <tbody>
-
-                                    @php
-                                        $i = 1;
-                                    @endphp
-                                    @foreach ($wallet_history as $history)
-                                        <tr>
-                                            <td>
-                                                {{ $i }}
-                                            </td>
-                                            <td>
-                                                @if ($history->flag = 'debit')
-                                                    {{ $history->amount }}
-                                                @else
-                                                    -{{ $history->amount }}
-                                                @endif
-                                            </td>
-                                            <td>{{ $history->transId }}</td>
-                                            <td>{{ $history->created_at }}</td>
-                                        </tr>
-                                        @php
-                                            $i++;
-                                        @endphp
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-                        @endif
-                    </div>
-                    <div class="col-sm-4">
-                        <h4>Deposit Into wallet</h4>
-                        @if (null != request()->get('deposit_amt'))
-                            <form id="payment-form" data-secret="{{ $stripeIntent->client_secret }}">
-                                <div id="payment-element">
-                                    <!-- Elements will create form elements here -->
-                                </div>
-                                <br>
-                                <button id="submit" class="btn btn-primary btn-lg">Pay Now</button>
-                                <div id="error-message">
-                                    <!-- Display error message to your customers here -->
-                                </div>
-                            </form>
-                        @else
-                            <form action="" method="get">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="amount">Deposit Amount(&euro;)</label>
-                                    <input type="number" name="deposit_amt" class="form-control" id="amount"
-                                        required>
-                                </div>
-                                <br>
-                                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> Save</button>
-                            </form>
-                        @endif
-                    </div>
-                </div>  --}}
             </div>
         </div>
     </div>
@@ -388,7 +320,7 @@
             $(document).ready(function() {
                 var table = $('#paymentRequestList').DataTable({
                     "dom": 'Bfrtip',
-                    "iDisplayLength": 50,
+                    "iDisplayLength": 30,
                     "lengthMenu": [
                         [10, 25, 50, 100, -1],
                         [10, 25, 50, 100, "All"]
@@ -398,8 +330,8 @@
                     serverSide: true,
                     ajax: "{{ route('paymentRequestget') }}",
                     columns: [{
-                            data: 'id',
-                            name: 'id'
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex'
                         },
                         {
                             data: 'bank_detail_id',
@@ -422,46 +354,46 @@
                 });
 
                 table.ajax.reload();
+
+                $('#transectionsList').DataTable({
+                    "dom": 'Bfrtip',
+                    "iDisplayLength": 30,
+                    "lengthMenu": [
+                        [10, 25, 50, 100, -1],
+                        [10, 25, 50, 100, "All"]
+                    ],
+                    "buttons": ['pageLength', 'copy', 'excel', 'csv', 'pdf', 'print', 'colvis'],
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ route('get-transit') }}",
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex'
+                        },
+                        {
+                            data: 'transId',
+                            name: 'transId'
+                        },
+                        {
+                            data: 'description',
+                            name: 'description',
+                            class: 'text-nowrap'
+                        },
+                        {
+                            data: 'flag',
+                            name: 'flag'
+                        },
+                        {
+                            data: 'amount',
+                            name: 'amount',
+                            searchable: true
+                        }
+                    ]
+                });
+
             });
         </script>
     @endif
 
-    <script>
-        getTransit();
-
-        function getTransit() {
-            $.ajax({
-                url: "{{ route('get-transit') }}",
-                type: 'get',
-                dataType: 'json',
-
-                success: function(data) {
-                    $.each(data.data, function(key, value) {
-                        var id = value.id;
-                        var description = value.description;
-                        var currency = value.currency;
-                        var flag = value.flag;
-                        var amount = value.amount;
-                        $format = amount;
-
-                        var tr = '';
-                        tr += '<tr>';
-                        tr += '<td>' + id + '</td>';
-                        tr += '<td>' + description + '</td>';
-                        tr += '<td>' + amount.toFixed(2) + '</td>';
-                        tr += '<td>' + currency + '</td>';
-                        tr += '<td>' + flag + '</td>';
-                        tr += '</tr>';
-
-                        $("#transit_tbl").append(tr);
-                    });
-                },
-
-                error: function(responce) {
-                    console.log(responce.success);
-                }
-            });
-        }
-    </script>
 
 @endsection

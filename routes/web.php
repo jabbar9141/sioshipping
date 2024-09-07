@@ -33,8 +33,11 @@ use App\Models\EUFundTransferOrder;
 use App\Models\IntlFundTransferOrder;
 use App\Models\Order;
 use App\Models\ShippingCost;
+use App\Models\User;
 use App\Models\UserFunds;
 use App\Models\WalkInCustomer;
+use App\Notifications\OrderStatusNotification;
+use App\Notifications\PaymentRequestNotification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
@@ -135,15 +138,42 @@ Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_09_06_200454_add_tow_column_in_orders_table.php'
     // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_07_114906_add_cummercial_invoice_in_orders_table.php'
+    // ]);
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_07_114906_add_cummercial_invoice_in_orders_table.php.php'
+        '--path' => 'database/migrations/2024_09_07_220352_create_notifications_table.php'
     ]);
+ 
     return "Success";
 });
 
 Route::get('/', [HomeController::class, 'landing'])->name('landing');
 Route::get('register', [HomeController::class, 'register'])->name('register');
 
+Route::get('/notify',function(){
+    // $users = User::where('user_type', 'admin')->where('blocked',false)->get();
+    // foreach ($users as $user) {
+    //     $data = [];
+    //     $user->notify(new PaymentRequestNotification($data));
+    // }
+    // return $users;
+    $user = User::find(1); 
+    // return  $user->notifications;
+
+        // Get unread notifications
+       return  $user->unreadNotifications;
+
+        // Mark all user notifications as read 
+        // $user->unreadNotifications->markAsRead();
+return $user->unreadNotifications;
+        // Delete all user notifications
+        // $user->notifications()->delete();
+    return $user->unreadNotifications;
+    return $user->notifications->count();
+    $data = [];
+    $user->notify(new OrderStatusNotification($data));
+});
 
 Route::get('/set-language/{locale}', function ($locale) {
     app()->setLocale($locale);
@@ -348,8 +378,7 @@ Route::get('get-transit', [PaymentRequestController::class, 'getTransit'])->name
 Route::get('batchOrdersList/{batch_id}', [OrderBatchController::class, 'batchOrdersList'])->name('batchOrdersList')->middleware(['auth']);
 Route::get('batchOrderEdit/{order_id}', [OrderBatchController::class, 'batchOrderEdit'])->name('batchOrderEdit')->middleware(['auth']);
 // Route::post('batchOrderEdit/{order_id}', [OrderBatchController::class, 'batchOrderEdit'])->name('batchOrderEdit')->middleware(['auth']);
-Route::post('orderAccept/{order_id}', [DispatcherController::class, 'orderAccept'])->name('orderAccept')->middleware(['auth']);
-Route::post('orderPickedUp/{order_id}', [DispatcherController::class, 'orderPickedUp'])->name('orderPickedUp')->middleware(['auth']);
+
 Route::get('/batches-search', [OrderBatchController::class, 'search'])->name('batches.search')->middleware(['auth']);
 
 Route::get('payment-summary', [PaymentController::class, 'payment_summary'])->middleware(['auth'])->name('payment.summary');
@@ -365,10 +394,11 @@ Route::get('/tax-fetch', [WalkInCustomerController::class, 'tax_fetch'])->name('
 Route::resource('walk_in_customer_order', WalkInCustomerOrder::class)->middleware(['auth']);
 
 Route::resource('walkInOrderAgents', WalkInOrderAgents::class)->middleware(['auth']);
-
+Route::post('cancelWalkInAgentOrder', [WalkInOrderAgents::class, 'cancelOrder'])->name('cancelWalkInAgentOrder')->middleware(['auth']);
+Route::post('orderAccept/{order_id}', [WalkInOrderAgents::class, 'orderAccept'])->name('orderAccept')->middleware(['auth']);
+Route::post('orderPickedUp/{order_id}', [WalkInOrderAgents::class, 'orderPickedUp'])->name('orderPickedUp')->middleware(['auth']);
 
 Route::get('myWalkInOrdersList', [WalkInCustomerOrder::class, 'myOrdersList'])->name('myWalkInOrdersList')->middleware(['auth']);
-Route::post('cancelWalkInOrder', [WalkInCustomerOrder::class, 'cancelOrder'])->name('cancelWalkInOrder')->middleware(['auth']);
 
 Route::get('allWalkInOrders', [WalkInCustomerOrder::class, 'allOrders'])->name('allWalkInOrders')->middleware(['auth']);
 Route::get('allWalkInOrdersList', [WalkInCustomerOrder::class, 'allOrdersList'])->name('allWalkInOrdersList')->middleware(['auth']);

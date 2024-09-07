@@ -22,7 +22,7 @@ if (!function_exists('getAccountbalances')) {
             ->whereDate('created_at', $today)
             ->sum('amount');
 
-        return ['balance' => $bal, 'earningsToday' => $earntToday, 'spentToday' => $spentToday];
+        return ['balance' => $bal, 'earningsToday' => $earntToday, 'spentToday' => $spentToday , 'totalAmount' => $earnt , 'totalSpendings' => $spent];
     }
 }
 

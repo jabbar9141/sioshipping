@@ -70,7 +70,7 @@
                                             <span class="badge bg-secondary">{{ $order->status }}</span>
 
                                             @if ($order->status == 'unpaid')
-                                                <form action="{{ route('cancelOrder') }}" method="post">
+                                                <form action="{{ route('cancelWalkInAgentOrder') }}" method="post">
                                                     @csrf
                                                     <input type="hidden" value="{{ $order->id }}" name="order_id">
                                                     <button class="btn btn-sm btn-danger"

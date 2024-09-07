@@ -576,7 +576,7 @@ class OrderController extends Controller
      * cancel an order
      */
     public function cancelOrder(Request $request)
-    {
+    {   
         $request->validate([
             'order_id' => 'required|exists:orders,id'
         ]);

@@ -71,69 +71,7 @@ class AgentController extends Controller
         }
     }
 
-    /**
-     * dispatcher accpt order
-     */
-    public function orderAccept(Request $request, $order_id)
-    {
-        $request->validate([
-            'batch_id' => 'required|numeric|exists:order_batches,id'
-        ]);
-
-        try {
-
-            $o = Order::where('id', $order_id)->first();
-            $p = $o->shipping_rate->price;
-            if (getAccountbalances(Auth::id())['balance'] >= $p) {
-                Order::where('id', $order_id)->update([
-                    'status' => 'assigned',
-                    'batch_id' => $request->batch_id,
-                    'dispatcher_id' => Auth::user()->dispatcher->id,
-                    'pickup_time' => Carbon::now(),
-                ]);
-
-                $u = updateAccountBalance(Auth::id(), ($p), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id);
-                $c = updateAccountBalance(Auth::id(), ($p * 0.015), $o->tracking_id, 'debit', 'Order Commision ' . $o->tracking_id);
-
-                if ($o->customer) {
-                    Mail::to($o->customer->user->email)->send(new PaymentEmail($o));
-                }
-
-                Mail::to($o->pickup_email)->send(new PaymentEmail($o));
-
-                Mail::to($o->delivery_email)->send(new PaymentEmail($o));
-
-                return back()->with(['message' => 'Order Accepted and Batch Assigned', 'message_type' => 'success']);
-            } else {
-                return back()->with(['message' => 'Insufficent Balance to complete Order']);
-            }
-        } catch (\Exception $e) {
-            Log::error($e->getMessage(), ['exception' => $e]);
-            return back()->with('message', "An error occured " . $e->getMessage());
-        }
-    }
-
-    /**
-     * dispatcher accpt order
-     */
-    public function orderPickedUp(Request $request, $order_id)
-    {
-        try {
-            $o = Order::where('id', $order_id)->first();
-
-            Order::where('id', $order_id)->update([
-                'status' => 'picked_up',
-                'delivery_time' => Carbon::now(),
-                'current_location_id' => $o->delivery_location_id
-            ]);
-
-            return back()->with(['message' => 'Order Marked As Picked Up', 'message_type' => 'success']);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage(), ['exception' => $e]);
-            return back()->with('message', "An error occured " . $e->getMessage());
-        }
-    }
-
+  
     /**
      * Show the form for creating a new resource.
      *

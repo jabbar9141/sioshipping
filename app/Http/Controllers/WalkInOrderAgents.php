@@ -16,8 +16,11 @@ use App\Mail\PaymentEmail;
 use App\Models\Bank_Detail;
 use App\Models\BankDetail;
 use App\Models\CityShippingCost;
+use App\Models\OrderBatch;
 use App\Models\ShippingCost;
 use App\Models\ShippingRate;
+use App\Models\User;
+use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Facades\Mail;
 
 class WalkInOrderAgents extends Controller
@@ -184,7 +187,7 @@ class WalkInOrderAgents extends Controller
      */
     public function store(Request $request)
     {
-   
+
         $request->validate([
             'tax_code_' => 'required',
             'surname_' => 'required',
@@ -343,7 +346,7 @@ class WalkInOrderAgents extends Controller
 
             if ($request->hasFile('cummercial_invoice')) {
                 $cummercialInvoice = $request->file('cummercial_invoice');
-                $cummercialInvoiceName = 'invoice_doc' . time() . '.' . $cummercialInvoice->getClientOriginalExtension();
+                $cummercialInvoiceName = 'invoice_doc_commertional' . time() . '.' . $cummercialInvoice->getClientOriginalExtension();
                 $cummercialInvoice->move(public_path('uploads/orders'), $cummercialInvoiceName);
             }
 
@@ -433,8 +436,18 @@ class WalkInOrderAgents extends Controller
             $l->val_of_goods = OrderPackage::where('order_id', $l->id)->sum('item_value');
             $l->shipping_cost = $shippingCostPrice;
             $l->save();
-
             DB::commit();
+            $users = User::where('user_type', 'admin')->where('blocked', false)->get();
+            foreach ($users as $user) {
+                $data = [
+                    'user_id' => Auth::user()->id,
+                    'user_name' => Auth::user()->name,
+                    'subject' => 'Order Created',
+                    'body' => 'A new order has been made check all orders.',
+                    'url' => route('allOrders')
+                ];
+                $user->notify(new OrderStatusNotification($data));
+            }
             return redirect()->route('agentsOrders')->with(['message' => 'Order saved You can proceed to add it to a batch', 'message_type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -732,17 +745,27 @@ class WalkInOrderAgents extends Controller
      */
     public function cancelOrder(Request $request)
     {
+        // return $request->all();
         $request->validate([
             'order_id' => 'required|exists:orders,id'
         ]);
         try {
-            //check if the order belongs to the authenticated user
-            $q = Order::where('id', $request->order_id)->where('customer_id', Auth::user()->customer->id)->count();
-
+            $q = Order::where('id', $request->order_id)->count();
             if ($q > 0) {
                 Order::where('id', $request->order_id)->update([
                     'status' => 'cancelled'
                 ]);
+                $users = User::where('user_type', 'admin')->where('blocked', false)->get();
+                foreach ($users as $user) {
+                    $data = [
+                        'user_id' => Auth::user()->id,
+                        'user_name' => Auth::user()->name,
+                        'subject' => 'Order Cancelled',
+                        'body' => 'A new order has been cancelled by agent.',
+                        'url' => route('allOrders')
+                    ];
+                    $user->notify(new OrderStatusNotification($data));
+                }
                 return back()->with(['message' => 'Order Canceled', 'message_type' => 'success']);
             }
         } catch (\Exception $e) {
@@ -751,6 +774,86 @@ class WalkInOrderAgents extends Controller
             return back()->with('message', "An error occured " . $e->getMessage());
         }
     }
+
+    public function orderAccept(Request $request, $order_id)
+    {
+        try {
+
+            $o = Order::where('id', $order_id)->first();
+            $subTotal = $o->val_of_goods;
+            $total =  (float) $subTotal + (float) $o->shipping_cost;
+            if (getAccountbalances(Auth::id())['balance'] >= $total) {
+                DB::beginTransaction();
+              
+
+                Order::where('id', $order_id)->update([
+                    'status' => 'placed',
+                    'pickup_time' => Carbon::now(),
+                ]);
+
+                $u = updateAccountBalance(Auth::id(), ($total), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id);
+
+                DB::commit();
+                $users = User::where('user_type', 'admin')->where('blocked', false)->get();
+                foreach ($users as $user) {
+                    $data = [
+                        'user_id' => Auth::user()->id,
+                        'user_name' => Auth::user()->name,
+                        'subject' => 'Order Placed',
+                        'body' => 'A new order has been Placed by agent.',
+                        'url' => route('allOrders')
+                    ];
+                    $user->notify(new OrderStatusNotification($data));
+                }
+                Mail::to($o->pickup_email)->send(new PaymentEmail($o));
+                Mail::to($o->delivery_email)->send(new PaymentEmail($o));
+
+                return back()->with(['message' => 'Order Accepted', 'message_type' => 'success']);
+            } else {
+                return back()->with(['message' => 'Insufficent Balance to complete Order']);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage(), ['exception' => $e]);
+            return back()->with('message', "An error occured " . $e->getMessage());
+        }
+    }
+
+    /**
+     * dispatcher accpt order
+     */
+    public function orderPickedUp(Request $request, $order_id)
+    {
+        try {
+            $o = Order::where('id', $order_id)->first();
+            $subTotal = $o->val_of_goods;
+            OrderBatch::where('id', $o->batch_id)->update([
+                'status' =>  'delivered'
+            ]);
+            Order::where('id', $order_id)->update([
+                'status' => 'delivered',
+                'delivery_time' => Carbon::now(),
+                'current_location_id' => $o->delivery_location_city_id
+            ]);
+            $c = updateAccountBalance(Auth::id(), ($subTotal * 0.015), $o->tracking_id, 'debit', 'Order Commision ' . $o->tracking_id);
+            $users = User::where('user_type', 'admin')->where('blocked', false)->get();
+            foreach ($users as $user) {
+                $data = [
+                    'user_id' => Auth::user()->id,
+                    'user_name' => Auth::user()->name,
+                    'subject' => 'Order Picked-Up',
+                    'body' => 'A new order has been Picked-Up by agent.',
+                    'url' => route('allOrders')
+                ];
+                $user->notify(new OrderStatusNotification($data));
+            }
+            return back()->with(['message' => 'Order Marked As Picked Up', 'message_type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), ['exception' => $e]);
+            return back()->with('message', "An error occured " . $e->getMessage());
+        }
+    }
+
 
     /**
      * Remove the specified resource from storage.

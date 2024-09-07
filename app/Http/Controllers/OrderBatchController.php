@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use App\Mail\PaymentEmail;
 use App\Models\Dispatcher;
 use App\Models\User;
+use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Mail;
 
@@ -236,6 +237,17 @@ class OrderBatchController extends Controller
                 $batchorder_log->save();
             }
             DB::commit();
+            $user = User::find($order->agent_id);
+            if (isset($user)) {
+                $data = [
+                    'user_id' => Auth::user()->id,
+                    'user_name' => Auth::user()->name,
+                    'subject' => 'Order Status Update',
+                    'body' => 'A new order has been Assigned a Batch by Admin.',
+                    'url' => route('agentsOrders')
+                ];
+                $user->notify(new OrderStatusNotification($data));
+            }
             return redirect()->route('batches.index')->with(['message' => 'Batch Created', 'message_type' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
