@@ -16,6 +16,7 @@
                 <style>
                     .message-body{
                         font-size: 10px;
+                        min-width: 300px;
                     }
                 </style>
                 <div class="dropdown-menu p-3 dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop3" id="notificationDropDown">
@@ -30,7 +31,10 @@
                             <a class="" href="">Url</a>
                         </div>
                     </div>
-                   
+                    <hr class="m-1">
+                    <div class="text-center">
+                <a class="btn-sm" href="">Mark as Read</a>
+            </div>
                 </div>
             </li>
         </ul>
