@@ -11,19 +11,30 @@
                 <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop3" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <i class="ti ti-bell-ringing"></i>
-                    <div class="notification bg-primary rounded-circle" id="notificationCounter"></div>
+                    <div class="notification bg-primary rounded-circle d-flex justify-content-center p-1 text-white align-items-center"
+                       > <span style="font-size: 10px" class="position-relative"  id="notificationCounter">1</span></div>
                 </a>
                 <style>
-                    .message-body{
+                    .message-body {
                         font-size: 10px;
                         min-width: 300px;
                     }
+
+                    .notification {
+                        content: "";
+                        position: absolute;
+                        top: 11px;
+                        right: 0px;
+                        width: 20px;
+                        height: 20px;
+                    }
                 </style>
-                <div class="dropdown-menu p-3 dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop3" id="notificationDropDown">
+                <div class="dropdown-menu p-3 dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop3"
+                    id="notificationDropDown">
                     <div class="message-body d-flex align-items-center gap-3 mb-2">
                         <div>
-                            <img style="width:30px; height:30px; border-radius:50%" src="{{ asset('admin_assets/assets/images/profile/user-1.jpg') }}"
-                                alt="">
+                            <img style="width:30px; height:30px; border-radius:50%"
+                                src="{{ asset('admin_assets/assets/images/profile/user-1.jpg') }}" alt="">
                         </div>
                         <div>
                             <b class="fw-bold">Alex Carry</b>
@@ -33,8 +44,8 @@
                     </div>
                     <hr class="m-1">
                     <div class="text-center">
-                <a class="btn-sm" href="">Mark as Read</a>
-            </div>
+                        <a class="btn-sm" href="">Mark as Read</a>
+                    </div>
                 </div>
             </li>
         </ul>
