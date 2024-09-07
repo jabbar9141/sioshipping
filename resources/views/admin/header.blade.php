@@ -1,16 +1,47 @@
 <header class="app-header d-flex justify-content-end">
-    <nav class="navbar navbar-expand w-25  navbar-light">
+    <nav class="navbar navbar-expand w-20  navbar-light">
         <ul class="navbar-nav">
             <li class="nav-item d-block d-xl-none">
                 <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
                     <i class="ti ti-menu-2"></i>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link nav-icon-hover" href="javascript:void(0)">
+
+            <li class="nav-item dropdown">
+                <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop3" data-bs-toggle="dropdown"
+                    aria-expanded="false">
                     <i class="ti ti-bell-ringing"></i>
                     <div class="notification bg-primary rounded-circle"></div>
                 </a>
+                <style>
+                    .message-body{
+                        font-size: 10px;
+                    }
+                </style>
+                <div class="dropdown-menu p-3 dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop3">
+                    <div class="message-body d-flex align-items-center gap-3 mb-2">
+                        <div>
+                            <img style="width:30px; height:30px; border-radius:50%" src="https://picsum.photos/200/300"
+                                alt="">
+                        </div>
+                        <div>
+                            <b class="fw-bold">name</b>
+                            <p class="fw-bold mb-0">Message</p>
+                            <a class="" href="">Url</a>
+                        </div>
+                    </div>
+                    <div class="message-body d-flex align-items-center gap-3 mb-2">
+                        <div>
+                            <img style="width:30px; height:30px; border-radius:50%" src="https://picsum.photos/200/300"
+                                alt="">
+                        </div>
+                        <div>
+                            <b class="fw-bold">name</b>
+                            <p class="fw-bold mb-0">Message</p>
+                            <a class="" href="">Url</a>
+                        </div>
+                    </div>
+                </div>
             </li>
         </ul>
         <div class="navbar-collapse px-0" id="navbarNavLang">
