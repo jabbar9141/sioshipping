@@ -132,8 +132,11 @@ Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_09_05_164933_add_new_column_in_users_table.php'
     // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_06_200454_add_tow_column_in_orders_table.php'
+    // ]);
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_06_200454_add_tow_column_in_orders_table.php'
+        '--path' => 'database/migrations/2024_09_07_114906_add_cummercial_invoice_in_orders_table.php.php'
     ]);
     return "Success";
 });
@@ -259,6 +262,7 @@ Route::post('cancelOrder', [OrderController::class, 'cancelOrder'])->name('cance
 
 Route::get('allOrders', [OrderController::class, 'allOrders'])->name('allOrders')->middleware(['auth']);
 Route::get('allOrdersList', [OrderController::class, 'allOrdersList'])->name('allOrdersList')->middleware(['auth']);
+Route::get('cummercial_invoice', [OrderController::class, 'cummercialInvoice'])->name('cummercial_invoice');
 
 Route::resource('orders', OrderController::class)->middleware(['auth']);
 

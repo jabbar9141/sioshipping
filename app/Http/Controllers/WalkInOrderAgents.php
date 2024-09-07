@@ -184,7 +184,7 @@ class WalkInOrderAgents extends Controller
      */
     public function store(Request $request)
     {
-
+   
         $request->validate([
             'tax_code_' => 'required',
             'surname_' => 'required',
@@ -331,10 +331,20 @@ class WalkInOrderAgents extends Controller
                     ]);
                 }
             }
+
+            $invoiceDocName = null;
+            $cummercialInvoiceName = null;
+
             if ($request->hasFile('invoice_document')) {
                 $invoiceDoc = $request->file('invoice_document');
-                $invoiceDoc_name = 'invoice_doc' . time() . '.' . $invoiceDoc->getClientOriginalExtension();
-                $invoiceDoc->move(public_path('uploads/orders/', $invoiceDoc_name));
+                $invoiceDocName = 'invoice_doc' . time() . '.' . $invoiceDoc->getClientOriginalExtension();
+                $invoiceDoc->move(public_path('uploads/orders'), $invoiceDocName);
+            }
+
+            if ($request->hasFile('cummercial_invoice')) {
+                $cummercialInvoice = $request->file('cummercial_invoice');
+                $cummercialInvoiceName = 'invoice_doc' . time() . '.' . $cummercialInvoice->getClientOriginalExtension();
+                $cummercialInvoice->move(public_path('uploads/orders'), $cummercialInvoiceName);
             }
 
             $l = new Order;
@@ -381,7 +391,8 @@ class WalkInOrderAgents extends Controller
             $l->delivery_location_country_id = $request->ship_to_country;
             $l->delivery_location_state_id = $request->ship_to_state;
             $l->delivery_location_city_id = $request->ship_to_city;
-            $l->invoice_document = $invoiceDoc_name;
+            $l->invoice_document = $invoiceDoc;
+            $l->cummercial_invoice = $cummercialInvoiceName;
             $l->save();
             // for ($o = 0; $o < count($request->group-a); $o++) {
 

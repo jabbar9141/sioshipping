@@ -56,7 +56,8 @@
                                             [Lat:{{ $order->currentCity->latitude }},
                                             Long:{{ $order->currentCity->longitude }}]</p>
                                         <br>
-                                        <b>Shipping Cost : </b> {{ fromEuroView(auth()->user()->currency_id ?? 0,$order->shipping_cost,) }}
+                                        <b>Shipping Cost : </b>
+                                        {{ fromEuroView(auth()->user()->currency_id ?? 0, $order->shipping_cost) }}
                                         <br>
 
 
@@ -80,8 +81,8 @@
                                         </div>
 
                                     </td>
-                                    <th>Price(&euro;)  </th>
-                                    <td>{{ fromEuroView(auth()->user()->currency_id ?? 0,$order->val_of_goods) }}</td>
+                                    <th>Price(&euro;) </th>
+                                    <td>{{ fromEuroView(auth()->user()->currency_id ?? 0, $order->val_of_goods) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Sender Name</th>
@@ -146,8 +147,8 @@
                                 <tr>
                                     <th>Condition of Goods</th>
                                     <td>{{ $order->cond_of_goods }}</td>
-                                    <th>{{--Value of goods (€)--}} </th>
-                                    <td>{{-- fromEuroView(auth()->user()->currency_id ?? 0,$order->val_of_goods) --}} </td>
+                                    <th>Order Pick-up Commission  </th>
+                                    <td>{{ fromEuroView(auth()->user()->currency_id ?? 0,($order->val_of_goods * 0.015)) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -196,10 +197,10 @@
                     <h5>Accept/ Assign batch</h5>
                     <p>Your Wallet will be billed for this order</p>
                     <hr>
-                    @if ($order->batch_id == null)
+                    @if ($order->status == 'unpaid')
                         <form action="{{ route('orderAccept', $order->id) }}" method="post">
                             @csrf
-                            <div class="row">
+                            {{--  <div class="row">
                                 <div class="col-6">
                                     <div class="ui-widget">
                                         <label for="origin">Batch <i class="text-danger">*</i> : </label>
@@ -223,18 +224,20 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
+                            </div>  --}}
                             <br>
                             <button type="submit" class="btn btn-primary"
                                 onclick="return confirm('Are you sure you wish to Accept this Order and Assign it to the specified batch?')"><i
                                     class="fa fa-save"></i> Accept Order</button>
                         </form>
                     @else
-                        <b>Batch Assingned : {{ $order->batch->name }}</b>
+                        <b>Batch Assingned : {{ $order?->batch?->name ?? 'Bathch Is Not Assigned Yet!' }}</b>
 
                         <hr>
                         <h5>Mark As Picked-Up</h5>
-                        <p>Only fill this if the item is about to be picked Up</p>
+                        <p>Only fill this if the item is about to be picked Up </p>
+
+
                         <hr>
                         @if ($order->status == 'assigned')
                             <form action="{{ route('orderPickedUp', $order->id) }}" method="post">
@@ -244,7 +247,8 @@
                                         class="fa fa-save"></i> Order Picked-up</button>
                             </form>
                         @else
-                            <b>Order Has been Picked Up on - {{ $order->delivery_time }}</b>
+                            <p><b>Note : You Can only Mark Order as Pick-Up After Approval of Admin </b></p>
+                            {{--  <b>Order Has been Picked Up on - {{ $order->delivery_time }}</b>  --}}
                         @endif
 
                     @endif

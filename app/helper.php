@@ -90,8 +90,12 @@ if (!function_exists('fromEuroView')) {
     {
         if ($currency_id > 0) {
             $currency = CurrencyExchangeRate::find($currency_id);
-            $result = number_format($price * $currency->exchange_rate, 2);
-            return $result . ' ' . $currency->country->currency_symbol;
+            if (isset($currency)) {
+                $result = number_format($price * $currency->exchange_rate, 2);
+                return $result . ' ' . $currency->country->currency_symbol;
+            }
+            $result = number_format($price,2);
+            return $result . ' ' . "€";
         } else {
             $result = number_format($price,2);
             return $result . ' ' . "€";

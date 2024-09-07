@@ -6,6 +6,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">My Orders</h5>
+
                 @include('admin.partials.notification')
                 <hr>
                 <div class="card">

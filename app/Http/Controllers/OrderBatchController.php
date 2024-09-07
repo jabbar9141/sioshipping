@@ -165,10 +165,14 @@ class OrderBatchController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create(Request $request)
+    {   
+        $order_id = 0;
+        if($request->filled('order_id')){
+            $order_id = $request->order_id;
+        }
         $dispachers = User::where('user_type','dispatcher')->get();
-        return view('dispatcher.settings.batches.create', compact('dispachers'));
+        return view('dispatcher.settings.batches.create', compact('dispachers','order_id'));
     }
 
     /**
@@ -213,9 +217,17 @@ class OrderBatchController extends Controller
 
             Order::whereIn('id', $request->order_id)->update([
                 'batch_id' => $b->id,
+                'status' => "assigned",
                 'current_location_country_id' => $request->ship_to_country_id,
                 'current_location_city_id' => $request->ship_to_city_id,
             ]);
+            $orders = Order::whereIn('id',$request->order_id)->get();
+            foreach ($orders as $key => $order) {
+                $subTotal = $order->val_of_goods + $order->shipping_cost;
+                $commissionAmount = $order->val_of_goods * 0.015;
+                $total = $subTotal - $commissionAmount;
+                $u = updateAccountBalance(Auth::id(), ($total), $order->tracking_id, 'debit', 'Order Payment To Admin After (0.015) commisssion' . $order->tracking_id);
+            }
 
             foreach ($request->order_id as $value) {
                 $batchorder_log = new BatchorderLog();
@@ -275,7 +287,7 @@ class OrderBatchController extends Controller
             }
         }
         return view('dispatcher.settings.batches.show', ['batch' => $batch, 'loactions' => $loactions]);
-    }
+    }   
 
     /**
      * Show the form for editing the specified resource.

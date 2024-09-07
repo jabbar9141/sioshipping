@@ -79,14 +79,10 @@ class DispatcherController extends Controller
         }
     }
 
-    /**
-     * dispatcher accpt order
-     */
-    public function orderAccept(Request $request, $order_id)
+
+    public function assigendOrder(Request $request, $order_id)
     {
-        // return $request;
         try {
-          
             $o = Order::where('id', $order_id)->first();
             $subTotal = $o->val_of_goods;
             $total =  (float) $subTotal + (float) $o->shipping_cost;
@@ -122,15 +118,51 @@ class DispatcherController extends Controller
                     'dispatcher_id' => $request->dispatcher_id,
                     'pickup_time' => Carbon::now(),
                 ]);
-
-                $u = updateAccountBalance(Auth::id(), ($total), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id);
-                $c = updateAccountBalance(Auth::id(), ($subTotal * 0.015), $o->tracking_id, 'debit', 'Order Commision ' . $o->tracking_id);
+                
                 DB::commit();
                 Mail::to($o->pickup_email)->send(new PaymentEmail($o));
 
                 Mail::to($o->delivery_email)->send(new PaymentEmail($o));
 
-                return back()->with(['message' => 'Order Accepted and Batch Assigned', 'message_type' => 'success']);
+                return back()->with(['message' => 'Order Accepted', 'message_type' => 'success']);
+            } else {
+                return back()->with(['message' => 'Insufficent Balance to complete Order']);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage(), ['exception' => $e]);
+            return back()->with('message', "An error occured " . $e->getMessage());
+        }
+    }
+
+    /**
+     * dispatcher accpt order
+     */
+    public function orderAccept(Request $request, $order_id)
+    {
+        // return $request;
+        try {
+
+            $o = Order::where('id', $order_id)->first();
+            $subTotal = $o->val_of_goods;
+            $total =  (float) $subTotal + (float) $o->shipping_cost;
+            if (getAccountbalances(Auth::id())['balance'] >= $total) {
+                DB::beginTransaction();
+              
+
+                Order::where('id', $order_id)->update([
+                    'status' => 'placed',
+                    'pickup_time' => Carbon::now(),
+                ]);
+
+                $u = updateAccountBalance(Auth::id(), ($total), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id);
+
+                DB::commit();
+                Mail::to($o->pickup_email)->send(new PaymentEmail($o));
+
+                Mail::to($o->delivery_email)->send(new PaymentEmail($o));
+
+                return back()->with(['message' => 'Order Accepted', 'message_type' => 'success']);
             } else {
                 return back()->with(['message' => 'Insufficent Balance to complete Order']);
             }
@@ -145,18 +177,19 @@ class DispatcherController extends Controller
      * dispatcher accpt order
      */
     public function orderPickedUp(Request $request, $order_id)
-    {   
+    {
         try {
             $o = Order::where('id', $order_id)->first();
-            OrderBatch::where('id',$o->batch_id)->update([
-                'status' =>  'in_transit'
+            $subTotal = $o->val_of_goods;
+            OrderBatch::where('id', $o->batch_id)->update([
+                'status' =>  'delivered'
             ]);
             Order::where('id', $order_id)->update([
-                'status' => 'in_transit',
+                'status' => 'delivered',
                 'delivery_time' => Carbon::now(),
                 'current_location_id' => $o->delivery_location_city_id
             ]);
-
+            $c = updateAccountBalance(Auth::id(), ($subTotal * 0.015), $o->tracking_id, 'debit', 'Order Commision ' . $o->tracking_id);
             return back()->with(['message' => 'Order Marked As Picked Up', 'message_type' => 'success']);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), ['exception' => $e]);

@@ -103,9 +103,21 @@ class OrderController extends Controller
     /**
      * datatable for all orders
      */
-    public function allOrdersList()
+    public function allOrdersList(Request $request)
     {
-        $orders = Order::orderBy('created_at', 'DESC')->get();
+        $query = Order::query();
+        if ($request->filled('startDate') && $request->filled('endDate')) {
+            $start = Carbon::parse($request->startDate)->startOfDay();
+            $end = Carbon::parse($request->endDate)->endOfDay();
+            $query->whereBetween('created_at', [$start, $end]);
+        } elseif ($request->filled('startDate')) {
+            $start = Carbon::parse($request->startDate)->startOfDay();
+            $query->whereDate('created_at', '=', $start);
+        } elseif ($request->filled('endDate')) {
+            $end = Carbon::parse($request->endDate)->endOfDay();
+            $query->whereDate('created_at', '=', $end);
+        }
+        $orders = $query->orderBy('created_at', 'DESC')->get();
 
         return Datatables::of($orders)
             ->addIndexColumn()
@@ -584,6 +596,13 @@ class OrderController extends Controller
             return back()->with('message', "An error occured " . $e->getMessage());
         }
     }
+
+
+    // public function cummercialInvoice(){
+
+        // $path = public_path('cu', )
+
+    // }
 
     /**
      * Remove the specified resource from storage.

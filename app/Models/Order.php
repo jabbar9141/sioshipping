@@ -60,7 +60,8 @@ class Order extends Model
         'delivery_location_state_id',
         'delivery_location_city_id',
         'invoice_document',
-        'agnet_id'
+        'agnet_id',
+        'cummercial_invoice',
 
     ];
 

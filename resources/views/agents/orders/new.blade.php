@@ -763,6 +763,18 @@
                                     <p class="text-danger">{{ $message }}</p>
                                 @enderror
                             </div>
+                            <div class="form-group col-md-6">
+                                <label for="cummercial_invoice">Commercial Invoice</label>
+                                <div class="d-flex gap-3 align-items-center">
+                                <input type="file" name="cummercial_invoice" accept="pdf" value="{{ old('cummercial_invoice') }}"
+                                    class="form-control" id="cummercial_invoice">
+                                <a style="white-space: nowrap" class="btn btn-primary" href="{{ asset('invoice_commercial/FedEx-Commercial-Invoice (1).pdf') }}" target="_blank">Create Commercial
+                                    Invoice</a>
+                                </div>
+                                @error('cummercial_invoice')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
                         <hr>
                         <p>By clicking Proceed bellow, you attest that you have read and understood our terms.</p>

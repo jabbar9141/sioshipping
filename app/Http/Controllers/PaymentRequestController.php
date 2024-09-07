@@ -154,7 +154,10 @@ class PaymentRequestController extends Controller
             $paymentRequest->status = 'accept';
             $paymentRequest->admin_id = Auth::user()->id;
             $paymentRequest->save();
+            $u = updateAccountBalance(Auth::user()->id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'debit', 'Admin Wallet Funding');
+            $u = updateAccountBalance(Auth::user()->id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'credit', 'Admin Transfer Requested amount from Wallet');
             $u = updateAccountBalance($paymentRequest->user_id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'debit', 'Wallet Funding');
+
             return redirect()->back()->with(['message' => 'Status Updated Successfully!', 'message_type' => 'success']);
         } else {
             return redirect()->back()->with('message', "Something went Wrong!");

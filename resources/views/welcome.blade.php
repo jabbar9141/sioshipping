@@ -121,7 +121,7 @@
                         id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
                         <hr>
                         {{--  <form class="mt-4" action="" method="get" class="">  --}}
-                            <div class="row mb-4">
+                            <div class="row my-4">
                                 <div class="col-md-4 col-lg-3 text-white text-start mb-2">
                                     <div class="ui-widget">
                                         <label for="origin">Shipping from Country<i class="text-danger">*</i> :
@@ -203,10 +203,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                    <div class="card ui-widget">
-                                       <h4>Shipping Cost</h4>
-                                       <h5 id="shipping_rate_list"></h5>
+                                <div class="col-md-4 col-lg-3 mt-auto text-white text-start mb-2">
+                                    <div class="bg-white pb-3 px-3 rounded d-flex gap-3 align-items-center pt-3">
+                                       <h4 class="mb-0">Shipping Cost: </h4>
+                                       <h5 class="mb-0" id="shipping_rate_list"></h5>
                                     </div>
                                 </div>
                                 
@@ -1115,7 +1115,7 @@
                     if (data.success) {
                         console.log(data);
                         let result = data.data;
-                        $('#shipping_rate_list').html(result.shipping_cost);
+                        $('#shipping_rate_list').html(result.shipping_cost +" €");
                        
                     } else {
                         toastr.error(data.message);

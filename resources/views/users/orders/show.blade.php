@@ -6,7 +6,13 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">My Orders</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-semibold mb-4">My Orders</h5>
+                    @if ($order->batch_id == null && $order->status == "placed")
+                        <a class="btn btn-primary pbn-sn"
+                            href="{{ route('batches.create', ['order_id' => $order->id]) }}">Assigned Batch</a>
+                    @endif
+                </div>
                 @include('admin.partials.notification')
                 <hr>
                 <div class="card">
@@ -17,6 +23,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div id="print_section">
+                        
                             <h5>Tracking ID: [{{ $order->tracking_id }}]</h5>
                             <div class="table-reponsive">
                                 <table class="table table-bordered table-sm">
@@ -152,8 +159,8 @@
                                         <tr>
                                             <th>Condition of Goods</th>
                                             <td>{{ $order->cond_of_goods }}</td>
-                                            <th>Value of goods</th>
-                                            <td>{{ number_format($order->val_of_goods, 2) }}</td>
+                                            <th>Commission</th>
+                                            <td>{{ number_format($order->val_of_goods * 0.015, 2) }} €</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -260,7 +267,7 @@
             color: 'gray'
         }).addTo(map);
 
-       
+
         map.fitBounds([latitude1, longitude1], [latitude2, longitude2]);
     </script>
     <script>

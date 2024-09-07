@@ -33,6 +33,7 @@
                         </div>
 
                         <div class="col-12 col-lg-6">
+                            {{--  {{ $order->tracking_id }}  --}}
                             <label for="origin">Select Orders<i class="text-danger">*</i> : </label>
                             <select name="order_id[]" id="orders" class="form-control" multiple>
                             </select>
@@ -334,6 +335,12 @@
                                 .tracking_id +
                                 '</option>')
                         });
+
+                        @if (!is_null('order_id'))
+                            $('#orders').val({{ $order_id }});
+                            $('#orders').trigger('change')
+                        @endif
+
                     } else {
                         Swal.fire({
                             icon: 'error',
