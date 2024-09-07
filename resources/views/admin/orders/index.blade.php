@@ -16,6 +16,12 @@
                 <h5 class="card-title fw-semibold mb-4">All Orders</h5>
                 @include('admin.partials.notification')
                 <hr>
+                <style>
+                    #orders_tbl th,
+                    #orders_tbl td {
+                        white-space: nowrap;
+                    }
+                </style>
                 <div class="d">
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -29,6 +35,7 @@
                                         <th>Parties</th>
                                         <th>Price(&euro;)</th>
                                         <th>Status</th>
+                                        <th>Commercial Invoice</th>
                                         <th>View / Track</th>
                                     </tr>
                                 </thead>
@@ -88,6 +95,9 @@
                 },
                 {
                     "data": "status"
+                },
+                {
+                    "data": "viewpdf"
                 },
                 {
                     "data": "view"
