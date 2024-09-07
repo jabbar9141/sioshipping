@@ -83,6 +83,7 @@ class OrderController extends Controller
                 $url = route('orders.show', $order->id);
                 return '<a href="' . $url . '" class="btn btn-info btn-sm" ><i class="fa fa-eye"></i> View/ Track</a>';
             })
+
             // ->addColumn('delete', function ($order) {
             //     $url = route('shipping_rates.destroy', $order->id);
             //     return '<form method="POST" action="' . $url . '">
@@ -118,7 +119,7 @@ class OrderController extends Controller
             $query->whereDate('created_at', '=', $end);
         }
         $orders = $query->orderBy('created_at', 'DESC')->get();
-
+        
         return Datatables::of($orders)
             ->addIndexColumn()
             ->addColumn('status', function ($order) {
@@ -144,6 +145,33 @@ class OrderController extends Controller
                 $mar = "Sender : " . $order->pickup_name . "<br>";
                 $mar .= "Receiver:" . $order->delivery_name;
                 return $mar;
+            })->addColumn('viewpdf', function ($order) {
+
+                $mar = '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#' . $order->id . 'Modal" data-toggle="tooltip" title="View Agent Information">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                    </svg>
+                </a>';
+
+                $mar .= '
+                <div class="modal fade" id="' . $order->id . 'Modal" tabindex="-1" aria-labelledby="' . $order->id . 'ModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="' . $order->id . '">' . $order->name . '</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <iframe class="pdf w-100" src="' . asset('uploads/orders/'.$order->cummercial_invoice) . '"  height="650"></iframe>    
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                return $mar;
             })
             // ->addColumn('edit', function ($order) {
             //     if ($order->status == 'unpaid' || $order->status == 'placed') {
@@ -160,7 +188,7 @@ class OrderController extends Controller
             })
             ->addColumn('view', function ($order) {
                 $url = route('orders.show', $order->id);
-                return '<a href="' . $url . '" class="btn btn-info btn-sm" ><i class="fa fa-eye"></i> View/ Track</a>';
+                return '<a style="white-space:nowrap" href="' . $url . '" class="btn btn-info btn-sm" ><i class="fa fa-eye"></i> View/ Track</a>';
             })
             // ->addColumn('delete', function ($order) {
             //     $url = route('shipping_rates.destroy', $order->id);
@@ -170,7 +198,7 @@ class OrderController extends Controller
             //                 <button type="submit" onclick="return confirm(\'Are you sure you wish to delete this entry?\')" class="btn btn-sm btn-danger">Delete</button>
             //             </form>';
             // })
-            ->rawColumns(['status', 'location', 'edit', 'view', 'parties', 'date', 'price'])
+            ->rawColumns(['status', 'location', 'edit', 'view', 'parties', 'date', 'price', 'viewpdf'])
             ->make(true);
     }
 
@@ -600,7 +628,7 @@ class OrderController extends Controller
 
     // public function cummercialInvoice(){
 
-        // $path = public_path('cu', )
+    // $path = public_path('cu', )
 
     // }
 
