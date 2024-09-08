@@ -17,12 +17,28 @@ if (!function_exists('getAccountbalances')) {
         $earntToday = UserFunds::where('flag', 'debit')->where('user_id', $user_id)->where('description', '!=', 'Wallet Funding')
             ->whereDate('created_at', $today)
             ->sum('amount');
- 
+
         $spentToday = UserFunds::where('flag', 'credit')->where('user_id', $user_id)
             ->whereDate('created_at', $today)
             ->sum('amount');
 
-        return ['balance' => $bal, 'earningsToday' => $earntToday, 'spentToday' => $spentToday , 'totalAmount' => $earnt , 'totalSpendings' => $spent];
+        $earntAdminToday = UserFunds::where('flag', 'debit')->where('user_id', $user_id)->where('description', '!=', 'Admin Wallet Funding')
+            ->whereDate('created_at', $today)
+            ->sum('amount');
+
+        $spentAdminToday = UserFunds::where('flag', 'credit')->where('user_id', $user_id)->where('description', '!=', 'Admin Transfer Requested amount from Wallet')
+            ->whereDate('created_at', $today)
+            ->sum('amount');
+
+        return [
+            'balance' => $bal,
+            'earningsToday' => $earntToday,
+            'spentToday' => $spentToday,
+            'totalAmount' => $earnt,
+            'totalSpendings' => $spent,
+            'totalAdminEarningsToday' => $earntAdminToday,
+            'totalAdminSpentToday' => $spentAdminToday,
+        ];
     }
 }
 
@@ -94,13 +110,11 @@ if (!function_exists('fromEuroView')) {
                 $result = number_format($price * $currency->exchange_rate, 2);
                 return $result . ' ' . $currency->country->currency_symbol;
             }
-            $result = number_format($price,2);
+            $result = number_format($price, 2);
             return $result . ' ' . "€";
         } else {
-            $result = number_format($price,2);
+            $result = number_format($price, 2);
             return $result . ' ' . "€";
         }
     }
 }
-
-

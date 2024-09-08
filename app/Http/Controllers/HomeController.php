@@ -189,4 +189,23 @@ class HomeController extends Controller
         $r = Order::where('tracking_id', $tracking_id)->first();
         return view('shiping-track', ['order' => $r]);
     }
+
+    public function allNotifications(){
+        $user = Auth::user();
+        $notifications = $user->unreadNotifications;
+        return response()->json([
+            'status' => true,
+            'notifications' => $notifications,
+            'count' => count($notifications)
+        ]);
+    }
+
+    public function markAsRead(){
+        $user = Auth::user();
+        $user->unreadNotifications->markAsRead();
+        return response()->json([
+           'status' => true,
+           'messges' => "All Notifications are Marked"
+        ]);
+    }
 }

@@ -35,14 +35,14 @@ class BankDetailsController extends Controller
                     return $buttons;
                 })
                 ->addColumn('country_id', function ($row) {
-                    $ctry = $row->country->name;
+                    $ctry = $row->country->name.': '.$row->city->name;
                     return $ctry;
                 })
-                ->addColumn('city_id', function ($row) {
-                    $ctry = $row->city->name;
-                    return $ctry;
+                ->addColumn('total_debit', function ($row) {
+                    $total = $row->paymentRequests->sum('amount');
+                    return number_format($total,2);
                 })
-                ->rawColumns(['action', 'country_id', 'city_id'])
+                ->rawColumns(['action', 'country_id', 'total_debit'])
                 ->make(true);
         }
 

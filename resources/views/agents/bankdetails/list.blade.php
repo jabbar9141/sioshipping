@@ -2,19 +2,54 @@
 @section('page_title', 'Currency Exchange Rates')
 @section('content')
     <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title fw-semibold mb-4">Wallet</h5>
+                    <div>
+                        <h4>Wallet History</h4>
+                        <h6 class="hide-menu">Total Account Amount :
+                            {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['totalAmount']) }}
+                        </h6>
+                        <h6 class="hide-menu">Total Available Balance :
+                            {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['balance']) }}
+                        </h6>
+
+                        <h6 class="hide-menu">Total Spendings :
+                            {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['totalSpendings']) }}
+                        </h6>
+                    </div>
+                    <div>
+                        <h4>Today History</h4>
+                        <h6 class="hide-menu">Available Account Balance :
+                            {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['balance']) }}
+                        </h6>
+                        <h6 class="hide-menu">Today's Commission:
+                            {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['totalAdminEarningsToday']) }}
+                        </h6>
+
+                        <h6 class="hide-menu">Today's Spendings :
+                            {{ fromEuroView(auth()->user()->currency_id ?? 0, getAccountbalances(Auth::id())['totalAdminSpentToday']) }}
+                        </h6>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card mb-3">
-            @include('admin.partials.notification');
+            @include('admin.partials.notification')
             <div class="card-header d-flex justify-content-between">
                 <h5 class="mb-0">Bank Details</h5>
                 <a class="btn btn-primary" href="{{ route('bank_details.create') }}">Add New</a>
             </div>
-        {{--  </div>
+            {{--  </div>
         <div class="card">  --}}
             <div class="card-body">
                 <div class=""></div>
                 <div class="table-responsive">
                     <style>
-                        #bankDetailsList th{
+                        #bankDetailsList th {
                             width: 16.6666666667% !important;
                         }
                     </style>
@@ -25,7 +60,7 @@
                                 <th>Name</th>
                                 <th>Iban</th>
                                 <th>Country</th>
-                                <th>City</th>
+                                <th>Total Amount</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -50,7 +85,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('bank_details.index') }}",
-      
+
                 columns: [{
                         data: 'id',
                         name: 'id'
@@ -61,20 +96,21 @@
                     },
                     {
                         data: 'iban',
-                        name: 'iban'
+                        name: 'iban',
+                        class: 'text-nowrap'
                     },
                     {
                         data: 'country_id',
                         name: 'country_id',
                     },
                     {
-                        data: 'city_id',
-                        name: 'city_id',
+                        data: 'total_debit',
+                        name: 'total_debit',
                     },
                     {
                         data: 'action',
                         name: 'action',
-                        
+
                         searchable: false
                     },
                 ]

@@ -51,7 +51,7 @@
             @yield('content')
         </div>
     </div>
-    
+
 
     <script src="{{ asset('admin_assets/assets/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('admin_assets/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
@@ -81,8 +81,65 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            getAllNotifications();
+            
+            setInterval(function() {
+                getAllNotifications();
+            }, 60000);
+            
 
+            function getAllNotifications() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('allNotifications') }}",
+                    dataType: "json",
+                    success: function(response) {
+                        let notifications = response.notifications;
+                        let html = '';
+                        $.each(notifications, function(index, Element) {
+                            let data = Element.data[0];
+                            html += ` <div class="message-body d-flex align-items-center gap-3 mb-2">
+                                        <div>
+                                            <img style="width:30px; height:30px; border-radius:50%" src="{{ asset('admin_assets/assets/images/profile/user-1.jpg') }}"
+                                                alt="">
+                                        </div>
+                                        <div>
+                                            <b class="fw-bold">${data.user_name}</b>
+                                            <p class="fw-bold mb-0">${data.body}</p>
+                                            <a class="" href="${data.url}">View</a>
+                                        </div>
+                                    </div>`
+                        });
+                        $('#notificationDropDown').empty();
+                        $('#notificationDropDown').html(html);
+                        $('#notificationCounter').empty();
+                        $('#notificationCounter').html(response.count);
+                    },
+                    error: function(response) {
+                        console.log(response);
+                    }
+                });
+            }
+
+            function markAllRead() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('markAsRead') }}",
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(response) {
+                        console.log(response);
+                    }
+                });
+            }
+        });
+    </script>
     @yield('scripts');
+
 
 </body>
 

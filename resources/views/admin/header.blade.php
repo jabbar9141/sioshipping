@@ -11,36 +11,26 @@
                 <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop3" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <i class="ti ti-bell-ringing"></i>
-                    <div class="notification bg-primary rounded-circle"></div>
+                    <div class="notification bg-primary rounded-circle" id="notificationCounter"></div>
                 </a>
                 <style>
                     .message-body{
                         font-size: 10px;
                     }
                 </style>
-                <div class="dropdown-menu p-3 dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop3">
+                <div class="dropdown-menu p-3 dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop3" id="notificationDropDown">
                     <div class="message-body d-flex align-items-center gap-3 mb-2">
                         <div>
-                            <img style="width:30px; height:30px; border-radius:50%" src="https://picsum.photos/200/300"
+                            <img style="width:30px; height:30px; border-radius:50%" src="{{ asset('admin_assets/assets/images/profile/user-1.jpg') }}"
                                 alt="">
                         </div>
                         <div>
-                            <b class="fw-bold">name</b>
-                            <p class="fw-bold mb-0">Message</p>
+                            <b class="fw-bold">Alex Carry</b>
+                            <p class="fw-bold mb-0">Welcome To Sioshipping</p>
                             <a class="" href="">Url</a>
                         </div>
                     </div>
-                    <div class="message-body d-flex align-items-center gap-3 mb-2">
-                        <div>
-                            <img style="width:30px; height:30px; border-radius:50%" src="https://picsum.photos/200/300"
-                                alt="">
-                        </div>
-                        <div>
-                            <b class="fw-bold">name</b>
-                            <p class="fw-bold mb-0">Message</p>
-                            <a class="" href="">Url</a>
-                        </div>
-                    </div>
+                   
                 </div>
             </li>
         </ul>

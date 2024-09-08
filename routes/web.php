@@ -150,30 +150,8 @@ Route::get('/test', function () {
 
 Route::get('/', [HomeController::class, 'landing'])->name('landing');
 Route::get('register', [HomeController::class, 'register'])->name('register');
-
-Route::get('/notify',function(){
-    // $users = User::where('user_type', 'admin')->where('blocked',false)->get();
-    // foreach ($users as $user) {
-    //     $data = [];
-    //     $user->notify(new PaymentRequestNotification($data));
-    // }
-    // return $users;
-    $user = User::find(1); 
-    // return  $user->notifications;
-
-        // Get unread notifications
-       return  $user->unreadNotifications;
-
-        // Mark all user notifications as read 
-        // $user->unreadNotifications->markAsRead();
-return $user->unreadNotifications;
-        // Delete all user notifications
-        // $user->notifications()->delete();
-    return $user->unreadNotifications;
-    return $user->notifications->count();
-    $data = [];
-    $user->notify(new OrderStatusNotification($data));
-});
+Route::get('allNotifications', [HomeController::class, 'allNotifications'])->name('allNotifications');
+Route::get('markAsRead', [HomeController::class, 'markAsRead'])->name('markAsRead');
 
 Route::get('/set-language/{locale}', function ($locale) {
     app()->setLocale($locale);

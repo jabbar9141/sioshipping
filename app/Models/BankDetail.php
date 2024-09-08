@@ -27,4 +27,8 @@ class BankDetail extends Model
     public function city(){
         return $this->belongsTo(City::class, 'city_id');
     }
+
+    public function paymentRequests(){
+        return $this->hasMany(PaymentRequest::class, 'bank_detail_id');
+    }
 }
