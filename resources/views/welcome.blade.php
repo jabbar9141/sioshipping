@@ -810,7 +810,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js"></script>
-    //countries city
+   
     <script>
         $(document).ready(function() {
 
@@ -1130,7 +1130,6 @@
 
         }
     </script>
-    //countries city
     @if (!empty($_GET))
         <script>
             document.addEventListener("DOMContentLoaded", function() {

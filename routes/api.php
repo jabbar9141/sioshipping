@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\ShippingRateController;
 use App\Http\Controllers\WalkInCustomerOrder;
+use App\Models\City;
+use App\Models\State;
 use App\Models\SupportedBanks;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -88,4 +90,26 @@ Route::group(['middleware' => ['jwt.auth']], function () {
         Route::get('/beneficiaries', [BeneficiaryController::class, 'getBeneficiaries'])->name('beneficiaries.get');
         Route::delete('/beneficiaries/{beneficiaryId}', [BeneficiaryController::class, 'deleteBeneficiary']);
     });
+});
+
+
+Route::get('/test', function () {
+    $states = State::whereDoesntHave('city')->get();
+    foreach ($states as $key => $state) {
+        City::create([
+            'name' => $state->name,
+            'state_id' => $state->id,
+            'state_code' => $state->country_code,
+            'country_id' => $state->country_id,
+            'country_code' => $state->country_code,
+            'latitude' => $state->latitude,
+            'longitude' => $state->longitude,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'flag' => 1,
+            'wikiDataId' => $state->wikiDataId ?? null,
+        ]);
+    }
+
+    return "Success";
 });

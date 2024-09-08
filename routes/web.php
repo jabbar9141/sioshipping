@@ -132,15 +132,15 @@ Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_09_04_171247_change_datatype_in_payment_requests_table.php'
     // ]);
-    // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_09_05_164933_add_new_column_in_users_table.php'
-    // ]);
-    // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_09_06_200454_add_tow_column_in_orders_table.php'
-    // ]);
-    // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_09_07_114906_add_cummercial_invoice_in_orders_table.php'
-    // ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_05_164933_add_new_column_in_users_table.php'
+    ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_06_200454_add_tow_column_in_orders_table.php'
+    ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_07_114906_add_cummercial_invoice_in_orders_table.php'
+    ]);
     Artisan::call('migrate', [
         '--path' => 'database/migrations/2024_09_07_220352_create_notifications_table.php'
     ]);
