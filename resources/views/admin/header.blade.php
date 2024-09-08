@@ -11,12 +11,22 @@
                 <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop3" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <i class="ti ti-bell-ringing"></i>
-                    <div class="notification bg-primary rounded-circle" id="notificationCounter"></div>
+                    <div class="notification bg-primary rounded-circle d-flex justify-content-center p-1 text-white align-items-center"
+                       > <span style="font-size: 10px" class="position-relative"  id="notificationCounter">1</span></div>
                 </a>
                 <style>
                     .message-body {
                         font-size: 10px;
                         min-width: 300px;
+                    }
+
+                    .notification {
+                        content: "";
+                        position: absolute;
+                        top: 11px;
+                        right: 0px;
+                        width: 20px;
+                        height: 20px;
                     }
                 </style>
                 <div class="dropdown-menu p-3 dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop3"
