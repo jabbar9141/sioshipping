@@ -84,11 +84,11 @@
     <script>
         $(document).ready(function() {
             getAllNotifications();
-            
+
             setInterval(function() {
                 getAllNotifications();
             }, 60000);
-            
+
 
             function getAllNotifications() {
                 $.ajax({
@@ -112,6 +112,10 @@
                                         </div>
                                     </div>`
                         });
+                        html += ` <hr class="m-1">
+                                <div class="text-center">
+                                    <a class="btn-sm" href="#" id="markAsReadBtn">Mark as Read</a>
+                                </div>`
                         $('#notificationDropDown').empty();
                         $('#notificationDropDown').html(html);
                         $('#notificationCounter').empty();
@@ -130,12 +134,17 @@
                     dataType: "json",
                     success: function(response) {
                         console.log(response);
+                        getAllNotifications()
                     },
                     error: function(response) {
                         console.log(response);
                     }
                 });
             }
+
+            $(document).on('click','#markAsReadBtn', function () {
+                markAllRead();
+            });
         });
     </script>
     @yield('scripts');
