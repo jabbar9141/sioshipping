@@ -404,7 +404,7 @@
                                 });
                                 // hideBlockUI();
 
-                                residential_state.trigger('change');
+                                $('#residential_state').trigger('change');
 
                                 @if (!is_null(old('residential.state')))
                                     $('#residential_state').val({{ old('residential.state') }})
@@ -429,16 +429,16 @@
             });
 
 
-            var residential_state = $("#residential_state");
-            residential_state.wrap('<div class="position-relative"></div>');
-            residential_state.on('change', function() {
+            var residential_country = $("#residential_country");
+            residential_country.wrap('<div class="position-relative"></div>');
+            residential_country.on('change', function() {
                 $("#residential_city").empty()
                 $('#residential_city').html('<option value="">Select City</option>');
 
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
-                    .replace(':stateId', $(this).val());
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
                     // showBlockUI();
                     $.ajax({
@@ -456,7 +456,7 @@
                                         value
                                         .id + '">' + value.name + '</option>');
                                 });
-                                residential_city.trigger('change');
+                                $('#residential_city').trigger('change');
                                 // hideBlockUI();
                                 @if (!is_null(old('residential.city')))
                                     $('#residential_city').val({{ old('residential.city') }});

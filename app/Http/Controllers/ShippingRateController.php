@@ -479,7 +479,7 @@ class ShippingRateController extends Controller
         $country = Country::find($id);
         $data = [
             'country' => $country,
-            'cities' => $country->cities ?? [],
+            'cities' => $country->cities()->orderBy('name')->get() ?? [],
 
         ];
         return view('admin.settings.shipping_rates.city_shipping_cost', $data);
@@ -498,7 +498,7 @@ class ShippingRateController extends Controller
 
     public function citiesShippingRatesList($country_id)
     {
-        $items = City::where('country_id', $country_id)->get();
+        $items = City::where('country_id', $country_id)->orderBy('name')->get();
         return DataTables::of($items)
             ->addIndexColumn()
             ->addColumn('name', function ($item) {

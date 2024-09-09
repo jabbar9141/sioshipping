@@ -340,7 +340,7 @@
                                 });
                                 // hideBlockUI();
 
-                                residential_state.trigger('change');
+                                $('#residential_state').trigger('change');
 
                                 @if (!is_null($agent->agent->state_id))
                                     $('#residential_state').val({{ $agent->agent->state_id }});
@@ -364,16 +364,15 @@
             });
 
 
-            var residential_state = $("#residential_state");
-            residential_state.wrap('<div class="position-relative"></div>');
-            residential_state.on('change', function() {
+            var residential_country = $("#residential_country");
+            residential_country.wrap('<div class="position-relative"></div>');
+            residential_country.on('change', function() {
                 $("#residential_city").empty()
                 $('#residential_city').html('<option value="">Select City</option>');
-
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
-                    .replace(':stateId', $(this).val());
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
                     // showBlockUI();
                     $.ajax({
@@ -381,7 +380,7 @@
                         type: 'post',
                         dataType: 'json',
                         data: {
-                            'stateId': $(this).val(),
+                            'countryId': $(this).val(),
                             '_token': _token
                         },
                         success: function(response) {

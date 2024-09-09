@@ -1,5 +1,16 @@
 @extends('admin.app')
 @section('page_title', 'New Shipping Order')
+@section('css')
+    <style>
+        .select2-selection__arrow {
+            display: none !important;
+        }
+
+        .select2-results__options {
+            overflow-y: clip !important;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="container-fluid">
         <div class="card">
@@ -152,11 +163,7 @@
                                     @error('ship_from_country')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
-                                    {{-- <label for="origin">Shipping from <i class="text-danger">*</i> : </label>
-                                    <input type="text" id="origin" name="origin_" value="{{ old('origin_') }}"
-                                        class="form-control" autocomplete="off">
-                                    <input type="hidden" name="origin_id" value="{{ old('origin_id') }}"
-                                        id="origin_id"> --}}
+
 
                                 </div>
                             </div>
@@ -204,10 +211,6 @@
                                     @error('ship_to_state')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
-                                    {{-- <label for="dest">Shipping To <i class="text-danger">*</i> : </label>
-                                    <input type="text" id="dest" name="dest_" value="{{ old('dest_') }}"
-                                        class="form-control" autocomplete="off">
-                                    <input type="hidden" name="dest_id" value="{{ old('dest_id') }}" id="dest_id"> --}}
                                 </div>
                             </div>
                             <div class="col-4 mb-2">
@@ -223,104 +226,7 @@
 
                         </div>
                         <hr>
-                        {{-- <div class="table-responsive"> --}}
-                        {{-- <table class="table"> --}}
-                        {{-- <thead>
-                                    <th>Package Type <i class="text-danger">*</i></th>
-                                    <th>length(cm) <i class="text-danger">*</i></th>
-                                    <th>Width(cm) <i class="text-danger">*</i></th>
-                                    <th>Height(cm) <i class="text-danger">*</i></th>
-                                    <th>Weight(Kg) <i class="text-danger">*</i></th>
-                                    <th>Content Desc <i class="text-danger">*</i></th>
-                                    <th>Value(&euro;) <i class="text-danger">*</i></th>
-                                    <th>Count/qty <i class="text-danger">*</i></th>
-                                    <th><button class="btn btn-primary btn-sm" type="button" onclick="addRow()"><i
-                                                class="fa fa-plus"></i> Add</button></th>
-                                </thead> --}}
-                        {{-- <tbody id="items_list">
-                                    <tr>
-                                        <td>
-                                            <select name="type[]" class="form-control type"
-                                                onchange="calculateTotItems('type')">
-                                                <option value="">--select package type--</option>
-                                                <option value="percel">Percel</option>
-                                                <option value="doc">Document</option>
-                                                <option value="pallet">Pallet</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="number" step="any" min="0" value="0"
-                                                class="form-control len" onkeyup="calculateTot()" name="len[]"
-                                            >
-                                        </td>
-                                        <td>
-                                            <input type="number" step="any" min="0" value="0"
-                                                class="form-control width" onkeyup="calculateTot()" name="width[]"
-                                            >
-                                        </td>
-                                        <td>
-                                            <input type="number" step="any" min="0" value="0"
-                                                class="form-control height" onkeyup="calculateTot()" name="height[]"
-                                            >
-                                        </td>
-                                        <td>
-                                            <input type="number" step="any" min="0" value="0"
-                                                class="form-control weight" onkeyup="calculateTot()" name="weight[]"
-                                            >
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" name="item_desc[]"
-                                                placeholder="Description...">
-                                        </td>
-                                        <td>
-                                            <input type="number" step="any" min="0" value="0.0"
-                                                class="form-control itemvalue" name="item_value[]">
-                                        </td>
-                                        <td>
-                                            <input type="number" step="1" min="1" value="1"
-                                                class="form-control count" onkeyup="calculateTot()" name="count[]"
-                                            >
-                                        </td>
-                                        <td> --}}
-                        {{-- <button class="btn btn-danger" type="button" onclick="removeRow(this)"><i
-                                                    class="fa fa-trash"></i></button> --}}
-                        {{-- </td>
-                                    </tr>
-                                </tbody> --}}
-                        {{-- <tfoot>
-                                    <th>
-                                        Packages: <span id="type-tot"></span>
-                                        <input type="hidden" name="type_tot" id="type_tot">
-                                    </th>
-                                    <th>
-                                        Total length: <span id="len-tot"></span>
-                                        <input type="hidden" name="len_tot" id="len_tot">
-                                    </th>
-                                    <th>
-                                        Total Width: <span id="width-tot"></span>
-                                        <input type="hidden" name="width_tot" id="width_tot">
-                                    </th>
-                                    <th>
-                                        Total Height: <span id="height-tot"></span>
-                                        <input type="hidden" name="height_tot" id="height_tot">
-                                    </th>
-                                    <th>
-                                        Total Weight: <span id="weight-tot"></span>
-                                        <input type="hidden" name="weight_tot" id="weight_tot">
-                                    </th>
-                                    <th>
-                                        Content Desc <i class="text-danger">*</i>
-                                    </th>
-                                    <th>
-                                        Value(&euro;) <i class="text-danger">*</i>
-                                    </th>
-                                    <th>
-                                        Total Quantity: <span id="count-tot"></span>
-                                        <input type="hidden" name="count_tot" id="count_tot">
-                                    </th>
-                                </tfoot> --}}
-                        {{-- </table>
-                        </div> --}}
+
                         <div class="repeater">
                             <div data-repeater-list="items">
                                 <div class="text-end">
@@ -766,10 +672,13 @@
                             <div class="form-group col-md-6">
                                 <label for="cummercial_invoice">Commercial Invoice</label>
                                 <div class="d-flex gap-3 align-items-center">
-                                <input type="file" name="cummercial_invoice" accept="pdf" value="{{ old('cummercial_invoice') }}"
-                                    class="form-control" id="cummercial_invoice">
-                                <a style="white-space: nowrap" class="btn btn-primary" href="{{ asset('invoice_commercial/FedEx-Commercial-Invoice (1).pdf') }}" target="_blank">Create Commercial
-                                    Invoice</a>
+                                    <input type="file" name="cummercial_invoice" accept="pdf"
+                                        value="{{ old('cummercial_invoice') }}" class="form-control"
+                                        id="cummercial_invoice">
+                                    <a style="white-space: nowrap" class="btn btn-primary"
+                                        href="{{ asset('invoice_commercial/FedEx-Commercial-Invoice (1).pdf') }}"
+                                        target="_blank">Create Commercial
+                                        Invoice</a>
                                 </div>
                                 @error('cummercial_invoice')
                                     <p class="text-danger">{{ $message }}</p>
@@ -791,16 +700,6 @@
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/jquery.repeater@1.2.1/jquery.repeater.min.js"></script>
     <script>
-        //function submit_form() {
-        // if (!$('#order-form')[0].checkValidity()) {
-        //  alert('please fill all required fields, all fileds marked * are required')
-        //  $('#order-form')[0].reportValidity()
-        // } else {
-        // if (confirm('Are you sure you sure you wish to proceed?')) {
-        //   $('#order-form').submit();
-        //}
-        //}
-        //}
         $('.proccess_btn').attr('disabled', true);
         $(document).ready(function() {
             $('#customer_country_id').select2();
@@ -859,16 +758,16 @@
             });
 
 
-            var customer_state_id = $("#customer_state_id");
-            customer_state_id.wrap('<div class="position-relative"></div>');
-            customer_state_id.on('change', function() {
+            var customer_country_id = $("#customer_country_id");
+            customer_country_id.wrap('<div class="position-relative"></div>');
+            customer_country_id.on('change', function() {
                 $("#customer_city_id").empty()
                 $('#customer_city_id').html('<option value="">Select City</option>');
 
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
-                    .replace(':stateId', $(this).val());
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
                     // showBlockUI();
                     $.ajax({
@@ -876,7 +775,7 @@
                         type: 'post',
                         dataType: 'json',
                         data: {
-                            'stateId': $(this).val(),
+                            'countryId': $(this).val(),
                             '_token': _token
                         },
                         success: function(response) {
@@ -887,10 +786,7 @@
                                         .id + '">' + value.name + '</option>');
                                 });
                                 $('#customer_city_id').trigger('change');
-                                // hideBlockUI();
-
                             } else {
-                                // hideBlockUI();
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
@@ -901,13 +797,11 @@
                         },
                         error: function(error) {
                             console.log(error);
-                            // hideBlockUI();
                         }
                     });
                 } else {
-                    // hideBlockUI();
+                    console.log('FSAD');
                 }
-                // hideBlockUI();
 
             });
         })
@@ -975,12 +869,24 @@
         });
         $(document).ready(function() {
 
-            $('#ship_from_country').select2();
-            $('#ship_from_state').select2();
-            $('#ship_from_city').select2();
-            $('#ship_to_country').select2();
-            $('#ship_to_state').select2();
-            $('#ship_to_city').select2();
+            $('#ship_from_country').select2({
+                // theme: "classic",
+            });
+            $('#ship_from_state').select2({
+                theme: "classic",
+            });
+            $('#ship_from_city').select2({
+                theme: "classic",
+            });
+            $('#ship_to_country').select2({
+                theme: "classic",
+            });
+            $('#ship_to_state').select2({
+                theme: "classic",
+            });
+            $('#ship_to_city').select2({
+                theme: "classic",
+            });
 
             countries();
 
@@ -1040,16 +946,16 @@
 
             });
 
-            var ship_from_state = $("#ship_from_state");
-            ship_from_state.wrap('<div class="position-relative"></div>');
-            ship_from_state.on('change', function() {
+            var ship_from_country = $("#ship_from_country");
+            ship_from_country.wrap('<div class="position-relative"></div>');
+            ship_from_country.on('change', function() {
                 $("#ship_from_city").empty()
                 $('#ship_from_city').html('<option value="">Select City</option>');
 
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
-                    .replace(':stateId', $(this).val());
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
                     // showBlockUI();
                     $.ajax({
@@ -1057,7 +963,7 @@
                         type: 'post',
                         dataType: 'json',
                         data: {
-                            'stateId': $(this).val(),
+                            'countryId': $(this).val(),
                             '_token': _token
                         },
                         success: function(response) {
@@ -1152,16 +1058,15 @@
             });
         })
 
-        var ship_to_state = $("#ship_to_state");
-        ship_to_state.wrap('<div class="position-relative"></div>');
-        ship_to_state.on('change', function() {
+        var ship_to_country = $("#ship_to_country");
+        ship_to_country.wrap('<div class="position-relative"></div>');
+        ship_to_country.on('change', function() {
             $("#ship_to_city").empty()
             $('#ship_to_city').html('<option value="">Select City</option>');
-
             var _token = '{{ csrf_token() }}';
             let url =
-                "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
-                .replace(':stateId', $(this).val());
+                "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                .replace(':countryId', $(this).val());
             if ($(this).val() > 0) {
                 // showBlockUI();
                 $.ajax({
@@ -1169,7 +1074,7 @@
                     type: 'post',
                     dataType: 'json',
                     data: {
-                        'stateId': $(this).val(),
+                        'countryId': $(this).val(),
                         '_token': _token
                     },
                     success: function(response) {
@@ -1179,9 +1084,7 @@
                                     value
                                     .id + '">' + value.name + '</option>');
                             });
-
                             $("#ship_to_city").trigger('change');
-                            // hideBlockUI();
                             @if (!is_null(old('residential.city')))
                                 $('#ship_to_city').val({{ old('residential.city') }});
                                 $('#ship_to_city').trigger('change')

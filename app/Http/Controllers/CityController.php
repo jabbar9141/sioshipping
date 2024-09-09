@@ -17,8 +17,7 @@ class CityController extends Controller
 {
     public function getCities($stateId)
     {
-        $cities = City::select('name', 'id')->where('state_id', $stateId)->get();
-
+        $cities = City::select('name', 'id')->where('state_id', $stateId)->orderBy('name')->get();
         return response()->json([
             'success' => true,
             'cities' => $cities->toArray(),
@@ -27,8 +26,7 @@ class CityController extends Controller
 
     public function getCountryCities($countryId)
     {
-        $cities = City::select('name', 'id')->where('country_id', $countryId)->get();
-
+        $cities = City::select('name', 'id')->where('country_id', $countryId)->orderBy('name')->get();
         return response()->json([
             'success' => true,
             'cities' => $cities->toArray(),
@@ -37,8 +35,7 @@ class CityController extends Controller
 
     public function getCountryState($countryId)
     {
-        $states = State::select('name', 'id')->where('country_id', $countryId)->get();
-
+        $states = State::select('name', 'id')->where('country_id', $countryId)->orderBy('name')->get();
         return response()->json([
             'success' => true,
             'cities' => $states->toArray(),

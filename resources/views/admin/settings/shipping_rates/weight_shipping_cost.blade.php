@@ -82,7 +82,7 @@
 
         $('#weightShippingCostTable').DataTable({
             "dom": 'Bfrtip',
-            "iDisplayLength": 50,
+            "iDisplayLength": 20,
             "lengthMenu": [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
