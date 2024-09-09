@@ -167,24 +167,22 @@
 
                                 </div>
                             </div>
-                            <div class="col-4 mb-2">
-                                <div class="ui-widget">
-                                    <label for="ship_from_state">Shipping from State<i class="text-danger">*</i> :
-                                    </label>
-                                    <select name="ship_from_state" id="ship_from_state" class="form-control">
-
-                                    </select>
-                                    @error('ship_from_state')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
+          
                             <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="origin">Shipping from City<i class="text-danger">*</i> : </label>
                                     <select name="ship_from_city" id="ship_from_city" class="form-control">
                                     </select>
                                     @error('ship_from_city')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-4 mb-2">
+                                <div class="ui-widget">
+                                    <label for="ship_from_state">Enter State Name<i class="text-danger">*</i> : </label>
+                                    <input name="ship_from_state" id="ship_from_state" class="form-control form-control-sm" placeholder="Enter State Name">
+                                    @error('ship_from_state')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -203,22 +201,22 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-4 mb-2">
-                                <div class="ui-widget">
-                                    <label for="ship_to_state">Shipping to State<i class="text-danger">*</i> : </label>
-                                    <select name="ship_to_state" id="ship_to_state" class="form-select select2">
-                                    </select>
-                                    @error('ship_to_state')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
+                          
                             <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="ship_to_city">Shipping to City<i class="text-danger">*</i> : </label>
                                     <select name="ship_to_city" id="ship_to_city" class="form-select select2">
                                     </select>
                                     @error('ship_to_city')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-4 mb-2">
+                                <div class="ui-widget">
+                                    <label for="ship_to_state">Enter State Name<i class="text-danger">*</i> : </label>
+                                    <input name="ship_to_state" id="ship_to_state" class="form-control form-control-sm" placeholder="Enter State Name">
+                                    @error('ship_to_state')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -581,17 +579,6 @@
                                         </div>
                                         <br>
                                         <div class="row">
-                                            <div class="col-12 col-lg-6">
-                                                <label for="origin">Receiver State<i class="text-danger">*</i> :
-                                                </label>
-                                                <select name="customer_state_id" id="customer_state_id"
-                                                    class="form-control">
-
-                                                </select>
-                                                @error('customer_state_id')
-                                                    <p class="text-danger">{{ $message }}</p>
-                                                @enderror
-                                            </div>
                                             <div class="col-12 col-lg-6 ">
                                                 <label for="origin">Receiver City<i class="text-danger">*</i> : </label>
                                                 <select name="customer_city_id" id="customer_city_id"
@@ -601,6 +588,18 @@
                                                     <p class="text-danger">{{ $message }}</p>
                                                 @enderror
                                             </div>
+                                            <div class="col-12 col-lg-6">
+                                                <label for="origin">Receiver State<i class="text-danger">*</i> :
+                                                </label>
+                                                <input name="customer_state_id" id="customer_state_id"
+                                                    class="form-control form-control-sm" placeholder="Enter State Name">
+
+                                            
+                                                @error('customer_state_id')
+                                                    <p class="text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -704,59 +703,7 @@
         $(document).ready(function() {
             $('#customer_country_id').select2();
             $('#customer_city_id').select2();
-            $('#customer_state_id').select2();
             countries();
-
-            var customer_country_id = $("#customer_country_id");
-            customer_country_id.wrap('<div class="position-relative"></div>');
-            customer_country_id.on('change', function() {
-                $("#customer_city_id").empty();
-                $('#customer_state_id').empty();
-                $('#customer_state_id').html('<option value="">Select State</option>');
-                $('#customer_city_id').html('<option value="">Select City</option>');
-                var _token = '{{ csrf_token() }}';
-                let url = "{{ route('ajax-get-states', ['countryId' => ':countryId']) }}".replace(
-                    ':countryId', $(this).val());
-                if ($(this).val() > 0) {
-                    // showBlockUI();
-                    $.ajax({
-                        url: url,
-                        type: 'post',
-                        dataType: 'json',
-                        data: {
-                            'stateId': $(this).val(),
-                            '_token': _token
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $.each(response.states, function(key, value) {
-                                    $("#customer_state_id").append(
-                                        '<option value="' + value.id + '">' + value
-                                        .name + '</option>'
-                                    );
-                                });
-                                // hideBlockUI();
-
-                                customer_state_id.trigger('change');
-
-
-                            } else {
-                                // hideBlockUI();
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message,
-                                });
-                            }
-                        },
-                        error: function(error) {
-                            console.log(error);
-                            // hideBlockUI();
-                        }
-                    });
-                }
-            });
-
 
             var customer_country_id = $("#customer_country_id");
             customer_country_id.wrap('<div class="position-relative"></div>');
@@ -872,79 +819,21 @@
             $('#ship_from_country').select2({
                 // theme: "classic",
             });
-            $('#ship_from_state').select2({
-                theme: "classic",
-            });
+         
             $('#ship_from_city').select2({
-                theme: "classic",
+                // theme: "classic",
             });
             $('#ship_to_country').select2({
-                theme: "classic",
+                // theme: "classic",
             });
-            $('#ship_to_state').select2({
-                theme: "classic",
-            });
+          
             $('#ship_to_city').select2({
-                theme: "classic",
+                // theme: "classic",
             });
 
             countries();
 
-            var ship_from_country = $("#ship_from_country");
-            ship_from_country.wrap('<div class="position-relative"></div>');
-            ship_from_country.on('change', function() {
-                $("#ship_from_state").empty()
-                $('#ship_from_state').html('<option value="">Select City</option>');
-
-                var _token = '{{ csrf_token() }}';
-                let url =
-                    "{{ route('ajax-get-country-state', ['countryId' => ':countryId']) }}"
-                    .replace(':countryId', $(this).val());
-                if ($(this).val() > 0) {
-                    // showBlockUI();
-                    $.ajax({
-                        url: url,
-                        type: 'post',
-                        dataType: 'json',
-                        data: {
-                            'stateId': $(this).val(),
-                            '_token': _token
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $.each(response.cities, function(key, value) {
-                                    $("#ship_from_state").append('<option value="' +
-                                        value
-                                        .id + '">' + value.name + '</option>');
-                                });
-
-                                $("#ship_from_state").trigger('change');
-                                // hideBlockUI();
-                                @if (!is_null(old('residential.city')))
-                                    $('#ship_from_state').val({{ old('residential.city') }});
-                                    $('#ship_from_state').trigger('change')
-                                @endif
-                            } else {
-                                // hideBlockUI();
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message,
-                                    title: 'Are You Sure',
-                                });
-                            }
-                        },
-                        error: function(error) {
-                            console.log(error);
-                            // hideBlockUI();
-                        }
-                    });
-                } else {
-                    // hideBlockUI();
-                }
-                // hideBlockUI();
-
-            });
+            
 
             var ship_from_country = $("#ship_from_country");
             ship_from_country.wrap('<div class="position-relative"></div>');
@@ -1002,60 +891,7 @@
 
             });
 
-            var ship_to_country = $("#ship_to_country");
-            ship_to_country.wrap('<div class="position-relative"></div>');
-            ship_to_country.on('change', function() {
-                $("#ship_to_state").empty()
-                $('#ship_to_state').html('<option value="">Select City</option>');
-
-                var _token = '{{ csrf_token() }}';
-                let url =
-                    "{{ route('ajax-get-country-state', ['countryId' => ':countryId']) }}"
-                    .replace(':countryId', $(this).val());
-                if ($(this).val() > 0) {
-
-                    $.ajax({
-                        url: url,
-                        type: 'post',
-                        dataType: 'json',
-                        data: {
-                            'stateId': $(this).val(),
-                            '_token': _token
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $.each(response.cities, function(key, value) {
-                                    $("#ship_to_state").append('<option value="' +
-                                        value
-                                        .id + '">' + value.name + '</option>');
-                                });
-                                $("#ship_to_state").trigger('change');
-
-                                @if (!is_null(old('residential.city')))
-                                    $('#ship_to_state').val({{ old('residential.city') }});
-                                    $('#ship_to_state').trigger('change')
-                                @endif
-                            } else {
-
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message,
-                                    title: 'Are You Sure',
-                                });
-                            }
-                        },
-                        error: function(error) {
-                            console.log(error);
-
-                        }
-                    });
-                } else {
-
-                }
-
-
-            });
+           
         })
 
         var ship_to_country = $("#ship_to_country");

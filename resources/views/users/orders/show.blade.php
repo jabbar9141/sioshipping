@@ -1,3 +1,8 @@
+@php
+    use App\Models\User;
+    use App\Models\Country;
+    use App\Models\City;
+@endphp
 @extends('admin.app')
 @section('page_title', 'Orders')
 @section('content')
@@ -8,7 +13,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title fw-semibold mb-4">My Orders</h5>
-                    @if ($order->batch_id == null && $order->status == "placed")
+                    @if ($order->batch_id == null && $order->status == 'placed')
                         <a class="btn btn-primary pbn-sn"
                             href="{{ route('batches.create', ['order_id' => $order->id]) }}">Assigned Batch</a>
                     @endif
@@ -23,7 +28,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div id="print_section">
-                        
+
                             <h5>Tracking ID: [{{ $order->tracking_id }}]</h5>
                             <div class="table-reponsive">
                                 <table class="table table-bordered table-sm">
@@ -141,8 +146,12 @@
                                         <tr>
                                             <th>Sender City</th>
                                             <td>{{ $order->pickup_city }}</td>
+                                            @php
+                                                $id = (int) $order->delivery_city;
+                                                $city = City::find($id)?->name;
+                                            @endphp
                                             <th>Reciever City</th>
-                                            <td>{{ $order->delivery_city }}</td>
+                                            <td>{{ $city }}</td>
                                         </tr>
                                         <tr>
                                             <th>Sender State/ Province</th>
@@ -153,8 +162,12 @@
                                         <tr>
                                             <th>Sender Country / Region</th>
                                             <td>{{ $order->pickup_country }}</td>
+                                            @php
+                                                $id = (int) $order->delivery_country;
+                                                $country = Country::find($id)?->name;
+                                            @endphp
                                             <th>Reciever Country / Region</th>
-                                            <td>{{ $order->delivery_country }}</td>
+                                            <td>{{ $country }}</td>
                                         </tr>
                                         <tr>
                                             <th>Condition of Goods</th>

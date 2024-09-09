@@ -111,8 +111,8 @@
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label for="zip">zip</label>
-                            <input type="text" name="zip" class="form-control" id="zip" value="{{ $dispatcher->zip }}"
-                                required>
+                            <input type="text" name="zip" class="form-control" id="zip"
+                                value="{{ $dispatcher->zip }}" required>
                         </div>
 
                         <div class="form-group col-md-6">
@@ -186,7 +186,7 @@
                                 });
                                 // hideBlockUI();
 
-                                residential_state.trigger('change');
+                                $("#residential_state").trigger('change');
 
                                 @if (!is_null($dispatcher->state_id))
                                     $('#residential_state').val({{ $dispatcher->state_id }});
@@ -210,16 +210,16 @@
             });
 
 
-            var residential_state = $("#residential_state");
-            residential_state.wrap('<div class="position-relative"></div>');
-            residential_state.on('change', function() {
+            var residential_country = $("#residential_country");
+            residential_country.wrap('<div class="position-relative"></div>');
+            residential_country.on('change', function() {
                 $("#residential_city").empty()
                 $('#residential_city').html('<option value="">Select City</option>');
 
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-cities', ['stateId' => ':stateId']) }}"
-                    .replace(':stateId', $(this).val());
+                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                    .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
                     // showBlockUI();
                     $.ajax({
@@ -227,7 +227,7 @@
                         type: 'post',
                         dataType: 'json',
                         data: {
-                            'stateId': $(this).val(),
+                            'countryId': $(this).val(),
                             '_token': _token
                         },
                         success: function(response) {
@@ -285,6 +285,11 @@
                             $("#residential_country").append('<option value="' + value.id +
                                 '">' + value.name + '</option>');
                         });
+                        $('#residential_country').trigger('change');
+                        @if (!is_null($dispatcher->country_id))
+                            $('#residential_country').val({{ $dispatcher->country_id }});
+                            $('#residential_country').trigger('change')
+                        @endif
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -298,13 +303,13 @@
                 }
             });
 
-            @if (!is_null($dispatcher->country_id))
-                 let country = "{{$dispatcher->country_id}}";
-                setTimeout(() => {          
-                    $('#residential_country').val({{ $dispatcher->country_id }});
-                    $('#residential_country').trigger('change')
-                }, 200);
-            @endif
+            // @if (!is_null($dispatcher->country_id))
+            //      let country = "{{ $dispatcher->country_id }}";
+            //     setTimeout(() => {          
+            //         $('#residential_country').val({{ $dispatcher->country_id }});
+            //         $('#residential_country').trigger('change')
+            //     }, 200);
+            // @endif
 
         }
     </script>

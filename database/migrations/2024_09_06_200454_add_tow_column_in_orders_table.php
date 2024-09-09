@@ -15,8 +15,8 @@ class AddTowColumnInOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             
-            $table->bigInteger('pickup_location_state_id')->nullable();
-            $table->bigInteger('delivery_location_state_id')->nullable();
+            $table->string('pickup_location_state_id')->nullable();
+            $table->string('delivery_location_state_id')->nullable();
             
         });
     }

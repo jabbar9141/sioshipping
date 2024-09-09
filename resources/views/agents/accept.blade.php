@@ -1,5 +1,7 @@
 @php
     use App\Models\User;
+    use App\Models\Country;
+    use App\Models\City;
     $dispatures = User::where('user_type', 'dispatcher')->get();
 @endphp
 @extends('admin.app')
@@ -129,8 +131,12 @@
                                 <tr>
                                     <th>Sender City</th>
                                     <td>{{ $order->pickup_city }}</td>
+                                    @php
+                                        $id = (int) $order->delivery_city;
+                                        $city = City::find($id)?->name;
+                                    @endphp
                                     <th>Reciever City</th>
-                                    <td>{{ $order->delivery_city }}</td>
+                                    <td>{{ $city }}</td>
                                 </tr>
                                 <tr>
                                     <th>Sender State/ Province</th>
@@ -141,14 +147,20 @@
                                 <tr>
                                     <th>Sender Country / Region</th>
                                     <td>{{ $order->pickup_country }}</td>
+                                    
+                                    @php
+                                        $id = (int) $order->delivery_country;
+                                        $country = Country::find($id)?->name;
+                                    @endphp
                                     <th>Reciever Country / Region</th>
-                                    <td>{{ $order->delivery_country }}</td>
+                                    <td>{{ $country }}</td>
                                 </tr>
                                 <tr>
                                     <th>Condition of Goods</th>
                                     <td>{{ $order->cond_of_goods }}</td>
-                                    <th>Order Pick-up Commission  </th>
-                                    <td>{{ fromEuroView(auth()->user()->currency_id ?? 0,($order->val_of_goods * 0.015)) }}</td>
+                                    <th>Order Pick-up Commission </th>
+                                    <td>{{ fromEuroView(auth()->user()->currency_id ?? 0, $order->val_of_goods * 0.015) }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

@@ -285,12 +285,12 @@ class OrderController extends Controller
     public function agentsOrdersList(Request $request)
     {
         $query = Order::query();
-        $cityName = Auth::user()->agent->city->name;
+        // $cityName = Auth::user()->agent->city->name;
 
-        $query->where(function ($q) use ($cityName) {
-            $q->where('pickup_city', 'LIKE', '%' . $cityName . '%')
-                ->orWhere('delivery_city', 'LIKE', '%' . $cityName . '%');
-        });
+        // $query->where(function ($q) use ($cityName) {
+        //     $q->where('pickup_city', 'LIKE', '%' . $cityName . '%')
+        //         ->orWhere('delivery_city', 'LIKE', '%' . $cityName . '%');
+        // });
 
         if ($request->filled('startDate') && $request->filled('endDate')) {
             $startDate = Carbon::parse($request->startDate)->startOfDay();

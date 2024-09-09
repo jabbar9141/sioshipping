@@ -438,6 +438,11 @@
                             $("#residential_country").append('<option value="' + value.id +
                                 '">' + value.name + '</option>');
                         });
+                        $('#residential_country').trigger('change');
+                        @if (!is_null($agent->agent->country_id))
+                            $('#residential_country').val({{ $agent->agent->country_id }});
+                            $('#residential_country').trigger('change');
+                        @endif
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -451,12 +456,7 @@
                 }
             });
 
-            @if (!is_null($agent->agent->country_id))
-                setTimeout(() => {
-                    $('#residential_country').val({{ $agent->agent->country_id }});
-                    $('#residential_country').trigger('change')
-                }, 200);
-            @endif
+
 
         }
     </script>
