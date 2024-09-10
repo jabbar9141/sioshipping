@@ -313,6 +313,4 @@
             }
         });
     }
-
-    $('#yourButton').on('click', trackingFunction);
 </script>
