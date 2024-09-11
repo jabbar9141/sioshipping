@@ -675,7 +675,7 @@
                                         value="{{ old('cummercial_invoice') }}" class="form-control"
                                         id="cummercial_invoice">
                                     <a style="white-space: nowrap" class="btn btn-primary"
-                                        href="{{ asset('invoice_commercial/FedEx-Commercial-Invoice (1).pdf') }}"
+                                        href="{{ asset('FedEx-Commercial-Invoice.pdf') }}"
                                         target="_blank">Create Commercial
                                         Invoice</a>
                                 </div>

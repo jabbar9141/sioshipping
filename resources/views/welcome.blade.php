@@ -1005,7 +1005,7 @@
                     if (data.success) {
                         console.log(data);
                         let result = data.data;
-                        $('#shipping_rate_list').html(result.shipping_cost + " €");
+                        $('#shipping_rate_list').html(result.shipping_cost.toFixed(2) + " €");
 
                     } else {
                         toastr.error(data.message);
