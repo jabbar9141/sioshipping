@@ -84,7 +84,8 @@
                         <a class="sidebar-link @if (Route::is('allUsers') ||
                                 Route::is('create.dispatcher') ||
                                 Route::is('dispatchers.*') ||
-                                Route::is('admin-paymentRequestget')) active @endif"
+                                Route::is('admin-paymentRequestget') ||
+                                Route::is('agent.editSitting.*')) active @endif"
                             href="{{ route('allUsers') }}" aria-expanded="false">
                             <span>
                                 <i class="fa-solid fa-users"></i>

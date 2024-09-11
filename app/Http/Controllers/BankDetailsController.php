@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BankDetail;
 use App\Models\Country;
+use App\Models\User;
 use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -161,5 +162,12 @@ class BankDetailsController extends Controller
         $bank_detail = BankDetail::find($id);
         $bank_detail->delete();
         return redirect()->back()->with('success', 'Delete Successfully');
+    }
+
+    public function assignBankDetails(Request $request,$id){
+        $user = User::find($id);
+        $user->bank_detail_id = $request->bank_detail_id;
+        $user->save();
+        return redirect()->back()->with('success', 'Add Successfully');
     }
 }

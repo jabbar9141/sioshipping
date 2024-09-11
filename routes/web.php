@@ -132,17 +132,20 @@ Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_09_04_171247_change_datatype_in_payment_requests_table.php'
     // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_05_164933_add_new_column_in_users_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_06_200454_add_tow_column_in_orders_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_07_114906_add_cummercial_invoice_in_orders_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_07_220352_create_notifications_table.php'
+    // ]);
     Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_05_164933_add_new_column_in_users_table.php'
-    ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_06_200454_add_tow_column_in_orders_table.php'
-    ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_07_114906_add_cummercial_invoice_in_orders_table.php'
-    ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_07_220352_create_notifications_table.php'
+        '--path' => 'database/migrations/2024_09_11_044833_add_column_in_users_table.php'
     ]);
  
     return "Success";
@@ -250,7 +253,10 @@ Route::post('saveCityShippingCostPercentage/{countryId}', [ShippingRateControlle
 
 Route::get('currencyExchangeView', [CurrencyExchangeRateController::class, 'index'])->name('currency-view')->middleware(['auth']);
 Route::get('currencyExchangeRateList', [CurrencyExchangeRateController::class, 'currencyExchangeRateList'])->name('currencyExchangeRateList')->middleware(['auth']);
+Route::post('assignCurrency/{userId}', [CurrencyExchangeRateController::class, 'assignCurrency'])->name('assignCurrency');
 // 
+
+
 Route::get('getCurrencyExchangeRate/{id}', [CurrencyExchangeRateController::class, 'getCurrencyExchangeRate'])->name('getCurrencyExchangeRate')->middleware(['auth']);
 Route::post('updateCurrencyExchangeRate', [CurrencyExchangeRateController::class, 'updateCurrencyExchangeRate'])->name('updateCurrencyExchangeRate')->middleware(['auth']);
 Route::post('storeCurrencyExchangeRate', [CurrencyExchangeRateController::class, 'storeCurrencyExchangeRate'])->name('storeCurrencyExchangeRate')->middleware(['auth']);
@@ -286,6 +292,7 @@ Route::get('allMobileUserList', [WalkInCustomerController::class, 'allMobileUser
 
 Route::post('unblockUser', [AdminController::class, 'unblockUser'])->name('unblockUser')->middleware(['auth']);
 Route::post('blockUser', [AdminController::class, 'blockUser'])->name('blockUser')->middleware(['auth']);
+
 Route::post('makeAdmin', [AdminController::class, 'makeAdmin'])->name('makeAdmin')->middleware(['auth']);
 Route::post('makeDispatcher', [AdminController::class, 'makeDispatcher'])->name('makeDispatcher')->middleware(['auth']);
 Route::post('makeUser', [AdminController::class, 'makeUser'])->name('makeUser')->middleware(['auth']);
@@ -340,6 +347,7 @@ Route::get('agent/accept', [AgentController::class, 'accept'])->name('agent.acce
 Route::get('agent/accept-search', [AgentController::class, 'accept_search'])->name('agent.accept.search')->middleware(['auth']);
 
 Route::get('agentSetting', [AgentController::class, 'settings'])->name('agent.profile')->middleware(['auth']);
+Route::get('editAgentSitting/{id}', [AgentController::class, 'editAgentSitting'])->name('agent.editSitting')->middleware(['auth']);
 
 
 //paymentRequesr route
@@ -413,6 +421,7 @@ Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.
 // Route::delete('bankdetails-delete', [BankDetailsController::class, 'destroy'])->name('bankdetails-delete');
 
 Route::resource('bank_details', BankDetailsController::class)->middleware(['auth']);
+Route::post('assignBankDetails/{id}', [BankDetailsController::class, 'assignBankDetails'])->name('assignBankDetails');
 
 
 Route::post('ajax-get-cities/{stateId}', [CityController::class, 'getCities'])->name('ajax-get-cities');

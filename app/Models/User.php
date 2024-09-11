@@ -30,6 +30,7 @@ class User extends Authenticatable implements JWTSubject
         'country',
         'registration_status',
         'currency_id',
+        'bank_detail_id',
     ];
 
     /**
@@ -105,5 +106,13 @@ class User extends Authenticatable implements JWTSubject
             'email' => $this->email,
             'phone' => $this->phone,
         ];
+    }
+
+    public function bankDetail(){
+        return $this->belongsTo(BankDetail::class,'bank_detail_id');
+    }
+
+    public function currency(){
+        return $this->belongsTo(CurrencyExchangeRate::class,'currency_id');
     }
 }

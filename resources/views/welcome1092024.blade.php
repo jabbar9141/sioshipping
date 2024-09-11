@@ -65,6 +65,30 @@
     @include('navbar')
     <!-- Navbar End -->
 
+    {{-- <div class="headi flex items-center h-auto md:h-screen p-5 bg-contain md:bg-cover">
+
+        <div class="w-full lg:w-1/2 flex flex-col items-center justify-center">
+            <div class="lg:w-[500px] space-y-3">
+                <h1 class="text-primary text-xl">Secure & Faster</h1>
+                <h1 class="md:text-4xl">The Best VTU Payment <br> Service & VTU Platform</h1>
+
+                <p class="font-bold text-black">Elevate your business and add value to your offerings by selecting
+                    SIOPAY as your
+                    payment services
+                    solution.</p>
+
+                <div class="flex space-x-2">
+                    <button
+                        class="bg-primary p-2 hover:bg-transparent hover:text-primary hover:border-2 hover:border-primary text-white rounded-full">Open
+                        Account</button>
+                    <button class="text-primary border-2 font-bold border-primary rounded-full p-2">Get in
+                        touch</button>
+                </div>
+            </div>
+        </div>
+
+    </div> --}}
+
     <!-- Header Start -->
     <div class="jumbotron jumbotron-fluid mb-5">
         <div class="container text-center py-5">
@@ -77,27 +101,21 @@
             <div class="mx-auto" style="width: 100%;">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link rounded {{ !empty(request()->get('origin_id')) || empty($_GET) ? 'active' : '' }}"
+                        <a class="nav-link {{ !empty(request()->get('origin_id')) || empty($_GET) ? 'active' : '' }}"
                             id="shipping-tab" data-toggle="tab" href="#shipping" role="tab" aria-controls="shipping"
                             aria-selected="true">{{ __('hompage.ship_quote_header') }}</a>
                     </li>
+                    {{-- <li class="nav-item">
+                        <a class="nav-link {{ !empty(request()->get('s_country_eu')) ? 'active' : '' }}"
+                            id="eu-funds-tab" data-toggle="tab" href="#eu-funds" role="tab" aria-controls="eu-funds"
+                            aria-selected="false">{{__('hompage.eu_fund_quote_header')}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ !empty(request()->get('s_country')) ? 'active' : '' }}"
+                            id="intl-funds-tab" data-toggle="tab" href="#intl-funds" role="tab"
+                            aria-controls="intl-funds" aria-selected="false">{{__('hompage.intl_fund_quote_header')}}</a>
+                    </li> --}}
                 </ul>
-                <style>
-                    .form-sm {
-                        height: 27px;
-                        border-radius: 3px;
-                    }
-                    label{
-                        font-size: 12px;
-                    }
-                    ::placeholder {
-                        font-size: 11px;
-                    }
-
-                    .form-card {
-                        background-color: #ffffff4f;
-                    }
-                </style>
                 <style>
                     .form-sm {
                         height: 27px;
@@ -119,7 +137,7 @@
                         id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
                         <hr>
                         {{--  <form class="mt-4" action="" method="get" class="">  --}}
-                        <div class="card rounded form-card p-3">
+                        <div class="card form-card p-3">
                             <div class="row my-4">
                                 <div class="col-md-4 col-lg-3 text-white text-start mb-2">
                                     <div class="ui-widget">
@@ -133,7 +151,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
 
                                 <div class="col-md-4 col-lg-3 text-white text-start mb-2">
                                     <div class="ui-widget">
@@ -156,17 +173,8 @@
                                 </div>
                                 <div class="col-md-4 col-lg-3 text-white text-start mb-2">
                                     <div class="ui-widget">
-                                        <label for="ship_from_state">Inter State Name<i class="text-danger">*</i> :
-                                        </label> <br>
-                                        <input type="text" placeholder="Inter State Name"
-                                            class="form-control form-control-sm form-sm">
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                    <div class="ui-widget">
                                         <label for="weight_tot">Total Weight<i class="text-danger">*</i> : </label>
                                         <br>
-                                        <input type="number" class="form-control form-sm" id="weight_tot">
                                         <input type="number" class="form-control form-sm" id="weight_tot">
                                     </div>
                                 </div>
@@ -184,7 +192,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
 
                                 <div class="col-md-4 col-lg-3 text-white text-start mb-2">
                                     <div class="ui-widget">
@@ -206,31 +213,18 @@
                                             class="form-control form-control-sm form-sm">
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                    <div class="ui-widget">
-                                        <label for="ship_from_state">Inter State Name<i class="text-danger">*</i> :
-                                        </label> <br>
-                                        <input type="text" placeholder="Inter State Name"
-                                            class="form-control form-control-sm form-sm">
-                                    </div>
-                                </div>
                                 <div class="col-md-4 col-lg-3 mt-auto text-white text-start mb-2">
                                     <div class="bg-white pb-3 px-3 rounded d-flex gap-3 align-items-center pt-3">
                                         <h4 class="mb-0">Shipping Cost: </h4>
                                         <h5 class="mb-0" id="shipping_rate_list"></h5>
-                                        <h4 class="mb-0">Shipping Cost: </h4>
-                                        <h5 class="mb-0" id="shipping_rate_list"></h5>
                                     </div>
                                 </div>
 
-
                             </div>
                             <div class="col-md-4 ps-0 text-start" style="width: 100%">
-                                <button class="btn rounded btn-primary m-1"
+                                <button class="btn btn-primary m-1"
                                     onclick="getRates()">{{ __('hompage.proceed') }}</button>
                                 {{--  <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a>  --}}
-                            </div>
-                        </div>
                             </div>
                         </div>
                         {{--  </form>  --}}
@@ -828,7 +822,6 @@
     <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js"></script>
 
-
     <script>
         $(document).ready(function() {
 
@@ -847,8 +840,6 @@
 
                 var _token = '{{ csrf_token() }}';
                 let url =
-                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
-                    .replace(':countryId', $(this).val());
                     "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
                     .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
@@ -918,13 +909,10 @@
                             if (response.success) {
                                 $.each(response.cities, function(key, value) {
                                     $("#ship_to_city").append('<option value="' +
-                                    $("#ship_to_city").append('<option value="' +
                                         value
                                         .id + '">' + value.name + '</option>');
                                 });
                                 $("#ship_to_city").trigger('change');
-                                $("#ship_to_city").trigger('change');
-
 
 
                             } else {
@@ -998,7 +986,6 @@
 
 
 
-
             $.ajax({
                 url: "{{ route('rates.fetch') }}",
                 type: "GET",
@@ -1018,8 +1005,6 @@
                     if (data.success) {
                         console.log(data);
                         let result = data.data;
-                        $('#shipping_rate_list').html(result.shipping_cost.toFixed(2) + " €");
-
                         $('#shipping_rate_list').html(result.shipping_cost + " €");
 
                     } else {

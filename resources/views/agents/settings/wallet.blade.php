@@ -166,11 +166,8 @@
                                     <div class="col-12 col-lg-6">
                                         <label for="bank_name">Name of Bank<i class="text-danger">*</i>:</label>
                                         <select name="bank_detail_id" id="bank_detail_id" class="form-control">
-                                            <option value="">Select Bank</option>
-                                            @foreach ($bank_details as $bank_detail)
-                                                <option value="{{ $bank_detail->id }}">{{ $bank_detail->bank_name }},
-                                                    {{ $bank_detail->iban }}</option>
-                                            @endforeach
+                                                <option value="{{ auth()->user()->bank_detail_id }}" selected>{{ auth()->user()->bankDetail?->bank_name }},
+                                                    {{auth()->user()->bankDetail?->iban }}</option>
                                         </select>
                                         @error('bank_detail_id')
                                             <p class="text-danger">{{ $message }}</p>

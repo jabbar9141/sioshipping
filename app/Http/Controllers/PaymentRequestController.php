@@ -95,48 +95,48 @@ class PaymentRequestController extends Controller
 
     public function store(Request $request)
     {
-        //  return $request->all();
-        $request->validate([
-            'bank_detail_id' => 'required|numeric',
-            'reciept_attachement' => 'required|mimes:png,jpg,pdf,jpeg',
-            'amount' => 'required|numeric',
-        ]);
-
-        try {
-            $attachment = $request->file('reciept_attachement');
-            $attachmentName = 'pay_attach_' . time() . '.' . $attachment->getClientOriginalExtension();
-            $attachment->move(public_path('uploads/payment'), $attachmentName);
-
-
-            $paymentRequest = PaymentRequest::create([
-                'bank_detail_id' => $request->bank_detail_id,
-                'reciept_attachement' => $attachmentName,
-                'amount' => $request->amount,
-                'user_id' => Auth::user()->id,
+       
+            $request->validate([
+                'bank_detail_id' => 'required',
+                'reciept_attachement' => 'required|mimes:png,jpg,pdf,jpeg',
+                'amount' => 'required|numeric',
             ]);
-            $users = User::where('user_type', 'admin')->where('blocked',false)->get();
-            foreach ($users as $user) {
-                $data = [
-                    'user_id' => Auth::user()->id,
-                    'user_name' => Auth::user()->name,
-                    'subject' => 'New Payment Request',
-                    'body' => 'A new payment request has been made on your Bank Account.',
-                    'url' => route('admin-paymentRequestget', Auth::user()->id)
-                ];
-                $user->notify(new PaymentRequestNotification($data));
-            }
-            return redirect()->route('my-wallet.index')->with(
-                'message',
-                "Payment Request Added Successfully."
-            );
-        } catch (\Exception $e) {
-            Log::error('Error during file upload or payment request creation: ' . $e->getMessage());
+     
+      
+            try {
+                $attachment = $request->file('reciept_attachement');
+                $attachmentName = 'pay_attach_' . time() . '.' . $attachment->getClientOriginalExtension();
+                $attachment->move(public_path('uploads/payment'), $attachmentName);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while processing your request.',
-            ], 500);
-        }
+                $paymentRequest = PaymentRequest::create([
+                    'bank_detail_id' => $request->bank_detail_id,
+                    'reciept_attachement' => $attachmentName,
+                    'amount' => $request->amount,
+                    'user_id' => Auth::user()->id,
+                ]);
+                $users = User::where('user_type', 'admin')->where('blocked', false)->get();
+                foreach ($users as $user) {
+                    $data = [
+                        'user_id' => Auth::user()->id,
+                        'user_name' => Auth::user()->name,
+                        'subject' => 'New Payment Request',
+                        'body' => 'A new payment request has been made on your Bank Account.',
+                        'url' => route('admin-paymentRequestget', Auth::user()->id)
+                    ];
+                    $user->notify(new PaymentRequestNotification($data));
+                }
+                return redirect()->route('my-wallet.index')->with(
+                    'message',
+                    "Payment Request Added Successfully."
+                );
+            } catch (\Exception $e) {
+                Log::error('Error during file upload or payment request creation: ' . $e->getMessage());
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while processing your request.',
+                ], 500);
+            }
     }
 
 
@@ -144,29 +144,29 @@ class PaymentRequestController extends Controller
     {
 
         // try {
-            $transits = UserFunds::where('user_id', Auth::user()->id)->get();
-            return DataTables::of($transits)
-                ->addIndexColumn()
-                ->addColumn('transId', function ($row) {
-                    return $row->transId;
-                })
-                ->addColumn('description', function ($row) {
-                    return strlen($row->description) > 30
+        $transits = UserFunds::where('user_id', Auth::user()->id)->get();
+        return DataTables::of($transits)
+            ->addIndexColumn()
+            ->addColumn('transId', function ($row) {
+                return $row->transId;
+            })
+            ->addColumn('description', function ($row) {
+                return strlen($row->description) > 30
                     ? substr($row->description, 0, 30) . '...'
                     : $row->description;
-                })
-                ->addColumn('flag', function ($row) {
-                    return ucfirst($row->flag);
-                })
-                ->addColumn('amount', function ($row) {
-                    return fromEuroView(Auth::user()->currency_id ?? 0, $row->amount);
-                })
-                ->rawColumns(['amount'])
-                ->make(true);
-            // return response()->json([
-            //     'success' => true,
-            //     'data' => $transits,
-            // ]);
+            })
+            ->addColumn('flag', function ($row) {
+                return ucfirst($row->flag);
+            })
+            ->addColumn('amount', function ($row) {
+                return fromEuroView(Auth::user()->currency_id ?? 0, $row->amount);
+            })
+            ->rawColumns(['amount'])
+            ->make(true);
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $transits,
+        // ]);
         // } catch (\Throwable $th) {
         //     return response()->json([
         //         'success' => false,
@@ -197,7 +197,7 @@ class PaymentRequestController extends Controller
                 ];
                 $user->notify(new PaymentRequestNotification($data));
             }
-            
+
             return redirect()->back()->with(['message' => 'Status Updated Successfully!', 'message_type' => 'success']);
         } else {
             return redirect()->back()->with('message', "Something went Wrong!");

@@ -44,6 +44,14 @@ class AgentController extends Controller
         return view('agents.settings.edit', compact('agent', 'currency_exchange_rates'));
     }
 
+
+    public function editAgentSitting($id)
+    {
+        $agent = User::find($id);
+        $currency_exchange_rates = CurrencyExchangeRate::get();
+        return view('admin.settings.editagents', compact('agent', 'currency_exchange_rates'));
+    }
+
     /**
      * hompage for the accepting orders
      */
@@ -71,7 +79,7 @@ class AgentController extends Controller
         }
     }
 
-  
+
     /**
      * Show the form for creating a new resource.
      *
@@ -90,19 +98,19 @@ class AgentController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
-        $validate = $request->validate([
-            'currency_id' => 'required',
-        ]);
+        // $validate = $request->validate([
+        //     'currency_id' => 'required',
+        // ]);
 
-        try {
-            $user = User::find(Auth::user()->id);
-            $user->currency_id = $request->currency_id;
-            $user->save();
-            return back()->with(['message' => 'Currency Add Successfully', 'message_type' => 'success']);
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage(), ['Exeption', $th]);
-            return back()->with('message', 'An Erorr Accured' . $th->getMessage());
-        }
+        // try {
+        //     $user = User::find(Auth::user()->id);
+        //     $user->currency_id = $request->currency_id;
+        //     $user->save();
+        //     return back()->with(['message' => 'Currency Add Successfully', 'message_type' => 'success']);
+        // } catch (\Throwable $th) {
+        //     Log::error($th->getMessage(), ['Exeption', $th]);
+        //     return back()->with('message', 'An Erorr Accured' . $th->getMessage());
+        // }
     }
     /**
      * Display the specified resource.
