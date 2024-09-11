@@ -6,8 +6,8 @@
 @section('content')
     <div class="container-fluid">
         @include('admin.partials.notification')
-        <div class="row">
-            <div class="card mb-3 col-md-6">
+        <div class="row justify-content-between">
+            <div class="card mb-3 col-md-5">
                 <div class="card-body">
                     <h5 class="mb-4">Reset Password</h5>
                     <form action="{{ route('updatePassword') }}" method="POST">
@@ -51,7 +51,7 @@
                         <p><b>Email: {{ $agent->email }}</b></p>
                         <p><b>Agency Type: {{ $agent->agent->agency_type }}</b></p>
 
-
+                        <p><b>Currency : {{ auth()->user()?->currency?->country?->name .' '. auth()->user()?->currency?->country?->currency_symbol}}</b></p>
                         <a type="button" class="" data-bs-toggle="modal" data-bs-target="#registrationDocumentModal">
                             Check Registration Document
                         </a>
@@ -61,7 +61,7 @@
                         </a>
                     </div>
 
-                    <form class="w-100" action="{{ route('agents.store') }}" method="post">
+                    {{-- <form class="w-100" action="{{ route('agents.store') }}" method="post">
                         @csrf
                         @method('POST')
                         <div class="row">
@@ -85,10 +85,10 @@
                             </div>
                         </div>
                         <br>
-                        <div class="text-end">
+                        {{-- <div class="text-end">
                             <button class="btn btn-primary btn-sm" type="submit">Save</button>
-                        </div>
-                    </form>
+                        </div> --}}
+                    {{-- </form> --}}
                     <!-- Modal -->
                     <div class="modal fade" id="registrationDocumentModal" tabindex="-1"
                         aria-labelledby="registrationDocumentModalLabel" aria-hidden="true">
@@ -101,8 +101,8 @@
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <iframe class="pdf" src="{{ asset($agent->agent->front_attachment) }}"
-                                        width="100%" height="650"></iframe>
+                                    <iframe class="pdf" src="{{ asset($agent->agent->front_attachment) }}" width="100%"
+                                        height="650"></iframe>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -125,8 +125,7 @@
                                         height="650"></iframe>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +146,7 @@
                         <div class="form-group  col-md-6">
                             <label for="name">Name/ Business Name</label>
                             <input type="text" name="name" class="form-control" id="name"
-                                value="{{ $agent->name }}" required>
+                                value="{{ $agent->name }}" required readonly>
                         </div>
                         <div class="form-group  col-md-6">
                             <label for="email">Email</label>
@@ -160,12 +159,12 @@
                         <div class="form-group col-md-6">
                             <label for="phone">Phone</label>
                             <input type="text" name="phone" class="form-control" id="phone"
-                                value="{{ $agent->agent->phone }}" required>
+                                value="{{ $agent->agent->phone }}" required readonly>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="phone_alt">Phone Alt</label>
                             <input type="text" name="phone_alt" class="form-control" id="phone_alt"
-                                value="{{ $agent->agent->phone_alt }}">
+                                value="{{ $agent->agent->phone_alt }}" readonly>
                         </div>
                     </div>
                     <br>
@@ -173,7 +172,7 @@
                         <div class="col-md-6">
                             <label for="agency-type" class="col-md-4 col-form-label">{{ __('Agency Type') }} <i
                                     class="text-danger">*</i></label>
-                            <select name="agency_type" id="agency_type" class="form-control">
+                            <select name="agency_type" id="agency_type" class="form-control" disabled>
                                 <option value="person" {{ $agent->agent->agency_type == 'person' ? 'selected' : '' }}>
                                     Personal</option>
                                 <option value="agency" {{ $agent->agent->agency_type == 'agency' ? 'selected' : '' }}>
@@ -193,7 +192,7 @@
                         <div class="col-md-6">
                             <label for="business-name" class="col-md-4 col-form-label">Business Name</label>
                             <input id="business-name" type="text" class="form-control"
-                                value="{{ $agent->agent->business_name }}" name="business_name">
+                                value="{{ $agent->agent->business_name }}" name="business_name" readonly>
                         </div>
                     </div>
                     <br>
@@ -202,7 +201,7 @@
                             <label for="tax-id-code" class="col-md-4 col-form-label">Tax ID Code <i
                                     class="text-danger">*</i></label>
                             <input id="tax-id-code" type="text" class="form-control" name="tax_id_code"
-                                value="{{ $agent->agent->tax_id_code }}" required>
+                                value="{{ $agent->agent->tax_id_code }}" required readonly>
                             @error('tax_id_code')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -212,7 +211,7 @@
                         <div class="col-md-6">
                             <label for="vat-no" class="col-md-4 col-form-label">VAT Number</label>
                             <input id="vat-no" type="text" class="form-control"
-                                value="{{ $agent->agent->vat_no }}" name="vat_no">
+                                value="{{ $agent->agent->vat_no }}" name="vat_no" readonly>
                         </div>
                     </div>
                     <br>
@@ -220,39 +219,39 @@
                         <div class="col-md-6">
                             <label for="pec" class="col-md-4 col-form-label">PEC</label>
                             <input id="pec" type="text" class="form-control" value="{{ $agent->agent->pec }}"
-                                name="pec">
+                                name="pec" readonly>
                         </div>
                         <div class="col-md-6">
                             <label for="sdi" class="col-md-4 col-form-label">Unique SDI Code</label>
                             <input id="sdi" type="text" class="form-control" value="{{ $agent->agent->sdi }}"
-                                name="sdi">
+                                name="sdi" readonly>
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="form-group">
                             <label for="address1">Address 1</label>
-                            <textarea name="address1" class="form-control" id="address1">{{ $agent->agent->address2 }}</textarea>
+                            <textarea name="address1" class="form-control" id="address1" readonly>{{ $agent->agent->address2 }}</textarea>
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="form-group">
                             <label for="address2">Address 2(additional decriptions)</label>
-                            <textarea name="address2" class="form-control" id="address2">{{ $agent->agent->address1 }}</textarea>
+                            <textarea name="address2" class="form-control" id="address2" readonly>{{ $agent->agent->address1 }}</textarea>
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label for="zip">zip</label>
-                            <input type="text" name="zip" class="form-control" id="zip"
+                            <input type="text" name="zip" class="form-control" id="zip" readonly
                                 value="{{ $agent->agent->zip }}" required>
                         </div>
 
                         <div class="form-group col-md-6">
                             <label for="residential_country">Country<i class="text-danger">*</i></label>
-                            <select class="form-control" id="residential_country" name="residential_country" required>
+                            <select class="form-control" id="residential_country" disabled name="residential_country" required>
                                 <option value="" selected>Select Country</option>
                             </select>
                             <small class="text-muted">Select Country</small>
@@ -262,14 +261,14 @@
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label for="residential_state">State<i class="text-danger">*</i></label>
-                            <select class="select2 form-control" id="residential_state" name="residential_state"
+                            <select class="select2 form-control" disabled id="residential_state" name="residential_state"
                                 required>
                             </select>
                             <small class="text-muted">Select State</small>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="residential_city">City<i class="text-danger">*</i></label>
-                            <select class="form-control" id="residential_city" name="residential_city">
+                            <select class="form-control" disabled id="residential_city" name="residential_city">
                             </select>
                             <small class="text-muted">Select City</small>
                         </div>
@@ -279,7 +278,7 @@
                         <div class="col-md-6">
                             <label for="attachment">{{ __('Registration Document') }} <i
                                     class="text-danger">*</i></label>
-                            <input type="file" class="form-control" name="front_attachment" accept="application/pdf">
+                            <input type="file" class="form-control" name="front_attachment" readonly disabled accept="application/pdf">
                             @error('attachment')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -287,14 +286,14 @@
 
                         <div class="col-md-6">
                             <label for="attachment">{{ __('Full Document') }} <i class="text-danger">*</i></label>
-                            <input type="file" class="form-control" name="attachment" accept="application/pdf">
+                            <input type="file" class="form-control" name="attachment" disabled readonly accept="application/pdf">
                             @error('attachment')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                     <br>
-                    <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> Save</button>
+                    {{-- <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> Save</button> --}}
                 </form>
             </div>
         </div>

@@ -112,7 +112,7 @@ class WalkInCustomerController extends Controller
 
             ->addColumn('actions', function ($user) {
                 $mar = '<div class="d-flex">';
-                if ($user->blocked == 1) {
+                if ($user->blocked == 1 && $user->user_type !== 'agent') {
                     $url = route('unblockUser');
                     $mar .= '<form method="POST" action="' . $url . '">
                             <input type="hidden" name = "_token" value = ' . csrf_token() . '>
@@ -125,6 +125,7 @@ class WalkInCustomerController extends Controller
                             </button>
                         </form>';
                 } else {
+                    if($user->user_type !== 'agent') {
                     $url = route('blockUser');
                     $mar .= '<form method="POST" action="' . $url . '">
                             <input type="hidden" name = "_token" value = ' . csrf_token() . '>
@@ -136,6 +137,7 @@ class WalkInCustomerController extends Controller
                                 </svg>
                             </button>
                         </form>';
+                    }
                 }
                 $mar .= '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#' . $user->id . 'Modal" data-toggle="tooltip" title="View Dispatcher Information">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
@@ -243,7 +245,7 @@ class WalkInCustomerController extends Controller
             })
             ->addColumn('actions', function ($user) {
                 $mar = '<div class="d-flex">';
-                if ($user->blocked == 1) {
+                if ($user->blocked == 1 && $user->user_type !== 'agent') {
                     $url = route('unblockUser');
                     $mar .= '<form method="POST" action="' . $url . '">
                             <input type="hidden" name = "_token" value = ' . csrf_token() . '>
@@ -256,6 +258,7 @@ class WalkInCustomerController extends Controller
                             </button>
                         </form>';
                 } else {
+                    if($user->user_type !== 'agent') {
                     $url = route('blockUser');
                     $mar .= '<form method="POST" action="' . $url . '">
                             <input type="hidden" name = "_token" value = ' . csrf_token() . '>
@@ -267,13 +270,9 @@ class WalkInCustomerController extends Controller
                                 </svg>
                             </button>
                         </form>';
+                    }
                 }
-                $mar .= '<a type="button" class="btn btn-sm btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Information">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
-                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
-                            </svg>
-                        </a>';
+                $mar .= '<a class="btn btn-sm btn-secondary ms-2" href="' . route('agent.editSitting', $user->id) . '">Show</a>';
 
                 $mar .= '
                     <div class="modal fade" id="' . $user->id . 'Modal" tabindex="-1" aria-labelledby="' . $user->id . 'ModalLabel" aria-hidden="true">
@@ -410,17 +409,17 @@ class WalkInCustomerController extends Controller
                             </div>
                         </div>';
 
-                $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" data-bs-toggle="modal" data-bs-target="#document' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Payment Request">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-code" viewBox="0 0 16 16">
-            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
-            <path d="M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708"/>
-            </svg>
-            </a>';
+            //     $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" data-bs-toggle="modal" data-bs-target="#document' . $user->id . 'Modal" data-toggle="tooltip" title="View Agent Payment Request">
+            // <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-code" viewBox="0 0 16 16">
+            // <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
+            // <path d="M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708"/>
+            // </svg>
+            // </a>';
                 $url_payment = route('admin-paymentRequestget', $user->id);
-                $paymentRequests = PaymentRequest::where('user_id', $user->id)->where('status','pending')->count();
+                $paymentRequests = PaymentRequest::where('user_id', $user->id)->where('status', 'pending')->count();
                 if ($paymentRequests > 0) {
-                    $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" href="' . $url_payment . '">Pending Payment - <b>'.$paymentRequests.'</b></a>';
-                }else{
+                    $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" href="' . $url_payment . '">Pending Payment - <b>' . $paymentRequests . '</b></a>';
+                } else {
                     $mar .= '<a type="button" class="btn btn-sm btn-info ms-2" href="' . $url_payment . '">Payment</a>';
                 }
 

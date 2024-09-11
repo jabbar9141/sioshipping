@@ -26,6 +26,11 @@
         .dashboard_ul li {
             width: 20%;
         }
+
+        .card_h2 {
+            font-size: 18px;
+            white-space: nowrap;
+        }
     </style>
 
     {{--  @dd($dispatcher_rep);  --}}
@@ -511,79 +516,79 @@
         @if ($dispatcher_rep)
             <ul class="d-flex dashboard_ul mb-5 gap-3">
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Customer</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Customer</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['customer'] }}</b>
                     </h2>
                 </li>
                 @if (Auth::user()->user_type === 'admin')
                     <li class="p-3 shadow rounded">
-                        <p class="fw-bold">Total User</p>
-                        <h2 class="text-center">
+                        <p class="fw-bold text-nowrap">Total User</p>
+                        <h2 class="text-center card_h2 text-nowrap">
                             <b>{{ $dispatcher_rep['total_users'] }}</b>
                         </h2>
                     </li>
                 @endif
                 {{--  @dd(fromEuroView())  --}}
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Sales</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Sales</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['total_sales']) }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Today Spending</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Today Spending</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['total_today_spent']) }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Account Balance</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Account Balance</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b> {{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['totalWalletAmout']) }} </b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Spent Amount</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Spent Amount</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b> {{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['toatalSpendAmount']) }} </b>
                     </h2>
                 </li>
             </ul>
             <ul class="d-flex dashboard_ul mb-5 gap-3">
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Orders</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Orders</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['total_orders'] }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Placed Orders</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Placed Orders</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['total_placed_orders'] }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total In-Transit Orders</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total In-Transit Orders</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['total_in_transit_orders'] }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Unpaid Orders</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Unpaid Orders</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['total_unpaid_orders'] }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Delivered Orders</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Delivered Orders</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['total_delivered_orders'] }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
-                    <p class="fw-bold">Total Canceled Orders</p>
-                    <h2 class="text-center">
+                    <p class="fw-bold text-nowrap">Total Canceled Orders</p>
+                    <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['total_cancelled_orders'] }}</b>
                     </h2>
                 </li>
@@ -591,7 +596,7 @@
             <div class="container-fluid">
                 <div class="row mb-5 justify-content-between">
                     <div class="col-md-12 d-flex gap-3">
-                        <div class="card p-3 shadow">
+                        <div class="card w-50 p-3 shadow">
                             <h3>Customers</h3>
                             <table class="table table-bordered table-striped" aria-describedby="orders_tbl_info">
                                 <thead>
@@ -615,7 +620,7 @@
                             </table>
                             {!! $dispatcher_rep['customers_list']->links() !!}
                         </div>
-                        <div class="card shadow p-3">
+                        <div class="card w-50 shadow p-3">
                             <h3>Latest Orders</h3>
                             <table class="table table-bordered table-striped" aria-describedby="orders_tbl_info">
                                 <thead>
@@ -644,7 +649,7 @@
                         </div>
                     </div>
                 </div>
-               
+
         @endif
     </div>
     </div>

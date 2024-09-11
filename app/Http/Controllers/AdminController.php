@@ -113,31 +113,34 @@ class AdminController extends Controller
             })
             ->addColumn('actions', function ($user) {
                 $mar = '';
-                if ($user->blocked == 1) {
-                    $url = route('unblockUser');
-                    $mar .= '<form method="POST" action="' . $url . '">
-                            <input type="hidden" name = "_token" value = ' . csrf_token() . '>
-                            <input type="hidden" name = "user_id" value ="' . $user->id . '">
-                            <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update User Status">
+                if ($user->user_type != 'agent') {
+                    if ($user->blocked == 1) {
+                        $url = route('unblockUser');
+                        $mar .= '<form method="POST" action="' . $url . '">
+                                <input type="hidden" name = "_token" value = ' . csrf_token() . '>
+                                <input type="hidden" name = "user_id" value ="' . $user->id . '">
+                                <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update User Status">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                    </svg>
+                                </button>
+                            </form>';
+                    } else {
+                        $url = route('blockUser');
+                        $mar .= '<form method="POST" action="' . $url . '">
+                                <input type="hidden" name = "_token" value = ' .     csrf_token() . '>
+                                <input type="hidden" name = "user_id" value ="' . $user->id . '">
+                                <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Update User Status">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
-                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
-                                </svg>
-                            </button>
-                        </form>';
-                } else {
-                    $url = route('blockUser');
-                    $mar .= '<form method="POST" action="' . $url . '">
-                            <input type="hidden" name = "_token" value = ' .     csrf_token() . '>
-                            <input type="hidden" name = "user_id" value ="' . $user->id . '">
-                            <button type="submit" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Update User Status">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
-                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
-                                </svg>
-                            </button>
-                        </form>';
+                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                    </svg>
+                                </button>
+                            </form>';
+                    }
                 }
+               
                 return $mar;
             })
             ->rawColumns(['user_type', 'email', 'date', 'blocked', 'actions', 'payment'])

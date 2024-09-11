@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Country;
 use App\Models\CurrencyExchangeRate;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -33,7 +34,7 @@ class CurrencyExchangeRateController extends Controller
             ->addColumn('action', function ($item) {
                 // removeCurrencyExchangeRate
                 $btn = '<a href="javascript:void(0)" onclick="editWeightCost(' . $item->id . ')" class="btn btn-info btn-sm" ><i class="fa fa-pencil"></i> Edit </a>';
-                $btn .= '<a href="'.route('removeCurrencyExchangeRate', $item->id).'"  class="btn btn-danger btn-sm ms-2" ><i class="fa fa-trash"></i> Remove </a>';
+                $btn .= '<a href="' . route('removeCurrencyExchangeRate', $item->id) . '"  class="btn btn-danger btn-sm ms-2" ><i class="fa fa-trash"></i> Remove </a>';
                 return $btn;
             })
             ->rawColumns(['action', 'exchange_rate'])
@@ -81,7 +82,7 @@ class CurrencyExchangeRateController extends Controller
     public function getCurrencyExchangeRate($id)
     {
         try {
-            
+
             $currency = CurrencyExchangeRate::find($id);
             return response()->json([
                 'success' => true,
@@ -95,9 +96,22 @@ class CurrencyExchangeRateController extends Controller
         }
     }
 
-    public function removeCurrencyExchangeRate($id){
+    public function removeCurrencyExchangeRate($id)
+    {
         $currency = CurrencyExchangeRate::find($id);
         $currency->delete();
         return redirect()->back()->with(['message' => 'Record Removed Successfully !', 'message_type' => 'success']);
+    }
+
+    public function assignCurrency(Request $request, $user_id)
+    {
+        try {
+            $user = User::find($user_id);
+            $user->currency_id = $request->currency_id;
+            $user->save();
+            return back()->with(['message' => 'Currency Add Successfully', 'message_type' => 'success']);
+        } catch (\Throwable $th) {
+            return back()->with('message', 'An Erorr Accured' . $th->getMessage());
+        }
     }
 }
