@@ -33,9 +33,9 @@
         }
     </style>
 
-    {{--  @dd($dispatcher_rep);  --}}
+    {{-- @dd($dispatcher_rep);  --}}
     <div class="container-fluid">
-        <div class="card">
+        <div class="card h-auto">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">Welcome, To SioShipping Managment Dashboard</h5>
 
@@ -515,20 +515,21 @@
         </div>
         @if ($dispatcher_rep)
             <ul class="d-flex dashboard_ul mb-5 gap-3">
+                @if (Auth::user()->user_type === 'admin')
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold text-nowrap">Total User</p>
+                    <h2 class="text-center card_h2 text-nowrap">
+                        <b>{{ $dispatcher_rep['total_users'] }}</b>
+                    </h2>
+                </li>
+            @endif
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold text-nowrap">Total Customer</p>
                     <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['customer'] }}</b>
                     </h2>
                 </li>
-                @if (Auth::user()->user_type === 'admin')
-                    <li class="p-3 shadow rounded">
-                        <p class="fw-bold text-nowrap">Total User</p>
-                        <h2 class="text-center card_h2 text-nowrap">
-                            <b>{{ $dispatcher_rep['total_users'] }}</b>
-                        </h2>
-                    </li>
-                @endif
+               
                 {{--  @dd(fromEuroView())  --}}
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold text-nowrap">Total Sales</p>
@@ -536,16 +537,17 @@
                         <b>{{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['total_sales']) }}</b>
                     </h2>
                 </li>
-                <li class="p-3 shadow rounded">
-                    <p class="fw-bold text-nowrap">Total Today Spending</p>
-                    <h2 class="text-center card_h2 text-nowrap">
-                        <b>{{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['total_today_spent']) }}</b>
-                    </h2>
-                </li>
+                
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold text-nowrap">Total Account Balance</p>
                     <h2 class="text-center card_h2 text-nowrap">
                         <b> {{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['totalWalletAmout']) }} </b>
+                    </h2>
+                </li>
+                <li class="p-3 shadow rounded">
+                    <p class="fw-bold text-nowrap">Total Today Spending</p>
+                    <h2 class="text-center card_h2 text-nowrap">
+                        <b>{{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['total_today_spent']) }}</b>
                     </h2>
                 </li>
                 <li class="p-3 shadow rounded">
@@ -596,9 +598,10 @@
             <div class="container-fluid">
                 <div class="row mb-5 justify-content-between">
                     <div class="col-md-12 d-flex gap-3">
-                        <div class="card w-50 p-3 shadow">
+                        <div class="card w-50 p-3 mb-4 shadow">
                             <h3>Customers</h3>
-                            <table class="table table-bordered table-striped" aria-describedby="orders_tbl_info">
+                            <table class="table customer_tbl mb-5 table-bordered table-striped"
+                                aria-describedby="orders_tbl_info">
                                 <thead>
                                     <tr>
                                         <td>S/NO</td>
@@ -619,10 +622,54 @@
                                 </tbody>
                             </table>
                             {!! $dispatcher_rep['customers_list']->links() !!}
+                            
+                            <style>
+                                .contact_tbl td,
+                                .order_tbl td,
+                                .customer_tbl td {
+                                    font-size: 11px;
+                                    white-space: nowrap;
+                                }
+                                .contact_tbl td:first-child{
+                                    /* width: 20px; */
+                                }
+                            </style>
+                            @if (auth()->user()->user_type == 'admin')
+                            <h3>Guest Users</h3>
+                            <table class="table contact_tbl table-responsive table-bordered table-striped"
+                                aria-describedby="orders_tbl_info">
+                                <thead>
+                                    <tr>
+                                        <td class="s_no">S/NO</td>
+                                        <td>Fullname</td>
+                                        <td>Email</td>
+                                        <td>Phone</td>
+                                        <td>Description</td>
+                                        <td>Show</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="contact_tbl">
+                                    @foreach ($dispatcher_rep['contacts'] as $key => $contact)
+                                        <tr>
+                                            <td class="s_no"> {{ $key + 1 }} </td>
+                                            <td> {{ $contact->first_name }} {{ $contact->last_name }}</td>
+                                            <td> {{ $contact->email }} </td>
+                                            <td> {{ $contact->phone }} </td>
+                                            <td> {{ substr($contact->description, 0, 5) }} </td>
+                                            <td><a onclick="getContact(id)" data-bs-toggle="modal" data-bs-target="#contactModal"
+                                                    class="btn btn-primary show_btn btn-sm" id="{{ $contact->id }}">Show</a></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            {!! $dispatcher_rep['contacts']->links() !!}
+                            @endif
+                           
                         </div>
+
                         <div class="card w-50 shadow p-3">
                             <h3>Latest Orders</h3>
-                            <table class="table table-bordered table-striped" aria-describedby="orders_tbl_info">
+                            <table class="table table-bordered order_tbl table-striped" aria-describedby="orders_tbl_info">
                                 <thead>
                                     <tr>
                                         <td>S/NO</td>
@@ -646,6 +693,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            {!! $dispatcher_rep['latest_orders']->links() !!}
                         </div>
                     </div>
                 </div>
@@ -653,4 +701,58 @@
         @endif
     </div>
     </div>
-@endsection
+    {{-- modal --}}
+    <div class="modal fade" id="contactModal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-dialog-lg">
+            <div class="modal-content rounded">
+                <div class="modal-header">
+                    <h4 class="modal-title">Contact with Vendor</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+        {{-- modal --}}
+    @endsection
+    @section('scripts')
+        <script src="{{ asset('admin_assets/assets/libs/jquery/dist/jquery.min.js') }}"></script>
+        <script>
+            // getContact();
+
+            function getContact(id) {
+                var id = id;
+                console.log($('.show_btn').attr('id'));
+                let url = "{{ route('contact.show', ['id' => ':id']) }}"
+                            .replace(':id', id);
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    dataType: 'json',
+                    data: id,
+                    success: function(response) {
+                        console.log(response);
+                        var tr = '';
+                        tr += '<div class="mb-3">';
+                        tr += '<p class="mb-2">First Name: <span class="ps-2 f_name">' + response.contact
+                            .first_name + '</span></p>';
+                        tr += '<p class="mb-2">Last Name: <span class="ps-2 l_name">' + response.contact
+                            .last_name + '</span></p>';
+                        tr += '<p class="mb-2">Email: <span class="ps-2 email">' + response.contact.email +
+                            '</span></p>';
+                        tr += '<p class="mb-2">Phone: <span class="ps-2 phone">' + response.contact.phone +
+                            '</span></p>';
+                        tr += '<p>Description: <span class="ps-2 desc">' + response.contact.description + '</span></p>';
+                        tr += '</div>';
+                        tr += '<hr>';
+                         $(".modal-body").append(tr);
+                    }
+                      
+                });
+              
+            } 
+          
+        </script>

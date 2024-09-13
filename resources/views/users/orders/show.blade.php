@@ -24,6 +24,7 @@
                     <div class="card-header">
                         {{-- <a href="{{ route('orders.index') }}" class="btn btn-danger float-right"><i
                                 class="fa fa-times"></i>Exit</a> --}}
+                        <h5><b>For Packege</b></h5>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -37,7 +38,7 @@
                                             <th colspan="2">
                                                 <div style="">
                                                     <svg id="barcode" style="width: 100px; height: 100px;"></svg><br>
-                                                </div>
+                                                </div>  
                                             </th>
                                             <th colspan="2" style="text-align: end">
                                                 <img src="{{ asset('admin_assets/assets/images/logos/favicon.png') }}"
@@ -45,8 +46,16 @@
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th>Origin</th>
+                                            <td class="" colspan="4">
+                                            <h5><b>For Custommer</b></h5>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <th> 
+                                                Origin
+                                            </th>
                                             <td>
+
                                                 <b>Origin</b>:
                                                 {{ $order->pickupCountry->name . ', ' . $order->pickupCity->name }}
                                                 <p style="margin: 0px !important" class="text-nowrap">[Lat:
@@ -82,16 +91,17 @@
                                             <td>
                                                 <div class="d-flex justify-content-between">
                                                     <span class="badge bg-secondary">{{ $order->status }}</span>
-
-                                                    @if ($order->status == 'unpaid')
-                                                        <form action="{{ route('cancelOrder') }}" method="post">
-                                                            @csrf
-                                                            <input type="hidden" value="{{ $order->id }}"
-                                                                name="order_id">
-                                                            <button class="btn btn-sm btn-danger"
-                                                                onclick="return confirm('Are you sure you wish to cancel this order')">Cancel
-                                                                Orrder</button>
-                                                        </form>
+                                                    @if (auth()->user()->user_type === 'admin')
+                                                        @if ($order->status == 'unpaid')
+                                                            <form action="{{ route('cancelOrder') }}" method="post">
+                                                                @csrf
+                                                                <input type="hidden" value="{{ $order->id }}"
+                                                                    name="order_id">
+                                                                <button class="btn btn-sm btn-danger"
+                                                                    onclick="return confirm('Are you sure you wish to cancel this order')">Cancel
+                                                                    Order</button>
+                                                            </form>
+                                                        @endif
                                                     @endif
                                                 </div>
 

@@ -22,7 +22,12 @@
                             </form>
                         </div>
                         <h5>Orders</h5>
-
+                        <style>
+                            #orders_tbl th,
+                            td {
+                                white-space: nowrap;
+                            }
+                        </style>
                         <div class="table-responsive">
 
                             <table id="orders_tbl" class="table table-sm  table-bordered table-striped display">
@@ -35,6 +40,7 @@
                                         <th>Price(&euro;)</th>
                                         <th>Status</th>
                                         <th>Accept/ Pickup</th>
+                                        <th>Print</th>
                                     </tr>
                                 </thead>
 
@@ -97,7 +103,10 @@
                     },
                     {
                         "data": "view"
-                    }
+                    },
+                    {
+                        "data": "print"
+                    },
                 ],
                 "paging": true,
                 "lengthChange": true,

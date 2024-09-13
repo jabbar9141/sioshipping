@@ -94,7 +94,7 @@ class ShippingRateController extends Controller
             $cityShppingCost = CityShippingCost::where('country_id', $shipFromCountryId)->where('city_id', $shipFromCityId)->first();
             if ($cityShppingCost) {
                 $shippingCostPrice = (float) $shippingCost->cost * ((float) $cityShppingCost->percentage ?? 0 / 100);
-            }else{
+            } else {
                 return response()->json([
                     'success' => false,
                     "message" => "First Define the shipping cost Of the City",
@@ -139,8 +139,8 @@ class ShippingRateController extends Controller
             'lengthTotal' => $request->lengthTotal,
             'valueTotal' => $request->valueTotal,
             'countTotal' => $request->countTotal,
-            'total' => (float) $request->valueTotal + $shippingCostPrice
-         ];
+            'total' => (float)  $shippingCostPrice
+        ];
         return response()->json([
             'success' => true,
             'data' => $resp
@@ -223,7 +223,7 @@ class ShippingRateController extends Controller
             'length' => 'required|numeric',
             'count' => 'required|numeric',
             'item_desc' => 'required',
-            'item_value' => 'required|numeric',
+            'item_value' => 'nullable|numeric',
             'origin_city' => 'required',
             'dest_city' => 'required',
             'origin_zip' => 'required',
@@ -376,7 +376,7 @@ class ShippingRateController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(ShippingRate $shippingRate)
-    {   
+    {
         return view('admin.settings.shipping_rates.show')->with('rate', $shippingRate);
     }
 

@@ -14,9 +14,11 @@
         <div class="row mb-4">
             <div class="col-md-4 mb-4">
                 <div class="card mb-3 h-100">
+                    <div class="card-header">
+                        <h5 class="">Agent Details</h5>
+                    </div>
                     <div class="card-body gap-4">
                         <div>
-                            <h5 class="mb-4">Agent Details;</h5>
                             <!-- Button trigger modal -->
                             <p><b>Name: {{ $agent->name }}</b></p>
                             <p><b>Email: {{ $agent->email }}</b></p>
@@ -82,12 +84,14 @@
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card mb-3 h-100">
+                    <div class="card-header">
+                        <h5 class="">Currency Details</h5>
+                    </div>
                     <div class="card-body d-flex gap-4">
                         <form class="w-100" action="{{ route('assignCurrency', $agent->id) }}" method="post">
                             @csrf
                             @method('POST')
                             <div class="row">
-                                <h5 class="mb-4">Currency Details</h5>
                                 <div class="form-group col-md-12 mt-4">
                                     {{ auth()->user()->currency_id }}
                                     <label for="currency_id">Select Currency<i class="text-danger">*</i></label>
@@ -102,6 +106,13 @@
                                         @endforeach
                                     </select>
                                     @error('currency_id')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-md-12 mt-4">
+                                    <label for="currency_id">Add Pick-Up Percentage<i class="text-danger">*</i></label>
+                                    <input type="number" class="form-control" min="1" max="100" name="pickup_comission_percentage" id="pickup_commission_percentage">
+                                    @error('pickup_comission_percentage')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -142,7 +153,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <br>
+                            <br>    
                             {{-- <div class="row">
                                 <div class="col-12">
                                     <label for="file">Receipt Attachment<i class="text-danger">*</i>:</label>
@@ -164,16 +175,21 @@
                                 </div>
                             </div> --}}
                             {{-- <br> --}}
+                            <div class="text-end">
                             <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                        </div>
                         </form>
                     </div>
                 </div>
             </div>
 
             <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title fw-semibold">Agent Information</h5>
+                </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                    <h5 class="card-title fw-semibold mb-4">Agent Information</h5>
+                    
                     <div class="d-flex">
                         <form action="{{route('blockUser')}}" method="post">
                             @csrf

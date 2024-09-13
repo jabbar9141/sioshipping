@@ -100,259 +100,258 @@
                     <br>
                     <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
                 </form>
+                </div>
             </div>
         </div>
-    </div>
-    {{-- </div> --}}
-    {{-- </div> --}}
-@endsection
-@section('scripts')
-    <script>
-        $('#origin').autocomplete({
-            source: "{{ route('locations.search') }}",
-            minLength: 1,
-            select: function(event, ui) {
-                // Update the hidden input field with the selected value
-                $('#origin_id').val(ui.item.value);
+        {{-- </div> --}}
+        {{-- </div> --}}
+    @endsection
+    @section('scripts')
+        <script>
+            $('#origin').autocomplete({
+                source: "{{ route('locations.search') }}",
+                minLength: 1,
+                select: function(event, ui) {
+                    // Update the hidden input field with the selected value
+                    $('#origin_id').val(ui.item.value);
 
-                // Update the visible input field with the label
-                $('#origin').val(ui.item.label);
+                    // Update the visible input field with the label
+                    $('#origin').val(ui.item.label);
 
-                // Prevent the default behavior of filling the input with the label
-                event.preventDefault();
-            }
-        });
+                    // Prevent the default behavior of filling the input with the label
+                    event.preventDefault();
+                }
+            });
 
 
-        $(document).ready(function() {
-            $('#ship_from_country').select2();
-            $('#ship_from_city').select2();
+            $(document).ready(function() {
+                $('#ship_from_country').select2();
+                $('#ship_from_city').select2();
 
-            countries();
+                countries();
 
-            var ship_from_country = $("#ship_from_country");
-            ship_from_country.wrap('<div class="position-relative"></div>');
-            ship_from_country.on('change', function() {
-                $("#ship_from_city").empty()
-                $('#ship_from_city').html('<option value="">Select City</option>');
+                var ship_from_country = $("#ship_from_country");
+                ship_from_country.wrap('<div class="position-relative"></div>');
+                ship_from_country.on('change', function() {
+                    $("#ship_from_city").empty()
+                    $('#ship_from_city').html('<option value="">Select City</option>');
 
-                var _token = '{{ csrf_token() }}';
-                let url =
-                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
-                    .replace(':countryId', $(this).val());
-                if ($(this).val() > 0) {
-                    // showBlockUI();
-                    $.ajax({
-                        url: url,
-                        type: 'post',
-                        dataType: 'json',
-                        data: {
-                            'countryId': $(this).val(),
-                            '_token': _token
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $.each(response.cities, function(key, value) {
-                                    $("#ship_from_city").append('<option value="' +
-                                        value
-                                        .id + '">' + value.name + '</option>');
-                                });
-                                $("#ship_from_city").trigger('change');
+                    var _token = '{{ csrf_token() }}';
+                    let url =
+                        "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                        .replace(':countryId', $(this).val());
+                    if ($(this).val() > 0) {
+                        // showBlockUI();
+                        $.ajax({
+                            url: url,
+                            type: 'post',
+                            dataType: 'json',
+                            data: {
+                                'countryId': $(this).val(),
+                                '_token': _token
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    $.each(response.cities, function(key, value) {
+                                        $("#ship_from_city").append('<option value="' +
+                                            value
+                                            .id + '">' + value.name + '</option>');
+                                    });
+                                    $("#ship_from_city").trigger('change');
+                                    // hideBlockUI();
+                                    @if (!is_null(old('residential.city')))
+                                        $('#ship_from_city').val({{ old('residential.city') }});
+                                        $('#ship_from_city').trigger('change')
+                                    @endif
+                                } else {
+                                    // hideBlockUI();
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        title: 'Are You Sure',
+                                    });
+                                }
+                            },
+                            error: function(error) {
+                                console.log(error);
                                 // hideBlockUI();
-                                @if (!is_null(old('residential.city')))
-                                    $('#ship_from_city').val({{ old('residential.city') }});
-                                    $('#ship_from_city').trigger('change')
-                                @endif
-                            } else {
-                                // hideBlockUI();
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message,
-                                    title: 'Are You Sure',
-                                });
                             }
-                        },
-                        error: function(error) {
-                            console.log(error);
-                            // hideBlockUI();
-                        }
-                    });
-                } else {
+                        });
+                    } else {
+                        // hideBlockUI();
+                    }
                     // hideBlockUI();
-                }
-                // hideBlockUI();
 
-            });
-        })
+                });
+            })
 
 
-        function countries() {
+            function countries() {
 
-            $('#ship_from_country').html('<option value="">Select Country</option>');
-            var _token = '{{ csrf_token() }}';
-            let url = "{{ route('ajax-get-countries') }}";
-            $.ajax({
-                url: url,
-                type: 'get',
-                dataType: 'json',
-                data: {
-                    '_token': _token
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $.each(response.countries, function(key, value) {
-                            $("#ship_from_country").append('<option value="' + value.id +
-                                '">' + value.name + '</option>');
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message,
-                        });
-                    }
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-
-
-        }
-
-        $(document).ready(function() {
-            $('#ship_to_country').select2();
-            $('#ship_to_city').select2();
-            $('#orders').select2();
-
-            countries2();
-
-            var ship_to_country = $("#ship_to_country");
-            ship_to_country.wrap('<div class="position-relative"></div>');
-            ship_to_country.on('change', function() {
-                $("#ship_to_city").empty()
-                $('#ship_to_city').html('<option value="">Select City</option>');
-
+                $('#ship_from_country').html('<option value="">Select Country</option>');
                 var _token = '{{ csrf_token() }}';
-                let url =
-                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
-                    .replace(':countryId', $(this).val());
-                if ($(this).val() > 0) {
-
-                    $.ajax({
-                        url: url,
-                        type: 'post',
-                        dataType: 'json',
-                        data: {
-                            'stateId': $(this).val(),
-                            '_token': _token
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $.each(response.cities, function(key, value) {
-                                    $("#ship_to_city").append('<option value="' +
-                                        value
-                                        .id + '">' + value.name + '</option>');
-                                });
-                                $("#ship_to_city").trigger('change');
-
-                                @if (!is_null(old('residential.city')))
-                                    $('#ship_to_city').val({{ old('residential.city') }});
-                                    $('#ship_to_city').trigger('change')
-                                @endif
-                            } else {
-
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message,
-                                    title: 'Are You Sure',
-                                });
-                            }
-                        },
-                        error: function(error) {
-                            console.log(error);
-
+                let url = "{{ route('ajax-get-countries') }}";
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        '_token': _token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $.each(response.countries, function(key, value) {
+                                $("#ship_from_country").append('<option value="' + value.id +
+                                    '">' + value.name + '</option>');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                            });
                         }
-                    });
-                } else {
-
-                }
-
-
-            });
-        })
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
 
 
-        function countries2() {
+            }
 
-            $('#ship_to_country').html('<option value="">Select Country</option>');
-            var _token = '{{ csrf_token() }}';
-            let url = "{{ route('ajax-get-countries') }}";
-            $.ajax({
-                url: url,
-                type: 'get',
-                dataType: 'json',
-                data: {
-                    '_token': _token
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $.each(response.countries, function(key, value) {
-                            $("#ship_to_country").append('<option value="' + value.id +
-                                '">' + value.name + '</option>');
+            $(document).ready(function() {
+                $('#ship_to_country').select2();
+                $('#ship_to_city').select2();
+                $('#orders').select2();
+
+                countries2();
+
+                var ship_to_country = $("#ship_to_country");
+                ship_to_country.wrap('<div class="position-relative"></div>');
+                ship_to_country.on('change', function() {
+                    $("#ship_to_city").empty()
+                    $('#ship_to_city').html('<option value="">Select City</option>');
+
+                    var _token = '{{ csrf_token() }}';
+                    let url =
+                        "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                        .replace(':countryId', $(this).val());
+                    if ($(this).val() > 0) {
+
+                        $.ajax({
+                            url: url,
+                            type: 'post',
+                            dataType: 'json',
+                            data: {
+                                'stateId': $(this).val(),
+                                '_token': _token
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    $.each(response.cities, function(key, value) {
+                                        $("#ship_to_city").append('<option value="' +
+                                            value
+                                            .id + '">' + value.name + '</option>');
+                                    });
+                                    $("#ship_to_city").trigger('change');
+
+                                    @if (!is_null(old('residential.city')))
+                                        $('#ship_to_city').val({{ old('residential.city') }});
+                                        $('#ship_to_city').trigger('change')
+                                    @endif
+                                } else {
+
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        title: 'Are You Sure',
+                                    });
+                                }
+                            },
+                            error: function(error) {
+                                console.log(error);
+
+                            }
                         });
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message,
-                        });
+
                     }
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
 
 
-        }
-        gitOrders();
+                });
+            })
 
-        function gitOrders() {
-            let Url = "{{ route('ajax-get-paced-orders') }}";
-            $('#orders').html('<option value="" >Select Order</option>');
-            $.ajax({
-                url: Url,
-                type: 'get',
-                dataType: 'json',
-                success: function(responce) {
-                    console.log(responce.ordres);
-                    if (responce.ordres) {
-                        $.each(responce.ordres, function(key, value) {
-                            $("#orders").append('<option value="' + value.id + '">' + value
-                                .tracking_id +
-                                '</option>')
-                        });
 
-                        @if (!is_null('order_id'))
-                            $('#orders').val({{ $order_id }});
-                            $('#orders').trigger('change')
-                        @endif
+            function countries2() {
 
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message,
-                        });
+                $('#ship_to_country').html('<option value="">Select Country</option>');
+                var _token = '{{ csrf_token() }}';
+                let url = "{{ route('ajax-get-countries') }}";
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        '_token': _token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $.each(response.countries, function(key, value) {
+                                $("#ship_to_country").append('<option value="' + value.id +
+                                    '">' + value.name + '</option>');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
                     }
-                }
-
-            });
+                });
 
 
-        }
-    </script>
-@endsection
+            }
+            gitOrders();
+
+            function gitOrders() {
+                let Url = "{{ route('ajax-get-paced-orders') }}";
+                $('#orders').html('<option value="" >Select Order</option>');
+                $.ajax({
+                    url: Url,
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(responce) {
+                        console.log(responce.ordres);
+                        if (responce.ordres) {
+                            $.each(responce.ordres, function(key, value) {
+                                $("#orders").append('<option value="' + value.id + '">' + value
+                                    .tracking_id +
+                                    '</option>')
+                            });
+
+                            @if (!is_null('order_id'))
+                                $('#orders').val({{ $order_id }});
+                                $('#orders').trigger('change')
+                            @endif
+
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                            });
+                        }
+                    }
+
+                });
+            }
+           
+        </script>
+    @endsection

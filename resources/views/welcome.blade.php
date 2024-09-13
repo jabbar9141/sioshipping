@@ -87,9 +87,11 @@
                         height: 27px;
                         border-radius: 3px;
                     }
-                    label{
+
+                    label {
                         font-size: 12px;
                     }
+
                     ::placeholder {
                         font-size: 11px;
                     }
@@ -103,9 +105,11 @@
                         height: 27px;
                         border-radius: 3px;
                     }
-                    label{
+
+                    label {
                         font-size: 12px;
                     }
+
                     ::placeholder {
                         font-size: 11px;
                     }
@@ -154,20 +158,20 @@
                                             class="form-control form-control-sm form-sm">
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                {{-- <div class="col-md-4 col-lg-3 text-white text-start mb-2">
                                     <div class="ui-widget">
                                         <label for="ship_from_state">Inter State Name<i class="text-danger">*</i> :
                                         </label> <br>
                                         <input type="text" placeholder="Inter State Name"
                                             class="form-control form-control-sm form-sm">
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-4 col-lg-3 text-white text-start mb-2">
                                     <div class="ui-widget">
                                         <label for="weight_tot">Total Weight<i class="text-danger">*</i> : </label>
                                         <br>
                                         <input type="number" class="form-control form-sm" id="weight_tot">
-                                        <input type="number" class="form-control form-sm" id="weight_tot">
+                                        {{-- <input type="number" class="form-control form-sm" id="weight_tot"> --}}
                                     </div>
                                 </div>
                             </div>
@@ -206,319 +210,376 @@
                                             class="form-control form-control-sm form-sm">
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                {{-- <div class="col-md-4 col-lg-3 text-white text-start mb-2">
                                     <div class="ui-widget">
                                         <label for="ship_from_state">Inter State Name<i class="text-danger">*</i> :
                                         </label> <br>
                                         <input type="text" placeholder="Inter State Name"
                                             class="form-control form-control-sm form-sm">
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-4 col-lg-3 mt-auto text-white text-start mb-2">
                                     <div class="bg-white pb-3 px-3 rounded d-flex gap-3 align-items-center pt-3">
                                         <h4 class="mb-0">Shipping Cost: </h4>
                                         <h5 class="mb-0" id="shipping_rate_list"></h5>
-                                        <h4 class="mb-0">Shipping Cost: </h4>
-                                        <h5 class="mb-0" id="shipping_rate_list"></h5>
                                     </div>
                                 </div>
-
-
                             </div>
                             <div class="col-md-4 ps-0 text-start" style="width: 100%">
-                                <button class="btn rounded btn-primary m-1"
+                                <button class="btn rounded btn-sm btn-primary m-1"
                                     onclick="getRates()">{{ __('hompage.proceed') }}</button>
+                                <button class="btn btn-primary rounded btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#myModal">Contact with Admin</button>
                                 {{--  <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a>  --}}
                             </div>
                         </div>
+                    </div>
+                </div>
+                {{--  </form>  --}}
+                {{-- modal --}}
+                <div class="modal fade" id="myModal">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-lg">
+                        <div class="modal-content rounded">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Contact with Admin</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                        <path
+                                            d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                    </svg></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ route('contact.save') }}" method="post">
+                                    @csrf
+                                    @method('POST')
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 text-start">
+                                            <label for="fi">First Name</label>
+                                            <input type="text" class="form-control form-sm" id="first_name"
+                                                name="first_name">
+                                            @error('first_name')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-6 text-start">
+                                            <label for="fi">Last Name</label>
+                                            <input type="text" class="form-control form-sm" id="last_name"
+                                                name="last_name">
+                                            @error('last_name')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 text-start">
+                                            <label for="fi">Email</label>
+                                            <input type="email" class="form-control form-sm" id="email"
+                                                name="email">
+                                            @error('email')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-6 text-start">
+                                            <label for="fi">Phone</label>
+                                            <input type="phone" class="form-control form-sm" id="phone"
+                                                name="phone">
+                                            @error('phone')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 text-start">
+                                            <label for="fi">Description</label>
+                                            <textarea class="form-control rounded" name="desc" id="desc" cols="30" rows="2"></textarea>
+                                            @error('desc')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn mt-3 rounded btn-primary btn-sm">Save</button>
+                                </form>
                             </div>
                         </div>
-                        {{--  </form>  --}}
-                        @if (!empty(request()->get('origin_id') && !empty(request()->get('dest_id'))))
-                            <div class="bg-dark text-secondary p-2">
-                                <div class="justify-items-left">
-                                    <p>{{ __('hompage.1') }} <b>{{ request()->get('origin_') }}</b> to
-                                        <b>{{ request()->get('dest_') }}</b>
-                                    </p>
-                                    <br>
-                                    <p>
-                                        {{ __('hompage.2') }}
-                                    </p>
-                                </div>
-                                <div>
-                                    <table class="table">
-                                        <thead>
-                                            <th>{{ __('hompage.3') }} <i class="text-danger">*</i></th>
-                                            <th>{{ __('hompage.4') }} <i class="text-danger">*</i></th>
-                                            <th>{{ __('hompage.5') }} <i class="text-danger">*</i></th>
-                                            <th>{{ __('hompage.6') }} <i class="text-danger">*</i></th>
-                                            <th>{{ __('hompage.7') }} <i class="text-danger">*</i></th>
-                                            <th>{{ __('hompage.8') }} <i class="text-danger">*</i></th>
-                                            <td><button class="btn btn-primary btn-sm" type="button"
-                                                    onclick="addRow()"><i class="fa fa-plus"></i>
-                                                    {{ __('hompage.9') }}</button></td>
-                                        </thead>
-                                        <tbody id="items_list">
-                                            <tr>
-                                                <td>
-                                                    <select name="type[]" class="form-control type"
-                                                        onchange="calculateTotItems('type')" required>
-                                                        <option value="">--{{ __('hompage.10') }}--</option>
-                                                        <option value="percel">{{ __('hompage.11') }}</option>
-                                                        <option value="doc">{{ __('hompage.12') }}</option>
-                                                        <option value="pallet">{{ __('hompage.13') }}</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="any" min="0"
-                                                        value="0" class="form-control len"
-                                                        onkeyup="calculateTot('len')" name="len[]" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="any" min="0"
-                                                        value="0" class="form-control width"
-                                                        onkeyup="calculateTot('width')" name="width[]" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="any" min="0"
-                                                        value="0" class="form-control height"
-                                                        onkeyup="calculateTot('height')" name="height[]" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="any" min="0"
-                                                        value="0" class="form-control weight"
-                                                        onkeyup="calculateTot('weight')" name="weight[]" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="1" min="1"
-                                                        value="1" class="form-control count"
-                                                        onkeyup="calculateTot('count')" name="count[]" required>
-                                                </td>
-                                                <td>
-                                                    {{-- <button class="btn btn-danger" type="button" onclick="removeRow(this)"><i
-                                                    class="fa fa-trash"></i></button> --}}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        <tfoot>
-                                            <th>
-                                                {{ __('hompage.14') }}: <span id="type-tot"></span>
-
-                                            </th>
-                                            <th>
-                                                {{ __('hompage.15') }}: <span id="len-tot"></span>
-
-                                                <input type="hidden" name="len_tot" id="len_tot">
-                                            </th>
-                                            <th>
-                                                {{ __('hompage.16') }}: <span id="width-tot"></span>
-
-                                                <input type="hidden" name="width_tot" id="width_tot">
-                                            </th>
-                                            <th>
-                                                {{ __('hompage.17') }}: <span id="height-tot"></span>
-
-                                                <input type="hidden" name="height_tot" id="height_tot">
-                                            </th>
-                                            <th>
-                                                {{ __('hompage.18') }}: <span id="weight-tot"></span>
-
-                                                <input type="hidden" name="weight_tot" id="weight_tot">
-                                            </th>
-                                            <th>
-                                                {{ __('hompage.19') }}: <span id="count-tot"></span>
-                                                <input type="hidden" name="count_tot" id="count_tot">
-                                            </th>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                                <button type="button" onclick="getRates()"
-                                    class="btn btn-primary">{{ __('hompage.20') }}</button>
-
-                                <hr>
-                                <h5>{{ __('hompage.21') }}</h5>
-                                <div class="table-responsive">
-                                    <table id="locations_tbl"
-                                        class="table table-sm  table-bordered table-striped display">
-                                        <thead>
-                                            <tr>
-                                                {{-- <th>Select <i class="text-danger">*</i></th> --}}
-                                                <th>{{ __('hompage.22') }}</th>
-                                                <th>{{ __('hompage.23') }}</th>
-                                                <th>{{ __('hompage.24') }}</th>
-                                                <th>{{ __('hompage.25') }}(&euro;)</th>
-                                                <th>{{ __('hompage.26') }}(cm)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="shipping_rate_list">
-
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                            </div>
-                        @endif
                     </div>
-                    <div class="tab-pane fade {{ !empty(request()->get('s_country_eu')) ? 'show active' : '' }}"
-                        id="eu-funds" role="tabpanel" aria-labelledby="eu-funds-tab">
-                        <hr>
-                        <form action="" method="get" class="form-inline justify-content-left">
-                            <div class="form-group col-md-3">
-                                <input style="width: 100%" type="text" name="s_country_eu"
-                                    value="{{ request()->get('s_country_eu') }}" class="form-control"
-                                    id="s_country_eu" autocomplete="off" placeholder="{{ __('hompage.27') }}"
-                                    required>
+                    {{-- modal --}}
+                    @if (!empty(request()->get('origin_id') && !empty(request()->get('dest_id'))))
+                        <div class="bg-dark text-secondary p-2">
+                            <div class="justify-items-left">
+                                <p>{{ __('hompage.1') }} <b>{{ request()->get('origin_') }}</b> to
+                                    <b>{{ request()->get('dest_') }}</b>
+                                </p>
+                                <br>
+                                <p>
+                                    {{ __('hompage.2') }}
+                                </p>
                             </div>
+                            <div>
+                                <table class="table">
+                                    <thead>
+                                        <th>{{ __('hompage.3') }} <i class="text-danger">*</i></th>
+                                        <th>{{ __('hompage.4') }} <i class="text-danger">*</i></th>
+                                        <th>{{ __('hompage.5') }} <i class="text-danger">*</i></th>
+                                        <th>{{ __('hompage.6') }} <i class="text-danger">*</i></th>
+                                        <th>{{ __('hompage.7') }} <i class="text-danger">*</i></th>
+                                        <th>{{ __('hompage.8') }} <i class="text-danger">*</i></th>
+                                        <td><button class="btn btn-primary btn-sm" type="button"
+                                                onclick="addRow()"><i class="fa fa-plus"></i>
+                                                {{ __('hompage.9') }}</button></td>
+                                    </thead>
+                                    <tbody id="items_list">
+                                        <tr>
+                                            <td>
+                                                <select name="type[]" class="form-control type"
+                                                    onchange="calculateTotItems('type')" required>
+                                                    <option value="">--{{ __('hompage.10') }}--</option>
+                                                    <option value="percel">{{ __('hompage.11') }}</option>
+                                                    <option value="doc">{{ __('hompage.12') }}</option>
+                                                    <option value="pallet">{{ __('hompage.13') }}</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="any" min="0" value="0"
+                                                    class="form-control len" onkeyup="calculateTot('len')"
+                                                    name="len[]" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="any" min="0" value="0"
+                                                    class="form-control width" onkeyup="calculateTot('width')"
+                                                    name="width[]" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="any" min="0" value="0"
+                                                    class="form-control height" onkeyup="calculateTot('height')"
+                                                    name="height[]" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="any" min="0" value="0"
+                                                    class="form-control weight" onkeyup="calculateTot('weight')"
+                                                    name="weight[]" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="1" min="1" value="1"
+                                                    class="form-control count" onkeyup="calculateTot('count')"
+                                                    name="count[]" required>
+                                            </td>
+                                            <td>
+                                                {{-- <button class="btn btn-danger" type="button" onclick="removeRow(this)"><i
+                                                    class="fa fa-trash"></i></button> --}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <th>
+                                            {{ __('hompage.14') }}: <span id="type-tot"></span>
+
+                                        </th>
+                                        <th>
+                                            {{ __('hompage.15') }}: <span id="len-tot"></span>
+
+                                            <input type="hidden" name="len_tot" id="len_tot">
+                                        </th>
+                                        <th>
+                                            {{ __('hompage.16') }}: <span id="width-tot"></span>
+
+                                            <input type="hidden" name="width_tot" id="width_tot">
+                                        </th>
+                                        <th>
+                                            {{ __('hompage.17') }}: <span id="height-tot"></span>
+
+                                            <input type="hidden" name="height_tot" id="height_tot">
+                                        </th>
+                                        <th>
+                                            {{ __('hompage.18') }}: <span id="weight-tot"></span>
+
+                                            <input type="hidden" name="weight_tot" id="weight_tot">
+                                        </th>
+                                        <th>
+                                            {{ __('hompage.19') }}: <span id="count-tot"></span>
+                                            <input type="hidden" name="count_tot" id="count_tot">
+                                        </th>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <button type="button" onclick="getRates()"
+                                class="btn btn-primary">{{ __('hompage.20') }}</button>
+
+                            <hr>
+                            <h5>{{ __('hompage.21') }}</h5>
+                            <div class="table-responsive">
+                                <table id="locations_tbl"
+                                    class="table table-sm  table-bordered table-striped display">
+                                    <thead>
+                                        <tr>
+                                            {{-- <th>Select <i class="text-danger">*</i></th> --}}
+                                            <th>{{ __('hompage.22') }}</th>
+                                            <th>{{ __('hompage.23') }}</th>
+                                            <th>{{ __('hompage.24') }}</th>
+                                            <th>{{ __('hompage.25') }}(&euro;)</th>
+                                            <th>{{ __('hompage.26') }}(cm)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shipping_rate_list">
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+                <div class="tab-pane fade {{ !empty(request()->get('s_country_eu')) ? 'show active' : '' }}"
+                    id="eu-funds" role="tabpanel" aria-labelledby="eu-funds-tab">
+                    <hr>
+                    <form action="" method="get" class="form-inline justify-content-left">
+                        <div class="form-group col-md-3">
+                            <input style="width: 100%" type="text" name="s_country_eu"
+                                value="{{ request()->get('s_country_eu') }}" class="form-control" id="s_country_eu"
+                                autocomplete="off" placeholder="{{ __('hompage.27') }}" required>
+                        </div>
 
 
-                            <div class="form-group col-md-3">
-                                <input style="width: 100%" type="text" name="rx_country_eu"
-                                    value="{{ request()->get('rx_country_eu') }}" class="form-control"
-                                    id="rx_country_eu" placeholder="{{ __('hompage.28') }}" autocomplete="off"
+                        <div class="form-group col-md-3">
+                            <input style="width: 100%" type="text" name="rx_country_eu"
+                                value="{{ request()->get('rx_country_eu') }}" class="form-control"
+                                id="rx_country_eu" placeholder="{{ __('hompage.28') }}" autocomplete="off" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <input style="width: 100%" type="number" step="any" name="rx_amount_eu"
+                                value="{{ request()->get('rx_amount_eu') }}" class="form-control" id="rx_amount_eu"
+                                placeholder="{{ __('hompage.29') }}(&euro;)" autocomplete="off" required>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary m-1" type="submit">{{ __('hompage.proceed') }}</button>
+                            <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a>
+                        </div>
+                    </form>
+                    <br>
+                    @if (isset($eu_rate) && !empty(request()->get('s_country_eu')))
+                        <div>
+                            <table class="table">
+                                <thead>
+                                    <th>{{ __('hompage.30') }}</th>
+                                    <th>{{ __('hompage.25') }}(&euro;)</th>
+                                    <th>{{ __('hompage.31') }}(&euro;)</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            {{ request()->get('s_country_eu') }}
+                                            <br>
+                                            To
+                                            <br>
+                                            {{ request()->get('rx_country_eu') }}
+                                        </td>
+                                        <td>
+                                            {{ __('hompage.25') }}(&euro;) :
+                                            {{ number_format(request()->get('rx_amount_eu')) }}
+                                        </td>
+                                        <td>
+                                            {{ __('hompage.31') }}(&euro;):
+                                            @if ($eu_rate->calc == 'perc')
+                                                {{ request()->get('rx_amount_eu') * ($eu_rate->commision / 100) }}
+                                            @else
+                                                {{ number_format(request()->get('rx_amount_eu')) }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    @elseif(!isset($eu_rate) && !empty(request()->get('s_country_eu')))
+                        <i>{{ __('hompage.32') }}</i>
+                    @endif
+                </div>
+                <div class="tab-pane fade {{ !empty(request()->get('s_country')) ? 'show active' : '' }}"
+                    id="intl-funds" role="tabpanel" aria-labelledby="intl-funds-tab">
+                    <hr>
+                    <form action="" method="get" class="justify-content-left">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <input style="width: 100%" type="text" name="s_country"
+                                    value="{{ request()->get('s_country') }}" class="form-control" id="s_country"
+                                    autocomplete="off" placeholder="{{ __('hompage.27') }}" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input style="width: 100%" type="text" name="rx_country"
+                                    value="{{ request()->get('rx_country') }}" class="form-control" id="rx_country"
+                                    placeholder="{{ __('hompage.28') }}" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <input style="width: 100%" type="text" name="s_currency"
+                                    value="{{ request()->get('s_currency') }}" class="form-control" id="s_currency"
+                                    autocomplete="off" placeholder="{{ __('hompage.33') }}" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input style="width: 100%" type="text" name="rx_currency"
+                                    value="{{ request()->get('rx_currency') }}" class="form-control"
+                                    id="rx_currency" placeholder="{{ __('hompage.34') }}" autocomplete="off"
                                     required>
                             </div>
-                            <div class="form-group col-md-3">
-                                <input style="width: 100%" type="number" step="any" name="rx_amount_eu"
-                                    value="{{ request()->get('rx_amount_eu') }}" class="form-control"
-                                    id="rx_amount_eu" placeholder="{{ __('hompage.29') }}(&euro;)"
-                                    autocomplete="off" required>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <input style="width: 100%" type="number" step="any" name="rx_amount"
+                                    value="{{ request()->get('rx_amount') }}" class="form-control" id="rx_amount"
+                                    placeholder="{{ __('hompage.29') }}(&euro;) " autocomplete="off" required>
                             </div>
-                            <div class="col-md-3">
+                            <col-md class="6">
                                 <button class="btn btn-primary m-1"
                                     type="submit">{{ __('hompage.proceed') }}</button>
-                                <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a>
-                            </div>
-                        </form>
-                        <br>
-                        @if (isset($eu_rate) && !empty(request()->get('s_country_eu')))
-                            <div>
-                                <table class="table">
-                                    <thead>
-                                        <th>{{ __('hompage.30') }}</th>
-                                        <th>{{ __('hompage.25') }}(&euro;)</th>
-                                        <th>{{ __('hompage.31') }}(&euro;)</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                {{ request()->get('s_country_eu') }}
-                                                <br>
-                                                To
-                                                <br>
-                                                {{ request()->get('rx_country_eu') }}
-                                            </td>
-                                            <td>
-                                                {{ __('hompage.25') }}(&euro;) :
-                                                {{ number_format(request()->get('rx_amount_eu')) }}
-                                            </td>
-                                            <td>
-                                                {{ __('hompage.31') }}(&euro;):
-                                                @if ($eu_rate->calc == 'perc')
-                                                    {{ request()->get('rx_amount_eu') * ($eu_rate->commision / 100) }}
-                                                @else
-                                                    {{ number_format(request()->get('rx_amount_eu')) }}
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        @elseif(!isset($eu_rate) && !empty(request()->get('s_country_eu')))
-                            <i>{{ __('hompage.32') }}</i>
-                        @endif
-                    </div>
-                    <div class="tab-pane fade {{ !empty(request()->get('s_country')) ? 'show active' : '' }}"
-                        id="intl-funds" role="tabpanel" aria-labelledby="intl-funds-tab">
-                        <hr>
-                        <form action="" method="get" class="justify-content-left">
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <input style="width: 100%" type="text" name="s_country"
-                                        value="{{ request()->get('s_country') }}" class="form-control"
-                                        id="s_country" autocomplete="off" placeholder="{{ __('hompage.27') }}"
-                                        required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <input style="width: 100%" type="text" name="rx_country"
-                                        value="{{ request()->get('rx_country') }}" class="form-control"
-                                        id="rx_country" placeholder="{{ __('hompage.28') }}" autocomplete="off"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <input style="width: 100%" type="text" name="s_currency"
-                                        value="{{ request()->get('s_currency') }}" class="form-control"
-                                        id="s_currency" autocomplete="off" placeholder="{{ __('hompage.33') }}"
-                                        required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <input style="width: 100%" type="text" name="rx_currency"
-                                        value="{{ request()->get('rx_currency') }}" class="form-control"
-                                        id="rx_currency" placeholder="{{ __('hompage.34') }}" autocomplete="off"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <input style="width: 100%" type="number" step="any" name="rx_amount"
-                                        value="{{ request()->get('rx_amount') }}" class="form-control"
-                                        id="rx_amount" placeholder="{{ __('hompage.29') }}(&euro;) "
-                                        autocomplete="off" required>
-                                </div>
-                                <col-md class="6">
-                                    <button class="btn btn-primary m-1"
-                                        type="submit">{{ __('hompage.proceed') }}</button>
-                                    <a class="btn btn-danger m-1"
-                                        href="/">{{ __('hompage.refresh') }}</a></col-md>
-                            </div>
+                                <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a></col-md>
+                        </div>
 
-                        </form>
-                        <br>
-                        @if (isset($global_rate) && !empty(request()->get('s_country')))
-                            <div>
-                                <table class="table">
-                                    <thead>
-                                        <th>{{ __('hompage.30') }}</th>
-                                        <th>{{ __('hompage.35') }}</th>
-                                        <th>{{ __('hompage.31') }}(&euro;)</th>
-                                        <th>{{ __('hompage.25') }}(&euro;)</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                {{ request()->get('s_country') }}
-                                                <br>
-                                                To
-                                                <br>
-                                                {{ request()->get('rx_country') }}
-                                            </td>
-                                            <td>
-                                                {{ __('hompage.29') }} ({{ request()->get('s_currency') }}) :
+                    </form>
+                    <br>
+                    @if (isset($global_rate) && !empty(request()->get('s_country')))
+                        <div>
+                            <table class="table">
+                                <thead>
+                                    <th>{{ __('hompage.30') }}</th>
+                                    <th>{{ __('hompage.35') }}</th>
+                                    <th>{{ __('hompage.31') }}(&euro;)</th>
+                                    <th>{{ __('hompage.25') }}(&euro;)</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            {{ request()->get('s_country') }}
+                                            <br>
+                                            To
+                                            <br>
+                                            {{ request()->get('rx_country') }}
+                                        </td>
+                                        <td>
+                                            {{ __('hompage.29') }} ({{ request()->get('s_currency') }}) :
+                                            {{ number_format(request()->get('rx_amount')) }}
+                                            <br>
+                                            {{ __('hompage.36') }} ({{ request()->get('rx_currency') }}) :
+                                            {{ number_format(request()->get('rx_amount') * $global_rate->ex_rate) }}
+                                        </td>
+                                        <td>
+                                            {{ __('hompage.31') }}(&euro;)
+                                            @if ($global_rate->calc == 'perc')
+                                                {{ request()->get('rx_amount') * ($global_rate->commision / 100) }}
+                                            @else
                                                 {{ number_format(request()->get('rx_amount')) }}
-                                                <br>
-                                                {{ __('hompage.36') }} ({{ request()->get('rx_currency') }}) :
-                                                {{ number_format(request()->get('rx_amount') * $global_rate->ex_rate) }}
-                                            </td>
-                                            <td>
-                                                {{ __('hompage.31') }}(&euro;)
-                                                @if ($global_rate->calc == 'perc')
-                                                    {{ request()->get('rx_amount') * ($global_rate->commision / 100) }}
-                                                @else
-                                                    {{ number_format(request()->get('rx_amount')) }}
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        @elseif(!isset($global_rate) && !empty(request()->get('s_country')))
-                            <i>{{ __('hompage.32') }}</i>
-                        @endif
-                    </div>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    @elseif(!isset($global_rate) && !empty(request()->get('s_country')))
+                        <i>{{ __('hompage.32') }}</i>
+                    @endif
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!-- Header End -->
 
@@ -849,8 +910,8 @@
                 let url =
                     "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
                     .replace(':countryId', $(this).val());
-                    "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
-                    .replace(':countryId', $(this).val());
+                "{{ route('ajax-get-country-cities', ['countryId' => ':countryId']) }}"
+                .replace(':countryId', $(this).val());
                 if ($(this).val() > 0) {
                     // showBlockUI();
                     $.ajax({
@@ -894,6 +955,24 @@
 
             });
 
+            //find state
+            var ship_to_country = $("#ship_to_country");
+            ship_to_country.wrap('<div class="position-relative"></div>');
+            ship_to_country.on('change', function() {
+            shipt_to_state = $("#shipt_to_state").empty();
+            shipt_to_state.append('<option class="position-relative"></option>');
+                var _token = '{{ csrf_token() }}'; 
+                var url = "{{ route('ajax-get-states') }}";
+
+                $.ajax([
+                  
+                ]);
+            });
+
+
+
+
+            //find City
             var ship_to_country = $("#ship_to_country");
             ship_to_country.wrap('<div class="position-relative"></div>');
             ship_to_country.on('change', function() {
@@ -918,14 +997,13 @@
                             if (response.success) {
                                 $.each(response.cities, function(key, value) {
                                     $("#ship_to_city").append('<option value="' +
-                                    $("#ship_to_city").append('<option value="' +
-                                        value
-                                        .id + '">' + value.name + '</option>');
+                                        $("#ship_to_city").append(
+                                            '<option value="' + value.id + '">' +
+                                            value.name + '</option>'));
                                 });
                                 $("#ship_to_city").trigger('change');
-                                $("#ship_to_city").trigger('change');
-
-
+                                $(
+                                    "#ship_to_city").trigger('change');
 
                             } else {
 
@@ -971,7 +1049,8 @@
                                 '">' + value.name + '</option>');
                             $("#ship_to_country").append('<option value="' + value.id +
                                 '">' + value.name + '</option>');
-                            $("#customer_country_id").append('<option value="' + value.id + '">' + value
+                            $("#customer_country_id").append('<option value="' + value.id +
+                                '">' + value
                                 .name + '</option>')
                         });
                     } else {

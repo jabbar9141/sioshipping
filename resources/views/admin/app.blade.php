@@ -89,7 +89,6 @@
                 getAllNotifications();
             }, 60000);
 
-
             function getAllNotifications() {
                 $.ajax({
                     type: "GET",
@@ -142,7 +141,7 @@
                 });
             }
 
-            $(document).on('click','#markAsReadBtn', function () {
+            $(document).on('click', '#markAsReadBtn', function() {
                 markAllRead();
             });
         });

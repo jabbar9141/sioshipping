@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Country;
 use App\Models\CurrencyExchangeRate;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -108,6 +109,7 @@ class CurrencyExchangeRateController extends Controller
         try {
             $user = User::find($user_id);
             $user->currency_id = $request->currency_id;
+            $user->pickup_comission_percentage = $request->pickup_comission_percentage;
             $user->save();
             return back()->with(['message' => 'Currency Add Successfully', 'message_type' => 'success']);
         } catch (\Throwable $th) {

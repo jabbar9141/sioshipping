@@ -15,7 +15,8 @@ class UserFunds extends Model
         'amount',
         'currency',
         'description',
-        'flag'
+        'flag',
+        'status',
     ];
 
     public function user()

@@ -5,6 +5,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BankDetailsController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\CurrencyExchangeRateController;
 use App\Http\Controllers\DispatcherController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\UserFundsController;
 use App\Http\Controllers\WalkInCustomerController;
 use App\Http\Controllers\WalkInCustomerOrder;
 use App\Http\Controllers\WalkInOrderAgents;
+use App\Mail\DispacherNotificationMail;
 use App\Models\Country;
 use App\Models\EUFundTransferOrder;
 use App\Models\IntlFundTransferOrder;
@@ -44,6 +46,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +60,7 @@ use Illuminate\Support\Facades\File;
 */
 
 Route::get('/test', function () {
+    // Mail::to('abc@gmail.com')->send(new DispacherNotificationMail());
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_08_24_161206_create_coutries_table.php'
     // ]);
@@ -144,10 +148,18 @@ Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_09_07_220352_create_notifications_table.php'
     // ]);
-    Artisan::call('migrate', [
-        '--path' => 'database/migrations/2024_09_11_044833_add_column_in_users_table.php'
-    ]);
- 
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_11_044833_add_column_in_users_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_11_190430_create_contactus_table.php'
+    // ]); 
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_12_110923_add_column_users_table.php'
+    // ]);
+    // Artisan::call('migrate', [
+    //     '--path' => 'database/migrations/2024_09_12_125123_add_column_user_funds_table.php'
+    // ]);
     return "Success";
 });
 
@@ -410,7 +422,9 @@ Route::get('showcase', [ProductController::class, 'showcase'])->name('showcase')
 
 Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.store');
 
-
+// Route::get('/order-bach', function () {
+//     return view('emails.order-batch');
+// });
 //bank details routes
 
 // Route::get('bankdetails-list', [BankDetailsController::class, 'index'])->name('bankdetails-list');
@@ -423,6 +437,12 @@ Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.
 Route::resource('bank_details', BankDetailsController::class)->middleware(['auth']);
 Route::post('assignBankDetails/{id}', [BankDetailsController::class, 'assignBankDetails'])->name('assignBankDetails');
 
+Route::group(['prefix' => 'contact', 'as' => 'contact.'], function () {
+    Route::get('list', [ContactUsController::class, 'index'])->name('list');
+    Route::get('show/{id}', [ContactUsController::class, 'show'])->name('show');
+    Route::post('save', [ContactUsController::class, 'store'])->name('save');
+    Route::delete('destroy', [ContactUsController::class, 'destroy'])->name('destroy');
+});
 
 Route::post('ajax-get-cities/{stateId}', [CityController::class, 'getCities'])->name('ajax-get-cities');
 Route::post('ajax-get-country-cities/{countryId}', [CityController::class, 'getCountryCities'])->name('ajax-get-country-cities');

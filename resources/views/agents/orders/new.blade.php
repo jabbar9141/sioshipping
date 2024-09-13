@@ -69,12 +69,17 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- <br> --}}
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="ui-widget">
                                     <label for="gender">Gender <i class="text-danger">*</i> : </label>
-                                    <input type="text" id="gender" name="gender_" value="{{ old('gender_') }}"
-                                        class="form-control" autocomplete="off">
+                                    <select class="form-select" name="gender_" id="gender">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+
                                     @error('gender_')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
@@ -167,7 +172,7 @@
 
                                 </div>
                             </div>
-          
+
                             <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="origin">Shipping from City<i class="text-danger">*</i> : </label>
@@ -181,7 +186,8 @@
                             <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="ship_from_state">Enter State Name<i class="text-danger">*</i> : </label>
-                                    <input name="ship_from_state" id="ship_from_state" class="form-control form-control-sm" placeholder="Enter State Name">
+                                    <input name="ship_from_state" id="ship_from_state"
+                                        class="form-control form-control-sm" placeholder="Enter State Name">
                                     @error('ship_from_state')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
@@ -201,7 +207,7 @@
                                     @enderror
                                 </div>
                             </div>
-                          
+
                             <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="ship_to_city">Shipping to City<i class="text-danger">*</i> : </label>
@@ -215,7 +221,8 @@
                             <div class="col-4 mb-2">
                                 <div class="ui-widget">
                                     <label for="ship_to_state">Enter State Name<i class="text-danger">*</i> : </label>
-                                    <input name="ship_to_state" id="ship_to_state" class="form-control form-control-sm" placeholder="Enter State Name">
+                                    <input name="ship_to_state" id="ship_to_state" class="form-control form-control-sm"
+                                        placeholder="Enter State Name">
                                     @error('ship_to_state')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror
@@ -375,7 +382,7 @@
                             <hr>
                             <div class="add_set">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    {{-- <div class="col-md-6">
                                         <h6>Sender Address</h6>
                                         <div class="row">
                                             <div class="form-group col-md-12">
@@ -483,7 +490,7 @@
                                         <br>
                                         <div class="row">
                                             <div class="form-group col-md-12">
-                                                <label for="r_date">Pickup Date <i class="text-danger">*</i></label>
+                                                <label for="r_date">Pickup Date (optional) <i class="text-danger">*</i></label>
                                                 <input type="date" name="r_date" value="{{ old('r_date') }}"
                                                     class="form-control">
                                                 @error('r_date')
@@ -491,11 +498,11 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
+                                    </div> --}}
+                                    <div class="col-md-12">
                                         <h6>Receiver Address</h6>
                                         <div class="row">
-                                            <div class="form-group col-md-12">
+                                            <div class="form-group col-md-6">
                                                 <label for="rx_name">Receiver Name <i class="text-danger">*</i></label>
                                                 <input type="text" name="rx_name" value="{{ old('rx_name') }}"
                                                     class="form-control">
@@ -503,10 +510,7 @@
                                                     <p class="text-danger">{{ $message }}</p>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <br>
-                                        <div class="row">
-                                            <div class="form-group col-md-12">
+                                            <div class="form-group col-md-6">
                                                 <label for="rx_email">Receiver Email <i class="text-danger">*</i></label>
                                                 <input type="email" name="rx_email" value="{{ old('rx_email') }}"
                                                     class="form-control">
@@ -536,6 +540,7 @@
                                         </div>
                                         <br>
                                         <div class="row">
+                                            <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="rx_aadress1">Address1 <i class="text-danger">*</i></label>
                                                 <textarea name="rx_address1" class="form-control">{{ old('rx_address1') }}</textarea>
@@ -544,8 +549,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <br>
-                                        <div class="row">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="rx_aadress2">Address 2(additional data-optional) <i
                                                         class="text-danger">*</i></label>
@@ -555,7 +559,9 @@
                                                 @enderror
                                             </div>
                                         </div>
+                                        </div>
                                         <br>
+                                       
                                         <div class="row">
                                             <div class="form-group col-md-6">
                                                 <label for="rx_zip">Receiver zip <i class="text-danger">*</i></label>
@@ -594,18 +600,29 @@
                                                 <input name="customer_state_id" id="customer_state_id"
                                                     class="form-control form-control-sm" placeholder="Enter State Name">
 
-                                            
+
                                                 @error('customer_state_id')
                                                     <p class="text-danger">{{ $message }}</p>
                                                 @enderror
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <hr>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="r_date">Pickup Date (optional) <i class="text-danger">*</i></label>
+                                <input type="date" name="r_date" value="{{ old('r_date') }}"
+                                    class="form-control">
+                                @error('r_date')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                        <br>
                         <div class="row">
                             <div class="form-group">
                                 <label for="cond_of_goods">Condition Of goods/ Customs Declaration</label>
@@ -651,8 +668,26 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="val_cur">Curency Of Value</label>
-                                <input type="text" name="val_cur" value="{{ old('val_cur') }}" class="form-control"
-                                    id="val_cur">
+                                <select class="form-control" name="val_cur"id="val_cur">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AFN">AFN</option>
+                                    <option value="DZD">DZD</option>
+                                    <option value="BHD">BHD</option>
+                                    <option value="BDT">BDT</option>
+                                    <option value="INR">INR</option>
+                                    <option value="NOK">NOK</option>
+                                    <option value="BRL">BRL</option>
+                                    <option value="BND">BND</option>
+                                    <option value="INR">INR</option>
+                                    <option value="XOF">XOF</option>
+                                    <option value="PKR">PKR</option>
+                                    <option value="QAR">QAR</option>
+                                </select>
+                             
                                 @error('val_cur')
                                     <p class="text-danger">{{ $message }}</p>
                                 @enderror
@@ -669,14 +704,14 @@
                                 @enderror
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="cummercial_invoice">Commercial Invoice</label>
+                                <label for="cummercial_invoice">Sioshipping Commercial Invoice</label>
                                 <div class="d-flex gap-3 align-items-center">
                                     <input type="file" name="cummercial_invoice" accept="pdf"
                                         value="{{ old('cummercial_invoice') }}" class="form-control"
                                         id="cummercial_invoice">
                                     <a style="white-space: nowrap" class="btn btn-primary"
-                                        href="{{ asset('FedEx-Commercial-Invoice.pdf') }}"
-                                        target="_blank">Create Commercial
+                                        href="{{ asset('sioshipping-cummercail-invoice.pdf') }}" target="_blank">Create
+                                        Commercial
                                         Invoice</a>
                                 </div>
                                 @error('cummercial_invoice')
@@ -692,6 +727,15 @@
                 </form>
             </div>
         </div>
+        <style>
+            .d-none {
+                display: none;
+            }
+
+            .d-block {
+                display: block;
+            }
+        </style>
     </div>
 
 @endsection
@@ -699,6 +743,35 @@
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/jquery.repeater@1.2.1/jquery.repeater.min.js"></script>
     <script>
+        $(document).ready(function() {
+            function updateImageVisibility() {
+                var inputVal = $('#doc_front').val();
+                if (inputVal === '') {
+                    $('#doc_front_img').removeClass('d-block').addClass('d-none');
+                } else {
+                    $('#doc_front_img').removeClass('d-none').addClass('d-block');
+                }
+            }
+            updateImageVisibility();
+            $('#doc_front').on('change', function() {
+                updateImageVisibility();
+            });
+
+            function updateImageVisibility1() {
+                var inputVal = $('#doc_back').val();
+                if (inputVal === '') {
+                    $('#doc_back_img').removeClass('d-block').addClass('d-none');
+                } else {
+                    $('#doc_back_img').removeClass('d-none').addClass('d-block');
+                }
+            }
+            updateImageVisibility1();
+            $('#doc_back').on('change', function() {
+                updateImageVisibility1();
+            });
+        });
+
+
         $('.proccess_btn').attr('disabled', true);
         $(document).ready(function() {
             $('#customer_country_id').select2();
@@ -819,21 +892,21 @@
             $('#ship_from_country').select2({
                 // theme: "classic",
             });
-         
+
             $('#ship_from_city').select2({
                 // theme: "classic",
             });
             $('#ship_to_country').select2({
                 // theme: "classic",
             });
-          
+
             $('#ship_to_city').select2({
                 // theme: "classic",
             });
 
             countries();
 
-            
+
 
             var ship_from_country = $("#ship_from_country");
             ship_from_country.wrap('<div class="position-relative"></div>');
@@ -891,7 +964,7 @@
 
             });
 
-           
+
         })
 
         var ship_to_country = $("#ship_to_country");

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactUs;
 use App\Models\EUFundsTransferRates;
 use App\Models\EUFundTransferOrder;
 use App\Models\IntlFundsTransferRates;
@@ -69,18 +70,19 @@ class HomeController extends Controller
         $rep['total_placed_orders'] = Order::where('status', 'placed')->count();
         $rep['total_cancelled_orders'] = Order::where('status', 'cancelled')->count();
         $rep['total_assigned_orders'] = Order::where('status', 'assigned')->count();
-        $rep['totalWalletAmout'] = UserFunds::where('flag', 'debit')->sum('amount');
-        $rep['toatalSpendAmount'] = UserFunds::where('flag', 'credit')->sum('amount');
-        $rep['total_unpaid_orders'] = Order::where('status', 'unpaid')->where('agent_id', Auth::user()->id)->count();
+        $rep['totalWalletAmout'] = UserFunds::where('flag', 'debit')->where('user_id', Auth::user()->id)->sum('amount');
+        $rep['toatalSpendAmount'] = UserFunds::where('flag', 'credit')->where('user_id', Auth::user()->id)->sum('amount');
+        $rep['total_unpaid_orders'] = Order::where('status', 'unpaid')->count();
         $rep['total_today_spent'] = UserFunds::where('flag', 'credit')->whereDate('created_at', Carbon::today())->sum('amount');
         $get_customer = Order::pluck('customer_id')->toArray();
         $rep['customer'] = count(array_unique($get_customer));
         $rep['total_sales'] = Order::sum('val_of_goods');
-        $rep['total_users'] = User::count('name');
-        // dd($totalWalletAmout);
+        $rep['total_users'] = User::where('blocked', false)->count('name');
+        // dd($rep['totalWalletAmout']);
         $customer_ids = Order::pluck('customer_id')->toArray();
         $rep['customers_list'] = WalkInCustomer::whereIn('id', $customer_ids)->orderBy('id', 'DESC')->paginate(10);
-        $rep['latest_orders'] = Order::orderBy('id', 'DESC')->limit(10)->get();
+        $rep['latest_orders'] = Order::orderBy('id', 'DESC')->paginate(20);
+        $rep['contacts'] = ContactUs::orderBy('id', 'DESC')->paginate(10);
         // $rep['orders_list'] = Order::
         $rep['total_transit'] = UserFunds::get();
         return $rep;
@@ -124,7 +126,7 @@ class HomeController extends Controller
         // dd($totalWalletAmout);
         $customer_ids = Order::where('agent_id', Auth::user()->id)->pluck('customer_id')->toArray();
         $rep['customers_list'] = WalkInCustomer::whereIn('id', $customer_ids)->orderBy('id', 'DESC')->paginate(10);
-        $rep['latest_orders'] = Order::orderBy('id', 'DESC')->limit(10)->get();
+        $rep['latest_orders'] = Order::orderBy('id', 'DESC')->paginate(10);
 
         //total transit 
         $rep['total_transit'] = UserFunds::get();
@@ -190,7 +192,8 @@ class HomeController extends Controller
         return view('shiping-track', ['order' => $r]);
     }
 
-    public function allNotifications(){
+    public function allNotifications()
+    {
         $user = Auth::user();
         $notifications = $user->unreadNotifications;
         return response()->json([
@@ -200,12 +203,13 @@ class HomeController extends Controller
         ]);
     }
 
-    public function markAsRead(){
+    public function markAsRead()
+    {
         $user = Auth::user();
         $user->unreadNotifications->markAsRead();
         return response()->json([
-           'status' => true,
-           'messges' => "All Notifications are Marked"
+            'status' => true,
+            'messges' => "All Notifications are Marked"
         ]);
     }
 }

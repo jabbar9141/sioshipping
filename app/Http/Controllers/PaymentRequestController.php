@@ -183,9 +183,9 @@ class PaymentRequestController extends Controller
             $paymentRequest->status = 'accept';
             $paymentRequest->admin_id = Auth::user()->id;
             $paymentRequest->save();
-            $u = updateAccountBalance(Auth::user()->id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'debit', 'Admin Wallet Funding');
-            $u = updateAccountBalance(Auth::user()->id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'credit', 'Admin Transfer Requested amount from Wallet');
-            $u = updateAccountBalance($paymentRequest->user_id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'debit', 'Wallet Funding');
+            updateAccountBalance(Auth::user()->id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'debit', 'Admin Wallet Funding', 'wallet');
+             updateAccountBalance(Auth::user()->id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'credit', 'Admin Transfer Requested amount from Wallet', 'transfer_to_agent');
+            updateAccountBalance($paymentRequest->user_id, $paymentRequest->amount, 'SIO' . rand(99999, 100000) . '-' . $paymentRequest->id, 'debit', 'Wallet Funding','wallet');
             $user = User::find($paymentRequest->user_id);
             if ($user) {
                 $data = [

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DispacherMail;
+use App\Mail\DispacherNotificationMail;
 use App\Models\Location;
 use App\Models\Order;
 use App\Models\Country;
@@ -23,6 +25,8 @@ use App\Models\User;
 use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class OrderBatchController extends Controller
 {
@@ -167,14 +171,24 @@ class OrderBatchController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
-    {   
+    {
+
         $order_id = 0;
-        if($request->filled('order_id')){
+        if ($request->filled('order_id')) {
             $order_id = $request->order_id;
         }
-        $dispachers = User::where('user_type','dispatcher')->get();
-        return view('dispatcher.settings.batches.create', compact('dispachers','order_id'));
+        $dispachers = User::where('user_type', 'dispatcher')->get();
+        return view('dispatcher.settings.batches.create', compact('dispachers', 'order_id'));
     }
+
+    // public function imageUpload(){
+    //  Storage::fake('photo');
+    //  if($this->json('photo')){
+    //   $responce = $this->json('POST','/photo', function(){
+    //     UploadedFile::fake()->image('image.png');
+    //   });
+    //  }
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -195,65 +209,85 @@ class OrderBatchController extends Controller
             'order_id' => 'required',
         ]);
 
-        try {
-            DB::beginTransaction();
-            $b = new OrderBatch();
-            $b->name = 'BA-' . time() . '-' . $request->name;
-            $b->user_id = Auth::user()->id;
-            $b->dispatcher_id = $request->dispatcher_id;
-            $b->save();
-            $b->batch_tracking_id = 'BA-' . rand(99999999, 100000000) . '_' . $b->id;
-            $b->save();
+        // try {
+        DB::beginTransaction();
+        $b = new OrderBatch();
+        $b->name = 'BA-' . time() . '-' . $request->name;
+        $b->user_id = Auth::user()->id;
+        $b->dispatcher_id = $request->dispatcher_id;
+        $b->save();
+        $b->batch_tracking_id = 'BA-' . rand(99999999, 100000000) . '_' . $b->id;
+        $b->save();
 
 
-            $batch_log = Batchlog::create([
-                'ship_from_country_id' => $request->ship_from_country_id,
-                'ship_from_city_id' => $request->ship_from_city_id,
-                'ship_to_country_id' => $request->ship_to_country_id,
-                'ship_to_city_id' => $request->ship_to_city_id,
-                'current_location_county_id' => $request->ship_to_country_id,
-                'current_location_city_id' => $request->ship_to_city_id,
-                'batch_id' => $b->id,
-            ]);
+        $batch_log = Batchlog::create([
+            'ship_from_country_id' => $request->ship_from_country_id,
+            'ship_from_city_id' => $request->ship_from_city_id,
+            'ship_to_country_id' => $request->ship_to_country_id,
+            'ship_to_city_id' => $request->ship_to_city_id,
+            'current_location_county_id' => $request->ship_to_country_id,
+            'current_location_city_id' => $request->ship_to_city_id,
+            'batch_id' => $b->id,
+        ]);
 
-            Order::whereIn('id', $request->order_id)->update([
-                'batch_id' => $b->id,
-                'status' => "assigned",
-                'current_location_country_id' => $request->ship_to_country_id,
-                'current_location_city_id' => $request->ship_to_city_id,
-            ]);
-            $orders = Order::whereIn('id',$request->order_id)->get();
-            foreach ($orders as $key => $order) {
-                $subTotal = $order->val_of_goods + $order->shipping_cost;
-                $commissionAmount = $order->val_of_goods * 0.015;
-                $total = $subTotal - $commissionAmount;
-                $u = updateAccountBalance(Auth::id(), ($total), $order->tracking_id, 'debit', 'Order Payment To Admin After (0.015) commisssion' . $order->tracking_id);
-            }
-
-            foreach ($request->order_id as $value) {
-                $batchorder_log = new BatchorderLog();
-                $batchorder_log->batch_id = $b->id;
-                $batchorder_log->order_id = $value;
-                $batchorder_log->save();
-            }
-            DB::commit();
-            $user = User::find($order->agent_id);
-            if (isset($user)) {
-                $data = [
-                    'user_id' => Auth::user()->id,
-                    'user_name' => Auth::user()->name,
-                    'subject' => 'Order Status Update',
-                    'body' => 'A new order has been Assigned a Batch by Admin.',
-                    'url' => route('agentsOrders')
-                ];
-                $user->notify(new OrderStatusNotification($data));
-            }
-            return redirect()->route('batches.index')->with(['message' => 'Batch Created', 'message_type' => 'success']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error($e->getMessage(), ['exception' => $e]);
-            return back()->with('message', "An error occured " . $e->getMessage());
+        Order::whereIn('id', $request->order_id)->update([
+            'batch_id' => $b->id,
+            'status' => "assigned",
+            'current_location_country_id' => $request->ship_to_country_id,
+            'current_location_city_id' => $request->ship_to_city_id,
+        ]);
+        $orders = Order::whereIn('id', $request->order_id)->get();
+        // dd($orders->toArray());
+        foreach ($orders as $key => $order) {
+            $subTotal = $order->val_of_goods + $order->shipping_cost;
+            $commissionAmount = $order->val_of_goods * 0.015;
+            $total = $subTotal - $commissionAmount;
+            $u = updateAccountBalance(Auth::id(), ($total), $order->tracking_id, 'debit', 'Order Payment To Admin After (0.015) commisssion' . $order->tracking_id);
         }
+
+        foreach ($request->order_id as $value) {
+            $batchorder_log = new BatchorderLog();
+            $batchorder_log->batch_id = $b->id;
+            $batchorder_log->order_id = $value;
+            $batchorder_log->save();
+        }
+        DB::commit();
+        $user = User::find($order->agent_id);
+        if (isset($user)) {
+            $data = [
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'subject' => 'Order Status Update',
+                'body' => 'A new order has been Assigned a Batch by Admin.',
+                'url' => route('agentsOrders')
+            ];
+            $user->notify(new OrderStatusNotification($data));
+        }
+
+        $dispatcher = User::where('id', $b->dispatcher_id)->first();
+        $orders = Order::whereIn('id', $request->order_id)->get();
+        if (isset($dispatcher)) {
+            $data = [
+                'user_id' => $dispatcher->id,
+                'user_name' => $dispatcher->name,
+                'subject' => 'Order Status Update',
+                'body' => 'A new order has been Assigned a Batch by Admin.',
+                'url' => route('agentsOrders')
+            ];
+
+            $dispatcher->notify(new OrderStatusNotification($data));
+
+            Mail::to($dispatcher->email)->send(new DispacherNotificationMail($b, $orders));
+        }
+
+
+
+        return redirect()->route('batches.index')->with(['message' => 'Batch Created', 'message_type' => 'success']);
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
+        //     Log::error($e->getMessage(), ['exception' => $e]);
+        //     return back()->with('message', "An error occured " . $e->getMessage());
+        // }
     }
 
     /**
@@ -278,7 +312,7 @@ class OrderBatchController extends Controller
                         'longitude' => $log->shipFromCity->longitude,
                         'type' => 'pickup'
                     ];
-                }else{
+                } else {
                     $loactions[] = [
                         'name' => $log->shipCurrentCountry->name . ', ' . $log->shipCurrentCity->name,
                         'latitude' => $log->shipCurrentCity->latitude,
@@ -294,12 +328,12 @@ class OrderBatchController extends Controller
                         'type' => 'delivery'
                     ];
                 }
-               
+
                 $start++;
             }
         }
         return view('dispatcher.settings.batches.show', ['batch' => $batch, 'loactions' => $loactions]);
-    }   
+    }
 
     /**
      * Show the form for editing the specified resource.

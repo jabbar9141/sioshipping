@@ -50,7 +50,7 @@
                     </li>
 
                     <li class="sidebar-item">
-                        <a class="sidebar-link @if (Route::is('agentsOrders') || Route::is('walkInOrderAgents.*')) active @endif"
+                        <a class="sidebar-link @if (Route::is('agentsOrders') || Route::is('walkInOrderAgents.*') || Route::is('orders.*')) active @endif"
                             href="{{ route('agentsOrders') }}" aria-expanded="false">
                             <span>
                                 <i class="ti ti-article"></i>

@@ -15,7 +15,9 @@ use Carbon\Carbon;
 use App\Mail\PaymentEmail;
 use App\Models\Bank_Detail;
 use App\Models\BankDetail;
+use App\Models\City;
 use App\Models\CityShippingCost;
+use App\Models\Country;
 use App\Models\OrderBatch;
 use App\Models\ShippingCost;
 use App\Models\ShippingRate;
@@ -187,9 +189,9 @@ class WalkInOrderAgents extends Controller
      */
     public function store(Request $request)
     {
-
+        // return $request->all();
         $request->validate([
-            'tax_code_' => 'required',
+            // 'tax_code_' => 'required',
             'surname_' => 'required',
             'name_' => 'required',
             'gender_' => 'required',
@@ -209,19 +211,19 @@ class WalkInOrderAgents extends Controller
             'rx_address2' => 'nullable|string',
             'rx_zip' => 'required|string',
             'customer_city_id' => 'required|string',
-            'customer_state_id' => 'required|string',
+            // 'customer_state_id' => 'required|string',
             'customer_country_id' => 'required|string',
-            's_name' => 'required|string',
-            's_phone' => 'required|string',
-            's_email' => 'required|string|email',
-            's_phone_alt' => 'required|string',
-            's_address1' => 'required|string',
-            's_address2' => 'required|string',
-            's_zip' => 'required|string',
-            's_city' => 'required|string',
-            's_state' => 'required|string',
-            's_country' => 'required|string',
-            'r_date' => 'required|string',
+            // 's_name' => 'required|string',
+            // 's_phone' => 'required|string',
+            // 's_email' => 'required|string|email',
+            // 's_phone_alt' => 'required|string',
+            // 's_address1' => 'required|string',
+            // 's_address2' => 'required|string',
+            // 's_zip' => 'required|string',
+            // 's_city' => 'required|string',
+            // 's_state' => 'required|string',
+            // 's_country' => 'required|string',
+            'r_date' => 'nullable|string',
             'cond_of_goods' => 'required|string',
             'val_of_goods' => 'required|string',
             'val_cur' => 'required|string',
@@ -256,204 +258,208 @@ class WalkInOrderAgents extends Controller
             'customs_inv_num' => 'required'
         ]);
 
-        try {
-            DB::beginTransaction();
-            $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->first();
+        // try {
+        DB::beginTransaction();
+        $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->first();
+        // return $cus;
+        if (!$cus) {
+            //upload file
+            if ($request->hasFile('doc_front_') && $request->hasFile('doc_back_')) {
+                $docFront = $request->file('doc_front_');
+                $docBack = $request->file('doc_back_');
 
-            if (!$cus) {
-                //upload file
-                if ($request->hasFile('doc_front_') && $request->hasFile('doc_back_')) {
-                    $docFront = $request->file('doc_front_');
-                    $docBack = $request->file('doc_back_');
-
-                    $docFrontFileName = 'doc_front_' . time() . '.' . $docFront->getClientOriginalExtension();
-                    $docBackFileName = 'doc_back_' . time() . '.' . $docBack->getClientOriginalExtension();
+                $docFrontFileName = 'doc_front_' . time() . '.' . $docFront->getClientOriginalExtension();
+                $docBackFileName = 'doc_back_' . time() . '.' . $docBack->getClientOriginalExtension();
 
 
-                    $docFront->move(public_path('uploads'), $docFrontFileName);
-                    $docBack->move(public_path('uploads'), $docBackFileName);
+                $docFront->move(public_path('uploads'), $docFrontFileName);
+                $docBack->move(public_path('uploads'), $docBackFileName);
 
-                    $cus = WalkInCustomer::create([
-                        'surname' => $request->surname_,
-                        'name' => $request->name_,
-                        'birthDate' => $request->dob_,
-                        'gender' => $request->gender_,
-                        'doc_type' => $request->doc_type_,
-                        'doc_num' => $request->doc_num_,
-                        'tax_code' => $request->tax_code_,
-                        'doc_front' => $docFrontFileName,
-                        'doc_back' => $docBackFileName
-                    ]);
-                } else {
-                    $cus = WalkInCustomer::create([
-                        'surname' => $request->surname_,
-                        'name' => $request->name_,
-                        'birthDate' => $request->dob_,
-                        'gender' => $request->gender_,
-                        'doc_type' => $request->doc_type_,
-                        'doc_num' => $request->doc_num_,
-                        'tax_code' => $request->tax_code_
-                    ]);
-                }
-                $customer = $cus;
+                $cus = WalkInCustomer::create([
+                    'surname' => $request->surname_,
+                    'name' => $request->name_,
+                    'birthDate' => $request->dob_,
+                    'gender' => $request->gender_,
+                    'doc_type' => $request->doc_type_,
+                    'doc_num' => $request->doc_num_,
+                    'tax_code' => $request->tax_code_,
+                    'doc_front' => $docFrontFileName,
+                    'doc_back' => $docBackFileName
+                ]);
             } else {
-                $customer = $cus;
-                //upload file
-                if ($request->hasFile('doc_front_') && $request->hasFile('doc_back_')) {
-                    $docFront = $request->file('doc_front_');
-                    $docBack = $request->file('doc_back_');
-
-                    // Generate unique filenames for the uploaded files
-                    $docFrontFileName = 'doc_front_' . time() . '.' . $docFront->getClientOriginalExtension();
-                    $docBackFileName = 'doc_back_' . time() . '.' . $docBack->getClientOriginalExtension();
-
-                    // Move the uploaded files to the public directory
-                    $docFront->move(public_path('uploads'), $docFrontFileName);
-                    $docBack->move(public_path('uploads'), $docBackFileName);
-
-                    $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->update([
-                        'surname' => $request->surname_,
-                        'name' => $request->name_,
-                        'birthDate' => $request->dob_,
-                        'gender' => $request->gender_,
-                        'doc_type' => $request->doc_type_,
-                        'doc_num' => $request->doc_num_,
-                        'tax_code' => $request->tax_code_,
-                        'doc_front' => $docFrontFileName,
-                        'doc_back' => $docBackFileName
-                    ]);
-                } else {
-                    $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->update([
-                        'surname' => $request->surname_,
-                        'name' => $request->name_,
-                        'birthDate' => $request->dob_,
-                        'gender' => $request->gender_,
-                        'doc_type' => $request->doc_type_,
-                        'doc_num' => $request->doc_num_,
-                        'tax_code' => $request->tax_code_
-                    ]);
-                }
+                $cus = WalkInCustomer::create([
+                    'surname' => $request->surname_,
+                    'name' => $request->name_,
+                    'birthDate' => $request->dob_,
+                    'gender' => $request->gender_,
+                    'doc_type' => $request->doc_type_,
+                    'doc_num' => $request->doc_num_,
+                    'tax_code' => $request->tax_code_
+                ]);
             }
+            $customer = $cus;
+        } else {
+            $customer = $cus;
+            //upload file
+            if ($request->hasFile('doc_front_') && $request->hasFile('doc_back_')) {
+                $docFront = $request->file('doc_front_');
+                $docBack = $request->file('doc_back_');
 
-            $invoiceDocName = null;
-            $cummercialInvoiceName = null;
+                // Generate unique filenames for the uploaded files
+                $docFrontFileName = 'doc_front_' . time() . '.' . $docFront->getClientOriginalExtension();
+                $docBackFileName = 'doc_back_' . time() . '.' . $docBack->getClientOriginalExtension();
 
-            if ($request->hasFile('invoice_document')) {
-                $invoiceDoc = $request->file('invoice_document');
-                $invoiceDocName = 'invoice_doc' . time() . '.' . $invoiceDoc->getClientOriginalExtension();
-                $invoiceDoc->move(public_path('uploads/orders'), $invoiceDocName);
-            }
+                // Move the uploaded files to the public directory
+                $docFront->move(public_path('uploads'), $docFrontFileName);
+                $docBack->move(public_path('uploads'), $docBackFileName);
 
-            if ($request->hasFile('cummercial_invoice')) {
-                $cummercialInvoice = $request->file('cummercial_invoice');
-                $cummercialInvoiceName = 'invoice_doc_commertional' . time() . '.' . $cummercialInvoice->getClientOriginalExtension();
-                $cummercialInvoice->move(public_path('uploads/orders'), $cummercialInvoiceName);
-            }
-
-            $l = new Order;
-            $l->customer_id = $customer->id;
-            $l->agent_id = Auth::user()->id;
-            $l->walk_in_customer_id = $customer->id;
-            $l->pickup_location_id = $request->origin_id;
-            $l->delivery_location_id = $request->dest_id;
-            $l->current_location_id = $request->origin_id;
-            $l->shipping_rate_id = ((!in_array($request->rate, self::$supported_apis) ? $request->rate : null));
-            $l->tracking_id = 'SIO' . time();
-            $l->delivery_name = $request->rx_name;
-            $l->delivery_phone = $request->rx_phone;
-            $l->delivery_email = $request->rx_email;
-            $l->delivery_phone_alt = $request->rx_phone_alt ?? null;
-            $l->delivery_address1 = $request->rx_address1;
-            $l->delivery_address2 = $request->rx_address2 ?? null;
-            $l->delivery_zip = $request->rx_zip;
-            $l->delivery_city = $request->customer_city_id;
-            $l->delivery_state = $request->customer_state_id;
-            $l->delivery_country = $request->customer_country_id;
-            $l->pickup_name = $request->s_name;
-            $l->pickup_phone = $request->s_phone;
-            $l->pickup_email = $request->s_email;
-            $l->pickup_phone_alt = $request->s_phone_alt ?? null;
-            $l->pickup_address1 = $request->s_address1;
-            $l->pickup_address2 = $request->s_address2 ?? null;
-            $l->pickup_zip = $request->s_zip;
-            $l->pickup_city = $request->s_city;
-            $l->pickup_state = $request->s_state;
-            $l->pickup_country = $request->s_country;
-            $l->return_date = $request->r_date;
-            $l->cond_of_goods = 0;
-            $l->val_of_goods = 0;
-            $l->val_cur = $request->val_cur;
-            $l->provider = ((!in_array($request->rate, self::$supported_apis) ? $request->rate : 'SIOPAY'));
-            $l->terms_of_sale = $request->terms_of_sale;
-            $l->customs_inv_num = $request->customs_inv_num;
-            $l->current_location_country_id = $request->ship_to_country;
-            $l->current_location_city_id = $request->ship_to_city;
-            $l->pickup_location_country_id = $request->ship_from_country;
-            $l->pickup_location_state_id = $request->ship_from_state;
-            $l->pickup_location_city_id = $request->ship_from_city;
-            $l->delivery_location_country_id = $request->ship_to_country;
-            $l->delivery_location_state_id = $request->ship_to_state;
-            $l->delivery_location_city_id = $request->ship_to_city;
-            $l->invoice_document = $invoiceDoc;
-            $l->cummercial_invoice = $cummercialInvoiceName;
-            $l->save();
-            // for ($o = 0; $o < count($request->group-a); $o++) {
-
-            $totalWeight = 0;
-            foreach ($request->items as $key => $item) {
-
-                $orderPackage = new OrderPackage;
-                $orderPackage->order_id = $l->id;
-                $orderPackage->type = $item['type'];
-                $orderPackage->length = $item['len'];
-                $orderPackage->width = $item['width'];
-                $orderPackage->height = $item['height'];
-                $orderPackage->weight = $item['weight'];
-                $orderPackage->qty = $item['count'];
-                $orderPackage->item_desc = $item['item_desc'];
-                $orderPackage->item_value = $item['item_value'];
-                $orderPackage->save();
-            }
-
-            $shipFromCountryId = $l->pickup_location_country_id;
-            $shipFromCityId = $l->pickup_location_city_id;
-            $shipToCountryId = $l->delivery_location_country_id;
-            $totalWeight = (int) OrderPackage::where('order_id', $l->id)->sum('weight');
-
-            $shippingCostPrice = 0;
-            $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight', $totalWeight)->first();
-            if ($shipFromCountryId == $shipToCountryId) {
-                $cityShppingCost = CityShippingCost::where('country_id', $shipFromCountryId)->where('city_id', $shipFromCityId)->first();
-                if ($cityShppingCost) {
-                    $shippingCostPrice = (float) $shippingCost->cost * ((float) $cityShppingCost->percentage ?? 10 / 100);
-                }
+                $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->update([
+                    'surname' => $request->surname_,
+                    'name' => $request->name_,
+                    'birthDate' => $request->dob_,
+                    'gender' => $request->gender_,
+                    'doc_type' => $request->doc_type_,
+                    'doc_num' => $request->doc_num_,
+                    'tax_code' => $request->tax_code_,
+                    'doc_front' => $docFrontFileName,
+                    'doc_back' => $docBackFileName
+                ]);
             } else {
-                $shippingCostPrice = (float) $shippingCost->cost;
+                $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->update([
+                    'surname' => $request->surname_,
+                    'name' => $request->name_,
+                    'birthDate' => $request->dob_,
+                    'gender' => $request->gender_,
+                    'doc_type' => $request->doc_type_,
+                    'doc_num' => $request->doc_num_,
+                    'tax_code' => $request->tax_code_
+                ]);
             }
-
-
-            $l->cond_of_goods = OrderPackage::where('order_id', $l->id)->sum('qty');
-            $l->val_of_goods = OrderPackage::where('order_id', $l->id)->sum('item_value');
-            $l->shipping_cost = $shippingCostPrice;
-            $l->save();
-            DB::commit();
-            $users = User::where('user_type', 'admin')->where('blocked', false)->get();
-            foreach ($users as $user) {
-                $data = [
-                    'user_id' => Auth::user()->id,
-                    'user_name' => Auth::user()->name,
-                    'subject' => 'Order Created',
-                    'body' => 'A new order has been made check all orders.',
-                    'url' => route('allOrders')
-                ];
-                $user->notify(new OrderStatusNotification($data));
-            }
-            return redirect()->route('agentsOrders')->with(['message' => 'Order saved You can proceed to add it to a batch', 'message_type' => 'success']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error($e->getMessage(), ['exception' => $e]);
-            return back()->with('message', "An error occured " . $e->getMessage())->withInput();
         }
+
+        $invoiceDocName = null;
+        $cummercialInvoiceName = null;
+
+        if ($request->hasFile('invoice_document')) {
+            $invoiceDoc = $request->file('invoice_document');
+            $invoiceDocName = 'invoice_doc' . time() . '.' . $invoiceDoc->getClientOriginalExtension();
+            $invoiceDoc->move(public_path('uploads/orders'), $invoiceDocName);
+        }
+
+        if ($request->hasFile('cummercial_invoice')) {
+            $cummercialInvoice = $request->file('cummercial_invoice');
+            $cummercialInvoiceName = 'invoice_doc_commertional' . time() . '.' . $cummercialInvoice->getClientOriginalExtension();
+            $cummercialInvoice->move(public_path('uploads/orders'), $cummercialInvoiceName);
+        }
+
+        $l = new Order;
+        $l->customer_id = $customer->id;
+        $l->agent_id = Auth::user()->id;
+        $l->walk_in_customer_id = $customer->id;
+        $l->pickup_location_id = $request->origin_id;
+        $l->delivery_location_id = $request->dest_id;
+        $l->current_location_id = $request->origin_id;
+        $l->shipping_rate_id = ((!in_array($request->rate, self::$supported_apis) ? $request->rate : null));
+        $l->tracking_id = 'SIO' . time();
+        $l->delivery_name = $request->rx_name;
+        $l->delivery_phone = $request->rx_phone;
+        $l->delivery_email = $request->rx_email;
+        $l->delivery_phone_alt = $request->rx_phone_alt ?? null;
+        $l->delivery_address1 = $request->rx_address1;
+        $l->delivery_address2 = $request->rx_address2 ?? null;
+        $l->delivery_zip = $request->rx_zip;
+        $l->delivery_city = $request->customer_city_id;
+        $l->delivery_state = $request->customer_state_id;
+        $l->delivery_country = $request->customer_country_id;
+
+        $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->first();
+
+        $l->pickup_name = $cus->surname ?? '-';
+        $l->pickup_phone = $cus->phone ?? '-';
+        $l->pickup_email = $cus->email ?? '-';
+        $l->pickup_phone_alt = $request->s_phone_alt ?? '-';
+        $l->pickup_address1 = $cus->address ?? '-';
+        $l->pickup_address2 = $request->s_address2 ?? '-';
+        $l->pickup_zip = $request->rx_zip;
+        $l->pickup_city = City::find($request->ship_to_city)->name;
+        $l->pickup_state = $request->ship_to_state ?? '-';
+        $l->pickup_country = Country::find($request->ship_to_country)->name;
+
+        $l->return_date = $request->r_date;
+        $l->cond_of_goods = 0;
+        $l->val_of_goods = 0;
+        $l->val_cur = $request->val_cur;
+        $l->provider = ((!in_array($request->rate, self::$supported_apis) ? $request->rate : 'SIOPAY'));
+        $l->terms_of_sale = $request->terms_of_sale;
+        $l->customs_inv_num = $request->customs_inv_num;
+        $l->current_location_country_id = $request->ship_to_country;
+        $l->current_location_city_id = $request->ship_to_city;
+        $l->pickup_location_country_id = $request->ship_from_country;
+        $l->pickup_location_state_id = $request->ship_from_state;
+        $l->pickup_location_city_id = $request->ship_from_city;
+        $l->delivery_location_country_id = $request->ship_to_country;
+        $l->delivery_location_state_id = $request->ship_to_state;
+        $l->delivery_location_city_id = $request->ship_to_city;
+        $l->invoice_document = $invoiceDocName;
+        $l->cummercial_invoice = $cummercialInvoiceName;
+        $l->save();
+        // for ($o = 0; $o < count($request->group-a); $o++) {
+
+        $totalWeight = 0;
+        foreach ($request->items as $key => $item) {
+
+            $orderPackage = new OrderPackage;
+            $orderPackage->order_id = $l->id;
+            $orderPackage->type = $item['type'];
+            $orderPackage->length = $item['len'];
+            $orderPackage->width = $item['width'];
+            $orderPackage->height = $item['height'];
+            $orderPackage->weight = $item['weight'];
+            $orderPackage->qty = $item['count'];
+            $orderPackage->item_desc = $item['item_desc'];
+            $orderPackage->item_value = $item['item_value'];
+            $orderPackage->save();
+        }
+
+        $shipFromCountryId = $l->pickup_location_country_id;
+        $shipFromCityId = $l->pickup_location_city_id;
+        $shipToCountryId = $l->delivery_location_country_id;
+        $totalWeight = (int) OrderPackage::where('order_id', $l->id)->sum('weight');
+
+        $shippingCostPrice = 0;
+        $shippingCost = ShippingCost::where('country_id', $shipFromCountryId)->where('weight', $totalWeight)->first();
+        if ($shipFromCountryId == $shipToCountryId) {
+            $cityShppingCost = CityShippingCost::where('country_id', $shipFromCountryId)->where('city_id', $shipFromCityId)->first();
+            if ($cityShppingCost) {
+                $shippingCostPrice = (float) $shippingCost->cost * ((float) $cityShppingCost->percentage ?? 10 / 100);
+            }
+        } else {
+            $shippingCostPrice = (float) $shippingCost->cost;
+        }
+
+
+        $l->cond_of_goods = OrderPackage::where('order_id', $l->id)->sum('qty');
+        $l->val_of_goods = OrderPackage::where('order_id', $l->id)->sum('item_value');
+        $l->shipping_cost = $shippingCostPrice;
+        $l->save();
+        DB::commit();
+        $users = User::where('user_type', 'admin')->where('blocked', false)->get();
+        foreach ($users as $user) {
+            $data = [
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'subject' => 'Order Created',
+                'body' => 'A new order has been made check all orders.',
+                'url' => route('allOrders')
+            ];
+            $user->notify(new OrderStatusNotification($data));
+        }
+        return redirect()->route('agentsOrders')->with(['message' => 'Order saved You can proceed to add it to a batch', 'message_type' => 'success']);
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
+        //     Log::error($e->getMessage(), ['exception' => $e]);
+        //     return back()->with('message', "An error occured " . $e->getMessage())->withInput();
+        // }
     }
 
     /**
@@ -642,17 +648,17 @@ class WalkInOrderAgents extends Controller
             'rx_city' => 'required|string',
             'rx_state' => 'required|string',
             'rx_country' => 'required|string',
-            's_name' => 'required|string',
-            's_phone' => 'required|string',
-            's_email' => 'required|string',
-            's_phone_alt' => 'nullable|string',
-            's_address1' => 'required|string',
-            's_address2' => 'nullable|string',
-            's_zip' => 'required|string',
-            's_city' => 'required|string',
-            's_state' => 'required|string',
-            's_country' => 'required|string',
-            'r_date' => 'required|string',
+            // 's_name' => 'required|string',
+            // 's_phone' => 'required|string',
+            // 's_email' => 'required|string',
+            // 's_phone_alt' => 'nullable|string',
+            // 's_address1' => 'required|string',
+            // 's_address2' => 'nullable|string',
+            // 's_zip' => 'required|string',
+            // 's_city' => 'required|string',
+            // 's_state' => 'required|string',
+            // 's_country' => 'required|string',
+            'r_date' => 'nullable|string',
             'cond_of_goods' => 'nullable|string',
             'val_of_goods' => 'nullable|string',
             'val_cur' => 'nullable|string',
@@ -688,16 +694,16 @@ class WalkInOrderAgents extends Controller
             $l->delivery_city = $request->rx_city;
             $l->delivery_state = $request->rx_state;
             $l->delivery_country = $request->rx_country;
-            $l->pickup_name = $request->s_name;
-            $l->pickup_phone = $request->s_phone;
-            $l->pickup_email = $request->s_email;
-            $l->pickup_phone_alt = $request->s_phone_alt ?? null;
-            $l->pickup_address1 = $request->s_address1;
-            $l->pickup_address2 = $request->s_address2 ?? null;
-            $l->pickup_zip = $request->s_zip;
-            $l->pickup_city = $request->s_city;
-            $l->pickup_state = $request->s_state;
-            $l->pickup_country = $request->s_country;
+            // $l->pickup_name = $request->s_name;
+            // $l->pickup_phone = $request->s_phone;
+            // $l->pickup_email = $request->s_email;
+            // $l->pickup_phone_alt = $request->s_phone_alt ?? null;
+            // $l->pickup_address1 = $request->s_address1;
+            // $l->pickup_address2 = $request->s_address2 ?? null;
+            // $l->pickup_zip = $request->s_zip;
+            // $l->pickup_city = $request->s_city;
+            // $l->pickup_state = $request->s_state;
+            // $l->pickup_country = $request->s_country;
             $l->return_date = $request->r_date;
             $l->cond_of_goods = $request->cond_of_goods;
             $l->val_of_goods = $request->val_of_goods;
@@ -780,18 +786,18 @@ class WalkInOrderAgents extends Controller
         try {
 
             $o = Order::where('id', $order_id)->first();
-            $subTotal = $o->val_of_goods;
+            $subTotal = 0;
             $total =  (float) $subTotal + (float) $o->shipping_cost;
             if (getAccountbalances(Auth::id())['balance'] >= $total) {
                 DB::beginTransaction();
-              
+
 
                 Order::where('id', $order_id)->update([
                     'status' => 'placed',
                     'pickup_time' => Carbon::now(),
                 ]);
 
-                $u = updateAccountBalance(Auth::id(), ($total), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id);
+                $u = updateAccountBalance(Auth::id(), ($total), $o->tracking_id, 'credit', 'Order ' . $o->tracking_id, 'sales');
 
                 DB::commit();
                 $users = User::where('user_type', 'admin')->where('blocked', false)->get();
@@ -826,7 +832,7 @@ class WalkInOrderAgents extends Controller
     {
         try {
             $o = Order::where('id', $order_id)->first();
-            $subTotal = $o->val_of_goods;
+            $subTotal = $o->shipping_cost;
             OrderBatch::where('id', $o->batch_id)->update([
                 'status' =>  'delivered'
             ]);
@@ -835,7 +841,9 @@ class WalkInOrderAgents extends Controller
                 'delivery_time' => Carbon::now(),
                 'current_location_id' => $o->delivery_location_city_id
             ]);
-            $c = updateAccountBalance(Auth::id(), ($subTotal * 0.015), $o->tracking_id, 'debit', 'Order Commision ' . $o->tracking_id);
+            $pickUpPercentage = Auth::user()->pickup_comission_percentage ?? 1;
+
+            $c = updateAccountBalance(Auth::id(), ($subTotal * ($pickUpPercentage / 100)), $o->tracking_id, 'debit', 'Order commission ' . $o->tracking_id, 'commission');
             $users = User::where('user_type', 'admin')->where('blocked', false)->get();
             foreach ($users as $user) {
                 $data = [

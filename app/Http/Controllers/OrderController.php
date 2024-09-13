@@ -17,6 +17,7 @@ use App\Models\City;
 use App\Models\Country;
 use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -119,7 +120,7 @@ class OrderController extends Controller
             $query->whereDate('created_at', '=', $end);
         }
         $orders = $query->orderBy('created_at', 'DESC')->get();
-        
+
         return Datatables::of($orders)
             ->addIndexColumn()
             ->addColumn('status', function ($order) {
@@ -163,7 +164,7 @@ class OrderController extends Controller
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <iframe class="pdf w-100" src="' . asset('uploads/orders/'.$order->cummercial_invoice) . '"  height="650"></iframe>    
+                                <iframe class="pdf w-100" src="' . asset('uploads/orders/' . $order->cummercial_invoice) . '"  height="650"></iframe>    
                             </div>
                             <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -330,7 +331,11 @@ class OrderController extends Controller
                 $url = route('agent.accept', ['order_track_id' => $order->tracking_id]);
                 return '<a href="' . $url . '" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Pickup/ Accept</a>';
             })
-            ->rawColumns(['status', 'location', 'view', 'parties', 'date', 'price'])
+            ->addColumn('print', function ($order) {
+                $url = route('orders.show', $order->id);
+                return '<a href="' . $url . '" class="btn btn-info btn-sm"><i class="fa fa-eye"></i>View/Track</a>';
+            })
+            ->rawColumns(['status', 'location', 'view', 'parties', 'date', 'price', 'print'])
             ->make(true);
     }
 
@@ -604,7 +609,7 @@ class OrderController extends Controller
      * cancel an order
      */
     public function cancelOrder(Request $request)
-    {   
+    {
         $request->validate([
             'order_id' => 'required|exists:orders,id'
         ]);

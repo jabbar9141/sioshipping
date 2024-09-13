@@ -13,6 +13,7 @@ if (!function_exists('getAccountbalances')) {
         $today = Carbon::today();
         $spent = UserFunds::where('flag', 'credit')->where('user_id', $user_id)->sum('amount');
         $earnt = UserFunds::where('flag', 'debit')->where('user_id', $user_id)->sum('amount');
+
         $bal = $earnt - $spent;
         $earntToday = UserFunds::where('flag', 'debit')->where('user_id', $user_id)->where('description', '!=', 'Wallet Funding')
             ->whereDate('created_at', $today)
@@ -44,13 +45,14 @@ if (!function_exists('getAccountbalances')) {
 
 if (!function_exists('updateAccountBalance')) {
 
-    function updateAccountBalance($user_id, $amount, $id, $flag = 'debit', $description = '', $currency = 'EUR')
+    function updateAccountBalance($user_id, $amount, $id, $flag = 'debit', $description = '', $status = null, $currency = 'EUR')
     {
         try {
             $u = new UserFunds;
             $u->user_id = $user_id;
             $u->amount = $amount;
             $u->flag = $flag;
+            $u->status = $status;
             $u->transId = $id;
             $u->description = $description;
             $u->currency = $currency;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DispacherMail;
 use App\Models\Dispatcher;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -290,6 +291,7 @@ class DispatcherController extends Controller
             return $user;
         });
         Mail::to($user->email)->send(new SignUpEmail($user, $request->password));
+        
         return redirect()->route('allUsers')->with('message', "Dispatcher Created Successfully !")->with('message_type', "success");
     }
 
