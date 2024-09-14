@@ -955,20 +955,7 @@
 
             });
 
-            //find state
-            var ship_to_country = $("#ship_to_country");
-            ship_to_country.wrap('<div class="position-relative"></div>');
-            ship_to_country.on('change', function() {
-            shipt_to_state = $("#shipt_to_state").empty();
-            shipt_to_state.append('<option class="position-relative"></option>');
-                var _token = '{{ csrf_token() }}'; 
-                var url = "{{ route('ajax-get-states') }}";
-
-                $.ajax([
-                  
-                ]);
-            });
-
+       
 
 
 

@@ -598,7 +598,7 @@
             <div class="container-fluid">
                 <div class="row mb-5 justify-content-between">
                     <div class="col-md-12 d-flex gap-3">
-                        <div class="card w-50 p-3 mb-4 shadow">
+                        <div class="card w-50 p-3 mb-4 shadow table-responsive">
                             <h3>Customers</h3>
                             <table class="table customer_tbl mb-5 table-bordered table-striped"
                                 aria-describedby="orders_tbl_info">
@@ -640,7 +640,7 @@
                                 aria-describedby="orders_tbl_info">
                                 <thead>
                                     <tr>
-                                        <td class="s_no">S/NO</td>
+                                        {{-- <td class="s_no">S/NO</td> --}}
                                         <td>Fullname</td>
                                         <td>Email</td>
                                         <td>Phone</td>
@@ -651,7 +651,7 @@
                                 <tbody id="contact_tbl">
                                     @foreach ($dispatcher_rep['contacts'] as $key => $contact)
                                         <tr>
-                                            <td class="s_no"> {{ $key + 1 }} </td>
+                                            {{-- <td class="s_no"> {{ $key + 1 }} </td> --}}
                                             <td> {{ $contact->first_name }} {{ $contact->last_name }}</td>
                                             <td> {{ $contact->email }} </td>
                                             <td> {{ $contact->phone }} </td>
