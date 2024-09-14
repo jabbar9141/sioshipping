@@ -14,24 +14,24 @@
     <div class="contianer">
         <div class="row">
             <div class="col-md-12">
+                Batch
                 <table class="table table-bordered">
                     <tbody>
-                        <tr>
-                            <th>Batch</th>
-                            <td>
-                                @foreach ($orders as $order)
-                            <th>Current Locatoin:</th>
-                            <p style="margin: 0px !important" class="text-nowrap">[ 
-                                {{ $order->current_location->country->name }}]</p>
-                            <br>
-                            </td>
-                            <th>Delivery Location</th>
-                            <td>
+                        @foreach ($orders as $order)
+                            <tr>
+                                <td>
+                                <th>Current Locatoin:</th>
                                 <p style="margin: 0px !important" class="text-nowrap">[
-                                    {{ $order->delivery_location->Country->name }}]</p>
+                                    {{ $order->batch->batchlogs->first()->shipFromCountry?->country?->name }}]</p>
                                 <br>
-                            </td>
-                        </tr>
+                                </td>
+                                <th>Delivery Location</th>
+                                <td>
+                                    <p style="margin: 0px !important" class="text-nowrap">[
+                                        {{  {{ $order->batch->batchlogs->first()->shipToCountry?->country?->name }} }}]</p>
+                                    <br>
+                                </td>
+                            </tr>
                             <tr>
                                 <th>Status</th>
                                 <td>
