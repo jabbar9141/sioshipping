@@ -57,11 +57,12 @@
                     <div style="border-radius: 12px" class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Order Tracking Logs</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-                                  </svg>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"
+                                    class="bi bi-x-lg" viewBox="0 0 16 16">
+                                    <path
+                                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                </svg>
                             </button>
                         </div>
                         <div class="modal-body">
@@ -70,9 +71,9 @@
                                 <label for="tracking">Add Tracking Id</label>
                                 <input class="form-control mb-2 rounded" type="text" id="tarcking_id"
                                     name="tarcking_id" value="">
-                                    <div class="text-end">
-                                <button onclick="trackingFunction()" id="trackingForm" class="btn btn-primary"
-                                    type="button">Submit</button>
+                                <div class="text-end">
+                                    <button onclick="trackingFunction()" id="trackingForm" class="btn btn-primary"
+                                        type="button">Submit</button>
                                 </div>
                             </form>
                             <div class="d-none hide_dev">
@@ -83,6 +84,7 @@
                                             <th>Type</th>
                                             <th>Country Name</th>
                                             <th>City Name</th>
+                                            <th>Date</th>
                                         </tr>
                                     </thead>
                                     <tbody id="logList">
@@ -293,11 +295,27 @@
                     $("#logList").empty();
                     var tr = '<tr></tr>';
                     $.each(response.logs, function(key, value) {
+                        if (value.created_at) {
+                            var datetime = value.created_at.split('T');
+                            if (datetime.length > 1) {
+                                var date = datetime[0]; 
+                                var time = datetime[1]; 
+
+                                console.log(date);
+                        
+                                console.log(time);
+                            } else {
+                                console.error('Unexpected created_at format:', value.created_at);
+                            }
+                        } else {
+                            console.error('created_at is undefined or null:', value);
+                        }
                         console.log(value);
-                            tr += '<tr><td>' + value.type + ':</td><td>' + value
-                                .country_name + '</td><td>' + value.city_name +
-                                '</td></tr>';
+                        tr += '<tr><td>' + value.type + ':</td><td>' + value.country_name +
+                            '</td><td>' + value.city_name + '</td><td>' + date +
+                            '</td></tr>';
                     });
+
                     $(".hide_dev").removeClass('d-none');
                     $("#logList").html(tr);
                 } else {

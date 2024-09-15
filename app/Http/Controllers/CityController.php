@@ -69,18 +69,21 @@ class CityController extends Controller
     {
         $order = Order::where('tracking_id', $request->tarckingId)->first();
         $batch = OrderBatch::where('id', $order->batch_id)->first();
+        // return $batch;
         $batch_logs = Batchlog::where('batch_id', $batch->id)->get();
 
         $data[] =
             [
                 'country_name' => Country::where('id', $batch_logs[0]->ship_to_country_id)->first()->name,
                 'city_name' => City::where('id', $batch_logs[0]->ship_to_city_id)->first()->name,
+                // 'created_at' => $batch_logs[0]->created_at,
                 'status' => $batch->status,
                 'type' => 'Delivery'
             ];
         $data[] =    [
             'country_name' => Country::where('id', $batch_logs[0]->ship_from_country_id)->first()->name,
             'city_name' => City::where('id', $batch_logs[0]->ship_from_city_id)->first()->name,
+            // 'created_at' => $batch_logs[0]->created_at,
             'type' => "Pickup"
         ];
 
@@ -88,6 +91,7 @@ class CityController extends Controller
             $data[]  = [
                 'country_name' => Country::where('id', $batch_log->current_location_county_id)->first()->name,
                 'city_name' => City::where('id', $batch_log->current_location_city_id)->first()->name,
+                'created_at' => $batch_log->created_at,
                 'type' => "Current"
             ];
         }

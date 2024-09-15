@@ -37,7 +37,7 @@
     <div class="container-fluid">
         <div class="card h-auto">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Welcome, To SioShipping Managment Dashboard:  <span class="ps-2">{{ Auth::user()->name }}</span></h5>
+                <h5 class="card-title fw-semibold mb-4">Welcome, To SioShipping Managment Dashboard:</h5>
 
                 {{-- @if (Auth::user()->user_type == 'user' || optional(auth()->user()->admin)->can == 'all')
                     <div class="row">
