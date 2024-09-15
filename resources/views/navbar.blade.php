@@ -134,10 +134,10 @@
                 @endif
             @else
                 <li class="nav-item dropdown">
-                    <a id="navbarDropdown" class=" dropdown-toggle" href="#" role="button"
+                    {{-- <a id="navbarDropdown" class=" dropdown-toggle" href="#" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         {{ Auth::user()->name }}
-                    </a>
+                    </a> --}}
                     <ul class="dropdown-menu service-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li>
                             <a class="dropdown-item" href="{{ route('logout') }}"
@@ -222,10 +222,10 @@
                 @endif
             @else
                 <div class="nav-item dropdown">
-                    <a id="navbarDropdown" class="dropdown-toggle" href="#" role="button"
+                    {{-- <a id="navbarDropdown" class="dropdown-toggle" href="#" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         {{ Auth::user()->name }}
-                    </a>
+                    </a> --}}
                     <ul class="dropdown-menu service-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>

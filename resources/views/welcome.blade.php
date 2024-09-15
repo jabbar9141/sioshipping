@@ -125,97 +125,91 @@
                         {{-- <form action="{{ route('contact.save') }}" method="post">
                             @csrf
                             @method('POST') --}}
-                            <div class="card rounded form-card p-3">
-                                <div class="row my-4">
-                                    <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                        <div class="ui-widget">
-                                            <label for="origin">Shipping from Country<i class="text-danger">*</i> :
-                                            </label> <br>
-                                            <select name="" id="ship_from_country"
-                                                class="form-control">
+                        <div class="card rounded form-card p-3">
+                            <div class="row my-4">
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="origin">Shipping from Country<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <select name="" id="ship_from_country" class="form-control">
 
-                                            </select>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                        <div class="ui-widget">
-                                            <label for="origin">Shipping from City<i class="text-danger">*</i> :
-                                            </label>
-                                            <br>
-                                            <select name="" id="ship_from_city" class="form-control">
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                        <div class="ui-widget">
-                                            <label for="ship_from_state">Inter State Name<i class="text-danger">*</i> :
-                                            </label> <br>
-                                            <input type="text" placeholder="Inter State Name"
-                                                name="" id="ship_from_state_name"
-                                                class="form-control form-control-sm form-sm">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                        <div class="ui-widget">
-                                            <label for="weight_tot">Total Weight<i class="text-danger">*</i> : </label>
-                                            <br>
-                                            <input type="number" name="" class="form-control form-sm"
-                                                id="weight_tot">
-                                        </div>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="row mb-4">
-                                    <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                        <div class="ui-widget">
-                                            <label for="ship_to_country">Shipping to Country<i
-                                                    class="text-danger">*</i> :
-                                            </label> <br>
-                                            <select name="" id="ship_to_country"
-                                                class="form-control">
-
-                                            </select>
-                                        </div>
-                                    </div>
 
 
-                                    <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                        <div class="ui-widget">
-                                            <label for="ship_to_city">Shipping to City<i class="text-danger">*</i> :
-                                            </label> <br>
-                                            <select name="" id="ship_to_city"
-                                                class="form-select w-100 select2">
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-3 text-white text-start mb-2">
-                                        <div class="ui-widget">
-                                            <label for="ship_from_state">Inter State Name<i class="text-danger">*</i>
-                                                :
-                                            </label> <br>
-                                            <input type="text" placeholder="Inter State Name"
-                                                id="ship_to_state_name" name=""
-                                                class="form-control form-control-sm form-sm">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-lg-3 mt-auto text-white text-start mb-2">
-                                        <div class="bg-white pb-3 px-3 rounded gap-3 align-items-center pt-3">
-                                            <h4 class="mb-0">Shipping Cost: </h4>
-                                            {{-- <h5 class="mb-0" ></h5> --}}
-                                            <input class="form-control border-0 text-dark" type="text"
-                                                name="" id="shipping_rate_list" value="">
-                                        </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="origin">Shipping from City<i class="text-danger">*</i> :
+                                        </label>
+                                        <br>
+                                        <select name="" id="ship_from_city" class="form-control">
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4 ps-0 text-start" style="width: 100%">
-                                    <button type="button" class="btn rounded btn-sm btn-primary m-1"
-                                        onclick="getRates()">{{ __('hompage.proceed') }}</button>
-                                    <button class="btn btn-primary rounded btn-sm" type="button"
-                                        data-bs-toggle="modal" data-bs-target="#myModal">Contact with Vendor</button>
-                                    {{--  <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a>  --}}
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="ship_from_state">Inter State Name<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <input type="text" placeholder="Inter State Name" name=""
+                                            id="ship_from_state_name" class="form-control form-control-sm form-sm">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="weight_tot">Total Weight<i class="text-danger">*</i> : </label>
+                                        <br>
+                                        <input type="number" name="" class="form-control form-sm"
+                                            id="weight_tot">
+                                    </div>
                                 </div>
                             </div>
+                            <div class="row mb-4">
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="ship_to_country">Shipping to Country<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <select name="" id="ship_to_country" class="form-control">
+
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="ship_to_city">Shipping to City<i class="text-danger">*</i> :
+                                        </label> <br>
+                                        <select name="" id="ship_to_city" class="form-select w-100 select2">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 text-white text-start mb-2">
+                                    <div class="ui-widget">
+                                        <label for="ship_from_state">Inter State Name<i class="text-danger">*</i>
+                                            :
+                                        </label> <br>
+                                        <input type="text" placeholder="Inter State Name" id="ship_to_state_name"
+                                            name="" class="form-control form-control-sm form-sm">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-lg-3 mt-auto text-white text-start mb-2">
+                                    {{-- <div class="bg-white pb-3 px-3 rounded gap-3 align-items-center pt-3 d-flex"> --}}
+                                        <h4 class="mb-0 text-white">Shipping Cost: </h4>
+                                        {{-- <h5 class="mb-0" ></h5> --}}
+                                        <input class="form-control border-0 text-dark form-control-sm mt-2" type="text" name=""
+                                            id="shipping_rate_list" value="">
+                                    {{-- </div> --}}
+                                </div>
+                            </div>
+                            <div class="col-md-4 ps-0 text-start" style="width: 100%">
+                                <button type="button" class="btn rounded btn-sm btn-primary m-1"
+                                    onclick="getRates()">{{ __('hompage.proceed') }}</button>
+                                <button class="btn btn-primary rounded btn-sm" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#myModal">Contact with Vendor</button>
+                                {{--  <a class="btn btn-danger m-1" href="/">{{ __('hompage.refresh') }}</a>  --}}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {{-- </form> --}}
@@ -236,74 +230,74 @@
                                 <form action="{{ route('contact.save') }}" method="post">
                                     @csrf
                                     @method('POST')
-                                    <div class="row mb-4">
-                                        <div class="col-md-3 text-start">
-                                            <label for="fi">Ship from Country</label>
-                                            <input type="text" class="form-control form-sm" id="from_country"
+                                    {{-- <div class="row mb-4"> --}}
+                                        {{-- <div class="col-md-3 text-start"> --}}
+                                            {{-- <label for="fi">Ship from Country</label> --}}
+                                            <input type="hidden" class="form-control form-sm" id="from_country"
                                                 name="ship_from_country_id">
-                                            @error('ship_from_country_id')
+                                            {{-- @error('ship_from_country_id')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
-                                        </div>
-                                        <div class="col-md-3 text-start">
-                                            <label for="fi">Ship from City</label>
-                                            <input type="text" class="form-control form-sm" id="from_city"
+                                        </div> --}}
+                                        {{-- <div class="col-md-3 text-start"> --}}
+                                            {{-- <label for="fi">Ship from City</label> --}}
+                                            <input type="hidden" class="form-control form-sm" id="from_city"
                                                 name="ship_from_city_id">
-                                            @error('ship_from_city_id')
+                                            {{-- @error('ship_from_city_id')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
-                                        </div>
-                                        <div class="col-md-3 text-start">
-                                            <label for="fi">Ship from State</label>
-                                            <input type="text" class="form-control form-sm" id="from_state"
+                                        </div> --}}
+                                        {{-- <div class="col-md-3 text-start"> --}}
+                                            {{-- <label for="fi">Ship from State</label> --}}
+                                            <input type="hidden" class="form-control form-sm" id="from_state"
                                                 name="ship_from_state_name">
-                                            @error('ship_from_state_name')
+                                            {{-- @error('ship_from_state_name')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
-                                        </div>
-                                        <div class="col-md-3 text-start">
-                                            <label for="fi">Total Weight</label>
-                                            <input type="text" class="form-control form-sm" id="total_weight"
+                                        </div> --}}
+                                        {{-- <div class="col-md-3 text-start"> --}}
+                                            {{-- <label for="fi">Total Weight</label> --}}
+                                            <input type="hidden" class="form-control form-sm" id="total_weight"
                                                 name="total_wieght">
-                                            @error('total_wieght')
+                                            {{-- @error('total_wieght')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row mb-4">
-                                        <div class="col-md-3 text-start">
-                                            <label for="fi">Ship to Country</label>
-                                            <input type="text" class="form-control form-sm" id="to_country"
+                                        </div> --}}
+                                    {{-- </div> --}}
+                                    {{-- <div class="row mb-4">
+                                        <div class="col-md-3 text-start"> --}}
+                                            {{-- <label for="fi">Ship to Country</label> --}}
+                                            <input type="hidden" class="form-control form-sm" id="to_country"
                                                 name="ship_to_country_id">
-                                            @error('ship_to_country_id')
+                                            {{-- @error('ship_to_country_id')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
-                                        </div>
-                                        <div class="col-md-3 text-start">
-                                            <label for="fi">Ship to City</label>
-                                            <input type="text" class="form-control form-sm" id="to_city"
+                                        </div> --}}
+                                        {{-- <div class="col-md-3 text-start"> --}}
+                                            {{-- <label for="fi">Ship to City</label> --}}
+                                            <input type="hidden" class="form-control form-sm" id="to_city"
                                                 name="ship_to_city_id">
-                                            @error('ship_to_city_id')
+                                            {{-- @error('ship_to_city_id')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
-                                        </div>
-                                        <div class="col-md-3 text-start">
-                                            <label for="fi">Ship to State</label>
-                                            <input type="text" class="form-control form-sm" id="to_state"
+                                        </div> --}}
+                                        {{-- <div class="col-md-3 text-start"> --}}
+                                            {{-- <label for="fi">Ship to State</label> --}}
+                                            <input type="hidden" class="form-control form-sm" id="to_state"
                                                 name="ship_to_state_name">
-                                            @error('ship_to_state_name')
+                                            {{-- @error('ship_to_state_name')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
-                                        </div>
-                                        <div class="col-md-3 text-start">
-                                            <label for="fi">Shipping Cost</label>
-                                            <input type="text" class="form-control form-sm" id="shipping_list"
+                                        </div> --}}
+                                        {{-- <div class="col-md-3 text-start"> --}}
+                                            {{-- <label for="fi">Shipping Cost</label> --}}
+                                            <input type="hidden" class="form-control form-sm" id="shipping_list"
                                                 name="shipping_cost">
-                                            @error('shipping_cost')
+                                            {{-- @error('shipping_cost')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
-                                        </div>
-                                    </div>
+                                        </div> --}}
+                                    {{-- </div> --}}
                                     <div class="row mb-4">
                                         <div class="col-md-6 text-start">
                                             <label for="fi">First Name</label>
