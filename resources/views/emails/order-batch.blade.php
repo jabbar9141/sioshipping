@@ -28,7 +28,7 @@
                                 <th>Delivery Location</th>
                                 <td>
                                     <p style="margin: 0px !important" class="text-nowrap">[
-                                        {{  {{ $order->batch->batchlogs->first()->shipToCountry?->country?->name }} }}]</p>
+                                        {{ $order->batch->batchlogs->first()->shipToCountry?->country?->name  }}]</p>
                                     <br>
                                 </td>
                             </tr>

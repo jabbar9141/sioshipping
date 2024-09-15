@@ -160,15 +160,15 @@ Route::get('/test', function () {
     // Artisan::call('migrate', [
     //     '--path' => 'database/migrations/2024_09_12_125123_add_column_user_funds_table.php'
     // ]);
-    // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_09_14_163630_add_column_walk_in_customers_table.php'
-    // ]);
-    // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_09_14_163705_add_column_orders_table.php'
-    // ]);
-    // Artisan::call('migrate', [
-    //     '--path' => 'database/migrations/2024_09_14_171213_add_column_contact_us_table.php'
-    // ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_14_163630_add_column_walk_in_customers_table.php'
+    ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_14_163705_add_column_orders_table.php'
+    ]);
+    Artisan::call('migrate', [
+        '--path' => 'database/migrations/2024_09_14_171213_add_column_contact_us_table.php'
+    ]);
     return "Success";
 });
 
