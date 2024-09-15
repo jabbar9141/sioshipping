@@ -8,6 +8,7 @@ use App\Models\WalkInCustomer;
 use App\Models\OrderPackage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
@@ -165,7 +166,26 @@ class WalkInOrderAgents extends Controller
             ->make(true);
     }
 
+    public function generatePDF()
+    {
 
+        $data = [
+            [
+                'title' => 'khyber pakhtunkhwa',
+                'provition' => 'INSTITUTE OF MEDICAL SCIENCES',
+                'content' => 'Payable at any Branch of BOK in Pakistan'
+            ],
+            [
+                'b_Copty' => 'Bank Copty',
+                'acTilte' => 'A/C Title: IOMS Admission, A/C #: 2007941059',
+                'content' => 'Payable at any Branch of BOK in Pakistan'
+            ],
+        ];
+
+        // $pdf = Pdf::loadView('pdf_view', $data);
+
+        // return $pdf->dowload('voucher-pdf');
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -198,6 +218,8 @@ class WalkInOrderAgents extends Controller
             'dob_' => 'required|date',
             'doc_type_' => 'required',
             'doc_num_' => 'required',
+            // 'company_name1' => 'nullable',
+            // 'company_name2' => 'nullable',
             'doc_front_' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
             'doc_back_' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
             // 'origin_id' => 'required|numeric|exists:locations,id',
@@ -284,7 +306,8 @@ class WalkInOrderAgents extends Controller
                     'doc_num' => $request->doc_num_,
                     'tax_code' => $request->tax_code_,
                     'doc_front' => $docFrontFileName,
-                    'doc_back' => $docBackFileName
+                    'doc_back' => $docBackFileName,
+                    'company_name' => $request->company_name1,
                 ]);
             } else {
                 $cus = WalkInCustomer::create([
@@ -294,7 +317,8 @@ class WalkInOrderAgents extends Controller
                     'gender' => $request->gender_,
                     'doc_type' => $request->doc_type_,
                     'doc_num' => $request->doc_num_,
-                    'tax_code' => $request->tax_code_
+                    'tax_code' => $request->tax_code_,
+                    'company_name' => $request->company_name1,
                 ]);
             }
             $customer = $cus;
@@ -322,7 +346,8 @@ class WalkInOrderAgents extends Controller
                     'doc_num' => $request->doc_num_,
                     'tax_code' => $request->tax_code_,
                     'doc_front' => $docFrontFileName,
-                    'doc_back' => $docBackFileName
+                    'doc_back' => $docBackFileName,
+                    'company_name' => $request->company_name1,
                 ]);
             } else {
                 $cus = WalkInCustomer::where('tax_code', $request->tax_code_)->update([
@@ -332,7 +357,8 @@ class WalkInOrderAgents extends Controller
                     'gender' => $request->gender_,
                     'doc_type' => $request->doc_type_,
                     'doc_num' => $request->doc_num_,
-                    'tax_code' => $request->tax_code_
+                    'tax_code' => $request->tax_code_,
+                    'company_name' => $request->company_name1,
                 ]);
             }
         }
@@ -402,6 +428,7 @@ class WalkInOrderAgents extends Controller
         $l->delivery_location_city_id = $request->ship_to_city;
         $l->invoice_document = $invoiceDocName;
         $l->cummercial_invoice = $cummercialInvoiceName;
+        $l->company_name = $request->company_name2;
         $l->save();
         // for ($o = 0; $o < count($request->group-a); $o++) {
 

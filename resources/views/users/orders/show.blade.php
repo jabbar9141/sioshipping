@@ -38,7 +38,7 @@
                                             <th colspan="2">
                                                 <div style="">
                                                     <svg id="barcode" style="width: 100px; height: 100px;"></svg><br>
-                                                </div>  
+                                                </div>
                                             </th>
                                             <th colspan="2" style="text-align: end">
                                                 <img src="{{ asset('admin_assets/assets/images/logos/favicon.png') }}"
@@ -47,11 +47,11 @@
                                         </tr>
                                         <tr>
                                             <td class="" colspan="4">
-                                            <h5><b>For Custommer</b></h5>
-                                        </td>
+                                                <h5><b>For Custommer</b></h5>
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <th> 
+                                            <th>
                                                 Origin
                                             </th>
                                             <td>
@@ -106,8 +106,8 @@
                                                 </div>
 
                                             </td>
-                                            <th>Price(&euro;)</th>
-                                            <td>{{ number_format($order->val_of_goods + $order->shipping_cost, 2) }}</td>
+                                            <th class="price">Price(&euro;)</th>
+                                            <td class="price">{{ number_format($order->val_of_goods + $order->shipping_cost, 2) }}</td>
                                         </tr>
                                         <tr>
                                             <th>Sender Name</th>
@@ -182,12 +182,13 @@
                                         <tr>
                                             <th>Condition of Goods</th>
                                             <td>{{ $order->cond_of_goods }}</td>
-                                            <th>Commission</th>
-                                            <td>{{ number_format($order->val_of_goods * 0.015, 2) }} €</td>
+                                            <th class="commission">Commission</th>
+                                            <td class="commission">{{ number_format($order->val_of_goods * 0.015, 2) }} €</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+
                             <hr>
                             <h5>Order Contents</h5>
                             <hr>
@@ -229,7 +230,8 @@
                             </div>
                         </div>
                         <hr>
-                        <button class="btn btn-primary" onclick="PrintElem('print_section')">Print Label</button>
+                        <button class="btn btn-primary" onclick="PrintElem('print_section')">For Company</button>
+                        <button class="btn btn-primary ms-3" onclick="PrintElem2('print_section')">For Custommer</button>
                         <hr>
                         <h5>Geolocation Data</h5>
                         <hr>
@@ -295,12 +297,13 @@
     </script>
     <script>
         function PrintElem(elem) {
+            
             var mywindow = window.open('', 'PRINT', 'height=400,width=600');
 
             mywindow.document.write('<html><head><title>' + document.title + '</title>');
             mywindow.document.write(
                 `<link rel="stylesheet" href="{{ asset('admin_assets/assets/css/styles.min.css') }}" />`);
-            mywindow.document.write('</head><body>');
+            mywindow.document.write('</head><body class="px-5 py-4">');
             mywindow.document.write(
                 `<link rel="preload" href="https://unpkg.com/@bitjson/qr-code@1.0.2/dist/qr-code.js" as="script">`);
             var script = document.createElement('script');
@@ -322,5 +325,48 @@
 
             return true;
         }
+    </script>
+    <script>
+         function PrintElem2(elem) {
+    const priceElements = document.getElementsByClassName('price');
+    const commissionElements = document.getElementsByClassName('commission');
+    for (let i = 0; i < commissionElements.length; i++) {
+        commissionElements[i].style.display = 'none';
+    }
+    for (let i = 0; i < priceElements.length; i++) {
+        priceElements[i].style.display = 'none';
+    }
+
+    const mywindow = window.open('', 'PRINT', 'height=400,width=600');
+    mywindow.document.write('<html><head><title>' + document.title + '</title>');
+    mywindow.document.write('<link rel="stylesheet" href="' + '{{ asset('admin_assets/assets/css/styles.min.css') }}' + '" />');
+    mywindow.document.write('</head><body class="px-5 py-4">');
+    
+    mywindow.document.write('<link rel="preload" href="https://unpkg.com/@bitjson/qr-code@1.0.2/dist/qr-code.js" as="script">');
+    
+    // Add QR code script
+    const script = mywindow.document.createElement('script');
+    script.src = 'https://unpkg.com/@bitjson/qr-code@1.0.2/dist/qr-code.js';
+    mywindow.document.head.appendChild(script);
+
+    mywindow.document.write(document.getElementById(elem).innerHTML);
+    mywindow.document.write('</body></html>');
+
+    mywindow.document.close(); // IE >= 10
+
+    // Wait for the window and its contents to load
+    mywindow.onload = function() {
+        mywindow.focus(); // Set focus for IE
+        mywindow.print();
+        // Optional: Uncomment the line below to close the window after printing
+        // mywindow.close();
+    };
+
+    for (let i = 0; i < priceElements.length; i++) {
+        priceElements[i].style.display = '';
+    }
+
+    return true;
+}
     </script>
 @endsection

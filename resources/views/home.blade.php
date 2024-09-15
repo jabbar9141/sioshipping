@@ -516,20 +516,20 @@
         @if ($dispatcher_rep)
             <ul class="d-flex dashboard_ul mb-5 gap-3">
                 @if (Auth::user()->user_type === 'admin')
-                <li class="p-3 shadow rounded">
-                    <p class="fw-bold text-nowrap">Total User</p>
-                    <h2 class="text-center card_h2 text-nowrap">
-                        <b>{{ $dispatcher_rep['total_users'] }}</b>
-                    </h2>
-                </li>
-            @endif
+                    <li class="p-3 shadow rounded">
+                        <p class="fw-bold text-nowrap">Total User</p>
+                        <h2 class="text-center card_h2 text-nowrap">
+                            <b>{{ $dispatcher_rep['total_users'] }}</b>
+                        </h2>
+                    </li>
+                @endif
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold text-nowrap">Total Customer</p>
                     <h2 class="text-center card_h2 text-nowrap">
                         <b>{{ $dispatcher_rep['customer'] }}</b>
                     </h2>
                 </li>
-               
+
                 {{--  @dd(fromEuroView())  --}}
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold text-nowrap">Total Sales</p>
@@ -537,7 +537,7 @@
                         <b>{{ fromEuroView(auth()->user()->currency_id ?? 0, $dispatcher_rep['total_sales']) }}</b>
                     </h2>
                 </li>
-                
+
                 <li class="p-3 shadow rounded">
                     <p class="fw-bold text-nowrap">Total Account Balance</p>
                     <h2 class="text-center card_h2 text-nowrap">
@@ -597,8 +597,8 @@
             </ul>
             <div class="container-fluid">
                 <div class="row mb-5 justify-content-between">
-                    <div class="col-md-12 d-flex gap-3">
-                        <div class="card w-50 p-3 mb-4 shadow">
+                    <div class="col-md-12  h-auto d-flex gap-3">
+                        <div class="card  h-auto w-50 p-3 mb-4 shadow">
                             <h3>Customers</h3>
                             <table class="table customer_tbl mb-5 table-bordered table-striped"
                                 aria-describedby="orders_tbl_info">
@@ -622,54 +622,72 @@
                                 </tbody>
                             </table>
                             {!! $dispatcher_rep['customers_list']->links() !!}
-                            
+
                             <style>
                                 .contact_tbl td,
                                 .order_tbl td,
                                 .customer_tbl td {
                                     font-size: 11px;
-                                    white-space: nowrap;
+                                    white-space: nowrap;    
                                 }
-                                .contact_tbl td:first-child{
+                                .card{
+                                    height: fit-content !important;
+                                }
+                                .contact_tbl td:first-child {
                                     /* width: 20px; */
                                 }
                             </style>
                             @if (auth()->user()->user_type == 'admin')
-                            <h3>Guest Users</h3>
-                            <table class="table contact_tbl table-responsive table-bordered table-striped"
-                                aria-describedby="orders_tbl_info">
-                                <thead>
-                                    <tr>
-                                        <td class="s_no">S/NO</td>
-                                        <td>Fullname</td>
-                                        <td>Email</td>
-                                        <td>Phone</td>
-                                        <td>Description</td>
-                                        <td>Show</td>
-                                    </tr>
-                                </thead>
-                                <tbody id="contact_tbl">
-                                    @foreach ($dispatcher_rep['contacts'] as $key => $contact)
+                                <h3>Guest Users</h3>
+                                <div class="overflow-auto">
+                                <table class="table contact_tbl table-responsive table-bordered table-striped">
+                                    <thead>
                                         <tr>
-                                            <td class="s_no"> {{ $key + 1 }} </td>
-                                            <td> {{ $contact->first_name }} {{ $contact->last_name }}</td>
-                                            <td> {{ $contact->email }} </td>
-                                            <td> {{ $contact->phone }} </td>
-                                            <td> {{ substr($contact->description, 0, 5) }} </td>
-                                            <td><a onclick="getContact(id)" data-bs-toggle="modal" data-bs-target="#contactModal"
-                                                    class="btn btn-primary show_btn btn-sm" id="{{ $contact->id }}">Show</a></td>
+                                            <td class="s_no">S/NO</td>
+                                            <td>Fullname</td>
+                                            <td>Email</td>
+                                            <td>Phone</td>
+                                            <td>Description</td>
+                                            <td>Location</td>
+                                            <td>Total Weight</td>
+                                            <td>Shipping Cost</td>
+                                            <td>Show</td>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            {!! $dispatcher_rep['contacts']->links() !!}
+                                    </thead>
+                                    <tbody id="contact_tbl">
+                                        @foreach ($dispatcher_rep['contacts'] as $key => $contact)
+                                            <tr>
+                                                <td class="s_no"> {{ $key + 1 }} </td>
+                                                <td> {{ $contact->first_name }} {{ $contact->last_name }}</td>
+                                                <td> {{ $contact->email }} </td>
+                                                <td> {{ $contact->phone }} </td>
+                                                <td> {{ substr($contact->description, 0, 5) }} </td>
+                                                <td style="white-space: nowrap"> Ship from Country:
+                                                    {{ $contact->ship_from_country?->name }} <br>
+                                                    Ship from City: {{ $contact->ship_from_city?->name }} <br>
+                                                    Ship to Country: {{ $contact->ship_to_country?->name }} <br>
+                                                    Ship to City: {{ $contact->ship_to_city?->name }}
+                                                </td>
+                                                <td> {{ $contact->total_weight }} </td>
+                                                <td> {{ $contact->shipping_cost }} </td>
+                                                <td><a onclick="getContact(id)" data-bs-toggle="modal"
+                                                        data-bs-target="#contactModal"
+                                                        class="btn btn-primary show_btn btn-sm"
+                                                        id="{{ $contact->id }}">Show</a></td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                                {!! $dispatcher_rep['contacts']->links() !!}
                             @endif
-                           
+
                         </div>
 
-                        <div class="card w-50 shadow p-3">
+                        <div class="card w-50 h-auto shadow p-3">
                             <h3>Latest Orders</h3>
-                            <table class="table table-bordered order_tbl table-striped" aria-describedby="orders_tbl_info">
+                            <table class="table table-bordered table-responsive w-100 order_tbl table-striped"
+                                aria-describedby="orders_tbl_info">
                                 <thead>
                                     <tr>
                                         <td>S/NO</td>
@@ -702,7 +720,7 @@
     </div>
     </div>
     {{-- modal --}}
-    <div class="modal fade" id="contactModal">
+    <div class="modal modal-lg fade" id="contactModal">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-dialog-lg">
             <div class="modal-content rounded">
                 <div class="modal-header">
@@ -727,7 +745,7 @@
                 var id = id;
                 console.log($('.show_btn').attr('id'));
                 let url = "{{ route('contact.show', ['id' => ':id']) }}"
-                            .replace(':id', id);
+                    .replace(':id', id);
                 $.ajax({
                     url: url,
                     type: 'get',
@@ -736,7 +754,8 @@
                     success: function(response) {
                         console.log(response);
                         var tr = '';
-                        tr += '<div class="mb-3">';
+                        tr += '<div class="mb-3 w-100 d-flex justify-content-between">';
+                        tr += '<div class="mb-3 w-50">';
                         tr += '<p class="mb-2">First Name: <span class="ps-2 f_name">' + response.contact
                             .first_name + '</span></p>';
                         tr += '<p class="mb-2">Last Name: <span class="ps-2 l_name">' + response.contact
@@ -745,14 +764,31 @@
                             '</span></p>';
                         tr += '<p class="mb-2">Phone: <span class="ps-2 phone">' + response.contact.phone +
                             '</span></p>';
-                        tr += '<p>Description: <span class="ps-2 desc">' + response.contact.description + '</span></p>';
+                        tr += '<p>Description: <span class="ps-2 desc">' + response.contact.description +
+                            '</span></p>';
+                        tr += '</div>';
+                        tr += '<div class="mb-3 w-50">';
+                        tr += '<p>Total Weight: <span class="ps-2 desc">' + response.contact.total_weight +
+                            '</span></p>';
+                        tr += '<p>Shipping Cost: <span class="ps-2 desc">' + response.contact.shipping_cost +
+                            '</span></p>';
+
+                        tr += '<p>Ship from Country: <span class="ps-2 desc">' + response.ship_from_country +
+                            '</span></p>';
+                        tr += '<p>Ship from City: <span class="ps-2 desc">' + response.ship_from_city +
+                            '</span></p>';
+                        tr += '<p>Ship to Country: <span class="ps-2 desc">' + response.ship_to_country +
+                            '</span></p>';
+                        tr += '<p>Ship to City: <span class="ps-2 desc">' + response.ship_to_city +
+                            '</span></p>';
+                        tr += '</div>';
                         tr += '</div>';
                         tr += '<hr>';
-                         $(".modal-body").append(tr);
+                        $(".modal-body").empty();
+                        $(".modal-body").append(tr);
                     }
-                      
+
                 });
-              
-            } 
-          
+
+            }
         </script>

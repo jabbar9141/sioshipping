@@ -78,12 +78,13 @@ class HomeController extends Controller
         $rep['customer'] = count(array_unique($get_customer));
         $rep['total_sales'] = Order::sum('val_of_goods');
         $rep['total_users'] = User::where('blocked', false)->count('name');
-        // dd($rep['totalWalletAmout']);
+        
         $customer_ids = Order::pluck('customer_id')->toArray();
         $rep['customers_list'] = WalkInCustomer::whereIn('id', $customer_ids)->orderBy('id', 'DESC')->paginate(10);
         $rep['latest_orders'] = Order::orderBy('id', 'DESC')->paginate(20);
         $rep['contacts'] = ContactUs::orderBy('id', 'DESC')->paginate(10);
-        // $rep['orders_list'] = Order::
+        // dd($rep['contacts']);
+        // $rep['contacts'] = Order::
         $rep['total_transit'] = UserFunds::get();
         return $rep;
     }

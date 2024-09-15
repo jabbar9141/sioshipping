@@ -47,6 +47,18 @@
                     <hr>
                     <div class="stage0">
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="ui-widget">
+                                    <label for="company_name1">Company Name<i class="text-danger">*</i> : </label>
+                                    <input type="text" id="company_name1" name="company_name1" value="{{ old('company_name1') }}"
+                                        class="form-control" autocomplete="off">
+                                    @error('company_name1')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="ui-widget">
                                     <label for="surname">Surname <i class="text-danger">*</i> : </label>
@@ -501,6 +513,19 @@
                                     </div> --}}
                                     <div class="col-md-12">
                                         <h6>Receiver Address</h6>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="ui-widget">
+                                                    <label for="company_name2">Company Name<i class="text-danger">*</i> : </label>
+                                                    <input type="text" id="company_name2" name="company_name2" value="{{ old('company_name2') }}"
+                                                        class="form-control" autocomplete="off">
+                                                    @error('company_name2')
+                                                        <p class="text-danger">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
                                         <div class="row">
                                             <div class="form-group col-md-6">
                                                 <label for="rx_name">Receiver Name <i class="text-danger">*</i></label>

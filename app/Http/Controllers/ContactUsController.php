@@ -43,12 +43,19 @@ class ContactUsController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required',
             'phone' => 'required',
             'desc' => 'required',
+            'ship_from_country_id' => 'required',
+            'ship_from_city_id' => 'required',
+            'total_wieght' => 'required',
+            'ship_to_country_id' => 'required',
+            'ship_to_city_id' => 'required',
+            'shipping_cost' => 'required',
         ]);
 
         $contacts = ContactUs::create([
@@ -57,6 +64,14 @@ class ContactUsController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'description' => $request->desc,
+            'ship_from_country_id' => $request->ship_from_country_id,
+            'ship_from_city_id' => $request->ship_from_city_id,
+            'ship_to_country_id' => $request->ship_to_country_id,
+            'ship_to_city_id' => $request->ship_to_city_id,
+            'ship_from_State_name' => $request->ship_from_state_name,
+            'ship_to_state_name' => $request->ship_to_state_name,
+            'total_weight' => $request->total_wieght,
+            'shipping_cost' => $request->shipping_cost,
         ]);
 
         $users = User::where('user_type', 'admin')->where('blocked', false)->get();
@@ -91,6 +106,10 @@ class ContactUsController extends Controller
         return response()->json([
             'success' => true,
             'contact' => $contact,
+            'ship_from_country' => $contact->ship_from_country?->name,
+            'ship_from_city' => $contact->ship_from_city?->name,
+            'ship_to_country' => $contact->ship_to_country?->name,
+            'ship_to_city' => $contact->ship_to_city?->name,
         ]);
     }
 

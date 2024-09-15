@@ -62,6 +62,7 @@ class Order extends Model
         'invoice_document',
         'agnet_id',
         'cummercial_invoice',
+        'company_name',
 
     ];
 
