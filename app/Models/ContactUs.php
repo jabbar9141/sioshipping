@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class ContactUs extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'first_name',
         'last_name',
@@ -46,8 +45,4 @@ class ContactUs extends Model
     {
         return $this->belongsTo(City::class, 'ship_to_city_id');
     }
-
-    // protected $casts = [
-    //   'status' =>
-    // ];
 }
